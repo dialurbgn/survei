@@ -34,7 +34,7 @@ RUN chmod +x /start.sh
 
 # Copy project
 WORKDIR /var/www/html
-COPY ../../ .  # Pastikan ini sesuai build context
+COPY . .
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html

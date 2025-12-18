@@ -348,99 +348,60 @@ class CI_DB_postgre_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Insert ID - FIXED VERSION
+	 * Insert ID
 	 *
 	 * @return	string
 	 */
 	public function insert_id()
-	{
-		$v = $this->version();
+{
+    $v = $this->version();
 
-		$table  = (func_num_args() > 0) ? func_get_arg(0) : NULL;
-		$column = (func_num_args() > 1) ? func_get_arg(1) : NULL;
+    $table  = (func_num_args() > 0) ? func_get_arg(0) : NULL;
+    $column = (func_num_args() > 1) ? func_get_arg(1) : NULL;
 
-		if ($table === NULL && $v >= '8.1')
-		{
-			// FIX: Gunakan @ untuk suppress error jika lastval belum defined
-			$sql = 'SELECT LASTVAL() AS ins_id';
-			$query = @pg_query($this->conn_id, $sql);
-			
-			// Jika query gagal (lastval not yet defined), return 0
-			if ($query === FALSE)
-			{
-				// Log error untuk debugging
-				if ($this->db_debug)
-				{
-					log_message('debug', 'PostgreSQL: lastval() not yet defined - no INSERT with RETURNING or sequence used');
-				}
-				return 0;
-			}
-			
-			$row = pg_fetch_row($query);
-			return isset($row[0]) ? (int) $row[0] : 0;
-		}
-		elseif ($table !== NULL)
-		{
-			if ($column !== NULL && $v >= '8.0')
-			{
-				$sql = 'SELECT pg_get_serial_sequence('.$this->escape($table).', '.$this->escape($column).') AS seq';
-				$query = $this->query($sql);
-				
-				if ($query === FALSE || $query->num_rows() === 0)
-				{
-					// Sequence tidak ditemukan
-					if ($this->db_debug)
-					{
-						log_message('error', 'PostgreSQL: Sequence not found for table "'.$table.'" column "'.$column.'"');
-					}
-					return 0;
-				}
-				
-				$row = $query->row();
-				$seq = $row->seq;
-				
-				if (empty($seq))
-				{
-					// Kolom bukan auto-increment
-					if ($this->db_debug)
-					{
-						log_message('debug', 'PostgreSQL: Column "'.$column.'" in table "'.$table.'" is not a serial/auto-increment column');
-					}
-					return 0;
-				}
-			}
-			else
-			{
-				// seq_name passed in table parameter
-				$seq = $table;
-			}
+    // Jika sequence name langsung dikirim, pakai langsung
+    if ($table !== NULL)
+    {
+        if ($column !== NULL && $v >= '8.0')
+        {
+            // Cari nama sequence dari tabel & kolom
+            $sql = "SELECT pg_get_serial_sequence('{$table}', '{$column}') AS seq";
+            $query = $this->query($sql);
+            $seq = $query->row()->seq ?? NULL;
 
-			$sql = 'SELECT CURRVAL('.$this->escape($seq).') AS ins_id';
-			$query = @pg_query($this->conn_id, $sql);
-			
-			if ($query === FALSE)
-			{
-				// CURRVAL gagal - sequence belum dipanggil di session ini
-				if ($this->db_debug)
-				{
-					log_message('error', 'PostgreSQL: CURRVAL failed for sequence "'.$seq.'" - sequence not yet incremented in this session');
-				}
-				return 0;
-			}
-			
-			$row = pg_fetch_row($query);
-			return isset($row[0]) ? (int) $row[0] : 0;
-		}
-		else
-		{
-			// Fallback untuk PostgreSQL < 8.1
-			if ($this->result_id !== FALSE)
-			{
-				return pg_last_oid($this->result_id);
-			}
-			return 0;
-		}
-	}
+            if (!$seq)
+            {
+                log_message('error', "insert_id(): Sequence tidak ditemukan untuk {$table}.{$column}");
+                return 0;
+            }
+        }
+        else
+        {
+            // Jika sequence langsung dikirim
+            $seq = $table;
+        }
+
+        // Ambil nilai terakhir dari sequence (global)
+        $sql = "SELECT last_value AS ins_id FROM {$seq}";
+    }
+    else
+    {
+        log_message('error', "insert_id(): Sequence name tidak diberikan. Gunakan insert_id('sequence_name')");
+        return 0;
+    }
+
+    $query = $this->query($sql);
+
+    if (!$query || $query->num_rows() === 0)
+    {
+        log_message('error', "insert_id(): Gagal menjalankan query: {$sql}");
+        return 0;
+    }
+
+    $row = $query->row();
+    return isset($row->ins_id) ? (int) $row->ins_id : 0;
+}
+
 
 	// --------------------------------------------------------------------
 
