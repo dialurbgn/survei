@@ -1,0 +1,14 @@
+apps:
+  - name: davina-chat
+    script: /var/www/html/server.js
+    interpreter: node
+    args: -p
+    watch: false
+    autorestart: true
+
+  - name: davina-rabbit
+    script: /var/www/html/index.php
+    interpreter: php
+    args: rabbit process
+    watch: false
+    autorestart: true

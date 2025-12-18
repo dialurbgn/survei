@@ -1,0 +1,23 @@
+@font-face {
+  font-family: sora-font-regular;
+  src: url('fonts/Sora-Regular.ttf');
+}
+
+@font-face {
+  font-family: sora-font-light;
+  src: url('fonts/Sora-Light.ttf');
+}
+
+@font-face {
+  font-family: sora-font-bold;
+  src: url('fonts/Sora-Bold.ttf');
+}
+
+html, body, div, section, p, h1, h2, h3, h4, h5, a, strong, text {
+	font-family: sora-font-light;
+}
+
+
+text {
+	font-family: sora-font-light !important;
+}

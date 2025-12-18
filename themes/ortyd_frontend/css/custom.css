@@ -1,0 +1,526 @@
+@font-face {
+  font-family: sora-font-regular;
+  src: url('fonts/Roboto-Regular.ttf');
+}
+
+@font-face {
+  font-family: sora-font-light;
+  src: url('fonts/Roboto-Light.ttf');
+}
+
+@font-face {
+  font-family: sora-font-bold;
+  src: url('fonts/Roboto-Bold.ttf');
+}
+
+html, body, div, section, p, span, h1, h2, h3, h4, h5, a, strong {
+	font-family: sora-font-light;
+}
+
+h1, h2, h3, h4, h5 {
+    margin-bottom: 5px;
+}
+
+#header .header-nav-bar {
+    padding: 3px 0;
+    background: #FFF;
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+#header .header-nav-bar .header-nav-main nav > ul > li > a {
+    color: #1f698c  !important;
+}
+
+#header .header-nav.header-nav-line nav > ul li:hover > a {
+    color: #000  !Important;
+}
+
+#header .header-nav.header-nav-line nav .dropdown-reverse .current-page-active, #header .header-nav.header-nav-line nav > ul:not(:hover) li > a.active {
+    color: #000 !Important;
+}
+
+#footer {
+    background: #0f3965;
+}
+
+html .svg-fill-color-primary-white {
+    fill: #FFF !important;
+}
+
+.slidet-text-light {
+	color: #FFF !important;
+}
+
+.slidet-text-light p {
+	color: #FFF !important;
+}
+
+html .bg-color-quaternary, html .bg-quaternary {
+    background-color: #f4f4f4 !important;
+}
+
+/* Style the buttons that are used to open and close the accordion panel */
+#accordion_faq .accordion {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  outline: none;
+  transition: 0.4s;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+#accordion_faq .active, #accordion_faq .accordion:hover {
+  background-color: #ccc;
+}
+
+/* Style the accordion panel. Note: hidden by default */
+#accordion_faq .panel {
+  padding: 10px 18px;
+  background-color: white;
+  display: none;
+  overflow: hidden;
+}
+
+#accordion_faq button.accordion:after {
+    content: '\002B';
+    color: #777;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+
+#accordion_faq button.accordion.active:after {
+    content: "\2212";
+}
+
+p {
+	margin:5px !Important
+}
+
+
+@media (max-width: 991px) {
+	#header .header-nav-main:not(.header-nav-main-mobile-dark) nav > ul > li > a {
+		color: #141d38 !important;
+	}
+}
+
+.goog-te-gadget-icon{
+		background:none !important;
+    }
+
+	.goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon {
+		display: none !important;
+	}
+	body {
+		top: 0px !important;
+	}
+	.goog-tooltip {
+		display: none !important;
+	}
+	.goog-tooltip:hover {
+		display: none !important;
+	}
+	.goog-text-highlight {
+		background-color: transparent !important;
+		border: none !important;
+		box-shadow: none !important;
+	}
+	.goog-te-banner-frame{display: none !important;}
+	.goog-logo-link{display: none !important;}
+	.goog-te-gadget{height: 28px !important;  overflow: hidden;}
+	#goog-gt-tt, .goog-te-balloon-frame{display: none !important;} 
+	.goog-text-highlight { background: none !important; box-shadow: none !important;}
+	
+	.skiptranslate iframe {
+		display:none !important;
+	}
+	
+	
+	.dataTables_wrapper .dt-buttons .btn span {
+		color:#fff !important
+	}
+	
+@media (min-width: 992px) {
+    #header .header-nav.header-nav-line nav > ul:not(:hover) li > a.active:before {
+        background: #000 !important;
+    }
+}
+
+@media (min-width: 992px) {
+    #header .header-nav.header-nav-line nav > ul li:hover > a:before {
+        background: #000 !important;
+    }
+}
+
+#header .header-column .header-extra-info li .header-extra-info-text a {
+    color: #195f97;
+    font-weight: 400;
+    font-size: 12px;
+	
+}
+
+#footer a:not(.btn):not(.no-footer-css).text-color-light:hover {
+    color: #e6e5e5 !important;
+    font-weight: 400;
+    font-size: 12px;
+}
+
+#footer a:not(.btn):not(.no-footer-css).text-color-light {
+    color: #FFF !important;
+	font-weight: 400;
+    font-size: 12px;
+}
+
+#informasi_layanan ul {
+	
+}
+
+#informasi_layanan ul li {
+	padding: 10px;
+    background: #fff;
+    color: #000 !important;
+    border-radius: 5px;
+}
+
+#informasi_layanan ul li.active {
+	
+}
+
+#bannerModal .modal-content  {
+	border-radius: 20px !important
+}
+
+#bannerModal .modal-body .owl-carousel .owl-dots {
+	display:none !important
+}
+
+#bannerModal .modal-body .owl-carousel {
+	margin-bottom:0 !important
+}
+
+#bannerModal .modal-body .owl-carousel .owl-item img {
+	border-radius: 5px !important
+}
+
+/* Bungkus datatables kamu dengan div: <div class="custom-dt"> */
+.custom-dt table.dataTable {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.custom-dt table.dataTable thead th {
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: bold;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid #e2e2e2;
+}
+
+.custom-dt table.dataTable tbody td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #f1f1f1;
+    color: #444;
+}
+
+.custom-dt table.dataTable tbody tr:hover {
+    background-color: #f1f9ff;
+    transition: background-color 0.3s ease;
+}
+
+.custom-dt table.dataTable tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Paginate, search, filter, info */
+.custom-dt .dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 6px 12px;
+    margin: 2px;
+    background-color: #007bff;
+    border: none;
+    color: #fff !important;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.custom-dt .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #0056b3;
+}
+
+.custom-dt .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #0056b3 !important;
+    font-weight: bold;
+}
+
+.custom-dt .dataTables_wrapper .dataTables_length select,
+.custom-dt .dataTables_wrapper .dataTables_filter input {
+    padding: 6px 10px;
+    margin: 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.custom-dt .dataTables_wrapper .dataTables_info {
+    padding: 10px;
+    color: #666;
+}
+
+/* Responsive styling aman */
+@media (max-width: 768px) {
+    .custom-dt table.dataTable thead {
+        display: none;
+    }
+
+    .custom-dt table.dataTable tbody td {
+        display: block;
+        width: 100%;
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .custom-dt table.dataTable tbody td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 16px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: #666;
+    }
+}
+.custom-dt .dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 4px 8px;
+    margin: 1px;
+    background-color: #f2f2f2; /* Ganti warna background */
+    border: 1px solid #ccc; /* Tambahkan border ringan */
+    color: #333 !important; /* Sesuaikan warna teks */
+    border-radius: 4px;
+    font-size: 12px;
+    min-width: 30px;
+    text-align: center;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.custom-dt .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #e0e0e0; /* Efek hover */
+    border-color: #bbb;
+}
+
+.custom-dt .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #007bff !important;
+    color: #fff !important;
+    font-weight: bold;
+}
+
+
+.custom-dt .dataTables_wrapper .dataTables_paginate {
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Menyesuaikan pagination active state */
+.pagination > .active > a, 
+.pagination > .active > span, 
+.pagination > .active > a:hover, 
+.pagination > .active > span:hover, 
+.pagination > .active > a:focus, 
+.pagination > .active > span:focus, 
+.pagination .page-item.active .page-link {
+    background-color: #141d38 !important; /* Warna latar belakang aktif */
+    border-color: #141d38 !important; /* Warna border aktif */
+    color: #ffffff !important; /* Warna teks pada item aktif */
+}
+
+.pagination .page-item.active .page-link {
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2) !important;
+    border-radius: 5px;
+}
+
+.page-item.disabled .page-link {
+    border-radius: 5px;
+}
+
+/* Carousel dengan ukuran responsif */
+.carousel-home {
+    max-width: 100%;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Gambar dalam slider yang responsif */
+.carousel-home .carousel-item img {
+    width: 100%;      /* Gambar akan mengambil 100% lebar kontainer */
+    height: 100%;     /* Gambar akan menyesuaikan tinggi kontainer */
+    object-fit: cover; /* Menjaga rasio gambar, mengisi seluruh area kontainer */
+    object-position: center; /* Menjaga agar gambar tetap fokus di tengah */
+    border-radius: 12px; /* Membuat gambar sudut melengkung */
+}
+
+/* Slick arrows */
+.carousel-home .slick-prev, .carousel-home .slick-next {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    z-index: 10;
+}
+.carousel-home .slick-prev:before, .carousel-home .slick-next:before {
+    font-size: 18px;
+    color: white;
+}
+
+/* Slick dots */
+.carousel-home .slick-dots {
+    bottom: 10px;
+}
+.carousel-home .slick-dots li button:before {
+    font-size: 10px;
+    color: #fff;
+    opacity: 0.5;
+}
+.carousel-home .slick-dots li.slick-active button:before {
+    opacity: 1;
+}
+
+/* Slick arrow previous button */
+.carousel-home .slick-prev,
+.carousel-home .slick-next {
+    background-color: rgba(0, 0, 0, 0.7);  /* Warna latar belakang tombol */
+    border-radius: 50%;                    /* Membuat tombol berbentuk bulat */
+    width: 40px;                           /* Lebar tombol */
+    height: 40px;                          /* Tinggi tombol */
+    display: flex;                         /* Menjaga agar isi tombol terpusat */
+    justify-content: center;               /* Menjaga posisi isi tetap di tengah */
+    align-items: center;                   /* Menjaga posisi isi tetap di tengah */
+    z-index: 10;                           /* Memastikan tombol tetap di atas slider */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);           /* Menjaga posisi vertikal tombol di tengah */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Ikon dalam tombol (arrow) */
+.carousel-home .slick-prev:before,
+.carousel-home .slick-next:before {
+    font-size: 20px;                       /* Ukuran font ikon */
+    color: white;                          /* Warna ikon */
+}
+
+/* Hover effect pada tombol */
+.carousel-home .slick-prev:hover,
+.carousel-home .slick-next:hover {
+    background-color: rgba(0, 0, 0, 0.9);  /* Perubahan warna saat hover */
+    transform: translateY(-50%) scale(1.1); /* Memberikan efek membesar pada tombol saat hover */
+}
+
+/* Slick arrows - next button */
+.carousel-home .slick-next {
+    right: 10px;                           /* Menempatkan tombol next di sebelah kanan */
+}
+
+/* Slick arrows - previous button */
+.carousel-home .slick-prev {
+    left: 10px;                            /* Menempatkan tombol prev di sebelah kiri */
+}
+
+.row>* {
+    padding-right: inherit;
+    padding-left: inherit;
+}
+
+.margin-auto {
+    margin:0 auto !important;
+}
+
+.row {
+    margin-right: inherit;
+    margin-left: inherit;
+	margin-top: inherit;
+	margin-bottom: inherit;
+}
+
+
+.curved-section {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+}
+
+.curved-overlay {
+    position: relative;
+    top: -50px; /* tarik ke atas */
+    height: 100px;
+    background: white; /* atau warna latar belakang section berikutnya */
+    border-top-left-radius: 100% 50px;
+    border-top-right-radius: 100% 50px;
+    z-index: 0;
+}
+
+.curve-svg {
+    position: relative;
+    top: -1px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.curve-svg svg {
+    display: block;
+    width: 100%;
+    height: 100px;
+}
+
+
+.margin-auto {
+    margin:0 auto !important;
+}
+
+.row {
+    margin-right: inherit;
+    margin-left: inherit;
+	margin-top: inherit;
+	margin-bottom: inherit;
+}
+
+.img-fluid {
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;      /* Membuat sudut gambar sedikit membulat */
+  transition: box-shadow 0.3s ease;	
+}
+
+
+.img-fluid:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+
+@media (max-width: 991px) {
+    #header .header-btn-collapse-nav {
+        outline: 0;
+        display: block;
+        position: absolute;
+        z-index: 9999 !important;
+        top: 35px !important;
+        right: 10px !important;
+    }
+}
+
+.page-header.page-header-modern.page-header-lg {
+    padding: 20px;
+}

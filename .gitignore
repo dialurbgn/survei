@@ -1,0 +1,28 @@
+# IDE Files
+#-------------------------
+/nbproject/
+.idea/*
+
+## Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+.htaccess
+.env
+.env.development
+.env.production
+.env*
+*.db
+
+/filemanager/userfiles/
+/uploads
+.DS_Store
+/file/
+/logs/
+/log/
+/lsp/
+/lsp
+

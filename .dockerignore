@@ -1,0 +1,5 @@
+vendor
+node_modules
+.git
+docker/app/start.sh
+docker/app/fail2ban

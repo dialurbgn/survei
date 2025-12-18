@@ -1,0 +1,34 @@
+User-agent: *
+
+# ========== Direktori Internal ==========
+Disallow: /application/
+Disallow: /system/
+Disallow: /vendor/
+Disallow: /uploads/
+Disallow: /file/
+
+# ========== Aset Non-Penting ==========
+Disallow: /themes/ortyd/assets/fonts/
+Disallow: /themes/ortyd/assets/vendors/
+Disallow: /themes/ortyd_frontend/assets/fonts/
+Disallow: /themes/ortyd_frontend/assets/vendors/
+
+# (Izinkan file CSS/JS utama jika perlu)
+Allow: /themes/ortyd/assets/css/
+Allow: /themes/ortyd/assets/js/
+Allow: /themes/ortyd_frontend/assets/css/
+Allow: /themes/ortyd_frontend/assets/js/
+
+# ========== Area Login/Admin ==========
+Disallow: /login/
+Disallow: /register/
+Disallow: /logout/
+
+# ========== PWA Files ==========
+Allow: /manifest.json
+Allow: /service-worker.js
+Allow: /sw-register.js
+Allow: /themes/pwa/
+
+# ========== Sitemap ==========
+Sitemap: https://bs-simpktn.kemendag.go.id/sitemap.xml

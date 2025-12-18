@@ -1,0 +1,438 @@
+/* Font setup */
+@font-face {
+  font-family: sora-font-regular;
+  src: url('fonts/Roboto-Regular.ttf');
+}
+
+@font-face {
+  font-family: sora-font-light;
+  src: url('fonts/Roboto-Light.ttf');
+}
+
+@font-face {
+  font-family: sora-font-bold;
+  src: url('fonts/Roboto-SemiBold.ttf');
+}
+
+/* System theme colors */
+:root {
+  --system-navbar-bg: #2e3440; /* Darker background for navbar */
+  --system-header-bg: #3b4252; /* Darker background for header */
+  --system-border: #4c566a; /* Border color */
+  --system-hover: #434c5e; /* Hover effect color */
+  --system-primary: #5e81ac; /* Primary color */
+  --system-toggle-bg: #434c5e; /* Background for navbar toggle */
+  --system-link-color: #d8dee9; /* Link color */
+  --system-text-dark: #eceff4; /* Light text for readability */
+  --bs-dropdown-bg: #eceff4;
+  --bs-input-color:#5e81ac;
+}
+
+/* Root selector */
+[data-bs-theme="system"] {
+  background-color: #2e3440 !important;
+  color: var(--system-text-dark) !important;
+  font-family: sora-font-regular;
+}
+
+/* General Text */
+[data-bs-theme="system"] body,
+[data-bs-theme="system"] h1,
+[data-bs-theme="system"] h2,
+[data-bs-theme="system"] h3,
+[data-bs-theme="system"] h4,
+[data-bs-theme="system"] h5,
+[data-bs-theme="system"] h6,
+[data-bs-theme="system"] p,
+[data-bs-theme="system"] span,
+[data-bs-theme="system"] label,
+[data-bs-theme="system"] a {
+  color: var(--system-text-dark) !important;
+}
+
+/* Navbar (Menu) */
+[data-bs-theme="system"] .navbar {
+  background-color: var(--system-navbar-bg) !important; /* Darker background for navbar */
+  border-bottom: 1px solid var(--system-border) !important; /* Optional border */
+}
+
+[data-bs-theme="system"] .navbar-nav .nav-link {
+  color: var(--system-link-color) !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+[data-bs-theme="system"] .navbar-nav .nav-link:hover,
+[data-bs-theme="system"] .navbar-nav .nav-link:focus {
+  color: #ffffff !important;
+  background-color: var(--system-hover) !important;
+}
+
+[data-bs-theme="system"] .navbar-nav .nav-link.active {
+  background-color: var(--system-primary) !important;
+  color: #ffffff !important;
+}
+
+/* Navbar Toggle Button */
+[data-bs-theme="system"] .navbar-toggler {
+  background-color: var(--system-toggle-bg) !important;
+  border: none !important;
+}
+
+[data-bs-theme="system"] .navbar-toggler-icon {
+  background-color: #ffffff !important;
+}
+
+/* Header */
+[data-bs-theme="system"] .header {
+  background-color: var(--system-header-bg) !important;
+  color: #ffffff !important;
+}
+
+[data-bs-theme="system"] .header h1,
+[data-bs-theme="system"] .header h2,
+[data-bs-theme="system"] .header h3,
+[data-bs-theme="system"] .header h4,
+[data-bs-theme="system"] .header h5,
+[data-bs-theme="system"] .header h6 {
+  color: #ffffff !important;
+}
+
+/* Links in Header */
+[data-bs-theme="system"] .header a {
+  color: var(--system-link-color) !important;
+}
+
+[data-bs-theme="system"] .header a:hover {
+  color: #ffffff !important;
+  text-decoration: underline !important;
+}
+
+/* Card */
+[data-bs-theme="system"] .card {
+  background-color: #3b4252 !important;
+  border-color: #4c566a !important;
+  color: #eceff4 !important;
+}
+
+[data-bs-theme="system"] .card-header {
+  background-color: #434c5e !important;
+  border-bottom: 1px solid #4c566a !important;
+}
+
+/* Button */
+[data-bs-theme="system"] .btn {
+  color: #ffffff !important;
+}
+
+[data-bs-theme="system"] .btn-primary {
+  background-color: var(--system-primary) !important;
+  border-color: var(--system-primary) !important;
+}
+
+[data-bs-theme="system"] .btn-outline-secondary {
+  border-color: #81a1c1 !important;
+  color: #d8dee9 !important;
+}
+
+/* Table */
+[data-bs-theme="system"] .table {
+  color: #eceff4 !important;
+}
+
+[data-bs-theme="system"] .table th {
+  background-color: #3b4252 !important;
+  color: #eceff4 !important;
+}
+
+[data-bs-theme="system"] .table td {
+  background-color: #2e3440 !important;
+}
+
+/* Modal */
+[data-bs-theme="system"] .modal-content {
+  background-color: #3b4252 !important;
+  color: #eceff4 !important;
+  border: 1px solid #4c566a !important;
+}
+
+/* Dropdown */
+[data-bs-theme="system"] .dropdown-menu {
+  background-color: #3b4252 !important;
+  color: #eceff4 !important;
+  border-color: #4c566a !important;
+}
+
+[data-bs-theme="system"] .dropdown-item:hover,
+[data-bs-theme="system"] .dropdown-item:focus {
+  background-color: #4c566a !important;
+  color: #ffffff !important;
+}
+
+/* Scrollbar */
+[data-bs-theme="system"] ::-webkit-scrollbar {
+  width: 8px;
+}
+
+[data-bs-theme="system"] ::-webkit-scrollbar-track {
+  background: #2e3440;
+}
+
+[data-bs-theme="system"] ::-webkit-scrollbar-thumb {
+  background-color: #4c566a;
+  border-radius: 4px;
+}
+
+/* List Group */
+[data-bs-theme="system"] .list-group-item {
+  background-color: #3b4252 !important;
+  color: #eceff4 !important;
+  border-color: #4c566a !important;
+}
+
+/* Utility Spacing */
+[data-bs-theme="system"] section,
+[data-bs-theme="system"] .container,
+[data-bs-theme="system"] .card-body,
+[data-bs-theme="system"] .modal-body {
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+[data-bs-theme="system"] .form-group,
+[data-bs-theme="system"] .form-control,
+[data-bs-theme="system"] .input-group {
+  margin-bottom: 1rem !important;
+}
+
+[data-bs-theme="system"] .table th,
+[data-bs-theme="system"] .table td {
+  padding: 0.75rem 1rem !important;
+}
+
+[data-bs-theme="system"] .mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+[data-bs-theme="system"] .pt-3 {
+  padding-top: 1rem !important;
+}
+
+/* Nav Tabs */
+[data-bs-theme="system"] .nav-tabs .nav-link {
+  padding: 0.75rem 1.25rem !important;
+  margin-right: 0.25rem;
+  color: #d8dee9 !important;
+  border: 1px solid #4c566a !important;
+  background-color: #3b4252 !important;
+}
+
+[data-bs-theme="system"] .nav-tabs .nav-link.active {
+  background-color: var(--system-primary) !important;
+  color: #ffffff !important;
+}
+
+/* DataTable */
+/* DataTable */
+[data-bs-theme="system"] .dataTables_wrapper {
+  background-color: #2e3440 !important; /* Dark background for DataTable wrapper */
+  color: #eceff4 !important; /* Light text color */
+}
+
+[data-bs-theme="system"] .dataTables_wrapper .dataTables_info,
+[data-bs-theme="system"] .dataTables_wrapper .dataTables_paginate {
+  color: #eceff4 !important; /* Light text color for info and pagination */
+}
+
+[data-bs-theme="system"] .dataTables_wrapper thead th {
+  background-color: #3b4252 !important; /* Dark background for table headers */
+  color: #eceff4 !important; /* Light text color for headers */
+  border-bottom: 1px solid #4c566a !important; /* Subtle border for headers */
+}
+
+[data-bs-theme="system"] .dataTables_wrapper tbody td {
+  background-color: #2e3440 !important; /* Dark background for table body cells */
+  color: #eceff4 !important; /* Light text color for table body cells */
+  border-top: 1px solid #4c566a !important; /* Border between rows */
+}
+
+[data-bs-theme="system"] .dataTables_wrapper tbody tr:hover {
+  background-color: #4c566a !important; /* Hover effect with a darker background */
+}
+
+[data-bs-theme="system"] .dataTables_wrapper tbody tr:nth-child(odd) {
+  background-color: #3b4252 !important; /* Slightly lighter background for odd rows */
+}
+
+[data-bs-theme="system"] .dataTables_wrapper .paginate_button {
+  background-color: var(--system-primary) !important; /* Primary color for pagination buttons */
+  color: #ffffff !important; /* White text for pagination buttons */
+  border-radius: 0.375rem !important;
+}
+
+[data-bs-theme="system"] .dataTables_wrapper .paginate_button:hover {
+  background-color: #4c566a !important; /* Hover effect for pagination buttons */
+  color: #ffffff !important; /* White text on hover */
+}
+
+[data-bs-theme="system"] .dataTables_wrapper .paginate_button.disabled {
+  background-color: #2e3440 !important; /* Disabled state with dark background */
+  color: #434c5e !important; /* Lighter text for disabled buttons */
+}
+
+/* DataTable search input and filter dropdown */
+[data-bs-theme="system"] .dataTables_wrapper .dataTables_filter input,
+[data-bs-theme="system"] .dataTables_wrapper .dataTables_length select {
+  background-color: #3b4252 !important; /* Dark background for search and filter input */
+  color: #eceff4 !important; /* Light text for inputs */
+  border: 1px solid #4c566a !important; /* Border around input */
+}
+
+[data-bs-theme="system"] .dataTables_wrapper .dataTables_filter input:focus,
+[data-bs-theme="system"] .dataTables_wrapper .dataTables_length select:focus {
+  border-color: var(--system-primary) !important; /* Primary color border on focus */
+  outline: none !important;
+}
+
+/* DataTable pagination buttons */
+[data-bs-theme="system"] .dataTables_wrapper .paginate_button.page-item {
+  background-color: #434c5e !important; /* Background for pagination items */
+  border: none !important;
+}
+
+[data-bs-theme="system"] .dataTables_wrapper .paginate_button.page-item:hover {
+  background-color: var(--system-primary) !important; /* Hover effect for pagination */
+  color: #ffffff !important; /* White text on hover */
+}
+
+[data-bs-theme="system"] .card-table {
+    background: transparent;
+}
+
+
+[data-bs-theme="system"] .equal-box {
+    background: transparent;
+}
+
+[data-bs-theme="system"] #go-to-chat, [data-bs-theme="dark"] #toggle-chat {
+    background: white;
+}
+
+[data-bs-theme="system"] #toggle-icon {
+    background: stroke;
+}
+
+
+[data-bs-theme="system"] .btn.btn-light, [data-bs-theme="system"] .btn-bg-light, [data-bs-theme="system"] .buttons-copy {
+    background: #2e3440 !important;
+}
+
+
+[data-bs-theme="system"] #kt_aside, [data-bs-theme="system"] .menu {
+        background: linear-gradient(to right bottom, rgb(59 66 82) 50%, rgb(46 52 64) 100%) !important;
+}
+
+
+/* Select2 */
+[data-bs-theme="system"] .select2-container .select2-selection {
+  background-color: #3b4252 !important; /* Dark background for the selected item */
+  color: #eceff4 !important; /* Light text color for selected item */
+  border: 1px solid #4c566a !important; /* Dark border around the selection */
+  border-radius: 0.375rem !important;
+  padding: 0.375rem 1rem !important; /* Padding for better text spacing */
+}
+
+[data-bs-theme="system"] .select2-container .select2-selection:focus {
+  border-color: var(--system-primary) !important; /* Primary color on focus */
+  outline: none !important;
+}
+
+[data-bs-theme="system"] .select2-container .select2-selection__arrow {
+  background-color: #4c566a !important; /* Dark arrow background */
+  border-left: 1px solid #4c566a !important;
+  border-radius: 0 0.375rem 0.375rem 0 !important;
+}
+
+[data-bs-theme="system"] .select2-container .select2-results__option {
+  background-color: #3b4252 !important; /* Dark background for the options */
+  color: #eceff4 !important; /* Light text color for options */
+  padding: 0.5rem 1rem !important;
+}
+
+[data-bs-theme="system"] .select2-container .select2-results__option:hover {
+  background-color: #4c566a !important; /* Hover effect on option */
+  color: #ffffff !important; /* White text on hover */
+}
+
+[data-bs-theme="system"] .select2-container .select2-results__option[aria-selected="true"] {
+  background-color: var(--system-primary) !important; /* Primary color for selected option */
+  color: #ffffff !important; /* White text for selected option */
+}
+
+[data-bs-theme="system"] .select2-container--open .select2-dropdown {
+  background-color: #2e3440 !important; /* Dark background for the dropdown */
+  border-color: #4c566a !important; /* Border color for the dropdown */
+  border-radius: 0.375rem !important;
+  padding: 0.25rem 0 !important;
+}
+
+[data-bs-theme="system"] .select2-container--open .select2-dropdown .select2-results {
+  max-height: 250px !important;
+  overflow-y: auto !important;
+}
+
+[data-bs-theme="system"] .select2-container--open .select2-dropdown .select2-search {
+  background-color: #3b4252 !important; /* Dark background for search box */
+  border-bottom: 1px solid #4c566a !important; /* Border at the bottom of the search box */
+  padding: 0.5rem !important;
+}
+
+[data-bs-theme="system"] .select2-container--open .select2-dropdown .select2-search input {
+  background-color: transparent !important; /* Transparent background for search input */
+  color: #eceff4 !important; /* Light text color for search input */
+  border: none !important;
+}
+
+[data-bs-theme="system"] .select2-container .select2-selection__clear {
+  color: #d8dee9 !important; /* Light color for the clear button */
+}
+
+/* Disabled select2 */
+[data-bs-theme="system"] .select2-container--disabled .select2-selection {
+  background-color: #2e3440 !important; /* Dark background for disabled select */
+  color: #434c5e !important; /* Lighter text for disabled state */
+  border: 1px solid #4c566a !important; /* Border for disabled select */
+}
+
+/* Select2 multiple select */
+[data-bs-theme="system"] .select2-container--multiple .select2-selection {
+  background-color: #3b4252 !important; /* Dark background for multiple selection */
+  color: #eceff4 !important; /* Light text for multiple selection */
+  border: 1px solid #4c566a !important; /* Border for multiple selection */
+  border-radius: 0.375rem !important;
+  padding: 0.375rem 1rem !important;
+}
+
+[data-bs-theme="system"] .select2-container--multiple .select2-selection__rendered {
+  color: #eceff4 !important; /* Light text for rendered options */
+}
+
+[data-bs-theme="system"] .select2-container--multiple .select2-selection__choice {
+  background-color: var(--system-primary) !important; /* Background for selected choices */
+  color: #ffffff !important; /* White text for selected choices */
+  border-radius: 0.375rem !important;
+  margin-right: 0.5rem !important;
+}
+
+[data-bs-theme="system"] .select2-container--multiple .select2-selection__choice__remove {
+  color: #ffffff !important; /* White text for remove icon in multiple selection */
+}
+
+[data-bs-theme="system"] .select2-container--multiple .select2-selection__choice__remove:hover {
+  color: #d8dee9 !important; /* Lighter color on hover for remove icon */
+}
+
+[data-bs-theme="system"] #kt_content_container {
+      margin-top:20px
+}
