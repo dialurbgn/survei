@@ -4,9 +4,16 @@ services:
       context: .
       dockerfile: docker/app/Dockerfile
     container_name: ci_app
+    networks:
+      net_private:
+        ipv4_address: 192.168.99.4
     volumes:
       - .:/var/www/html
       - ./docker/app/fail2ban:/etc/fail2ban
+    depends_on:
+      - node
+    # restart jika ingin otomatis
+    restart: unless-stopped
 
   nginx:
     image: nginx:alpine
@@ -22,7 +29,7 @@ services:
       - ./logs/nginx:/var/log/nginx
     depends_on:
       - app
-      
+
   node:
     build:
       context: ./docker/node
