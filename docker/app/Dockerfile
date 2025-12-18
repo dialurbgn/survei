@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev libonig-dev zlib1g-dev libxrender1 libfontconfig1 \
     ghostscript libicu-dev libmagickwand-dev \
     libpq-dev \
-    wkhtmltopdf \
     fail2ban \
     rsyslog \
     gnupg ca-certificates build-essential
