@@ -1,14 +1,9 @@
 #!/bin/bash
-set -e
 
-# Hapus service yang tidak ada
-# service rsyslog start
-# service fail2ban start
-
-# Jalankan PM2 untuk app Node.js (jika ada process.yml)
+# Jalankan Node.js PM2 jika ada
 if [ -f /var/www/html/process.yml ]; then
-  pm2-runtime /var/www/html/process.yml
+  pm2-runtime /var/www/html/process.yml &
 fi
 
-# Jalankan PHP-FPM di foreground
+# Jalankan PHP-FPM di foreground agar container tetap hidup
 exec php-fpm -F
