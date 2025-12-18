@@ -35,9 +35,10 @@ services:
     working_dir: /usr/src/app
     command: ["pm2-runtime", "process.yml"]
     ports:
-      - "3000:3000"
+      - "84:3000"
     networks:
-      - ci-network
+      net_private:
+        ipv4_address: 192.168.99.9
 
 networks:
   net_private:
