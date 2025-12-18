@@ -6,13 +6,14 @@ RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libwebp-dev libfreetype6-dev \
     libxml2-dev libonig-dev zlib1g-dev libxrender1 libfontconfig1 \
     ghostscript libicu-dev libmagickwand-dev \
+    libpq-dev \
     wkhtmltopdf \
     fail2ban \
     rsyslog \
     gnupg ca-certificates build-essential
 
 # PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql zip gd mbstring exif pcntl intl
+RUN docker-php-ext-install pdo pdo_pgsql pgsql pdo_mysql zip gd mbstring exif pcntl intl
 
 # Imagick (for Browsershot)
 RUN pecl install imagick && docker-php-ext-enable imagick

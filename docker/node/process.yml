@@ -1,0 +1,14 @@
+apps:
+  - name: rabbit-star
+    script: index.php
+    args: rabbit process
+    cwd: /var/www/html
+    interpreter: php
+    autorestart: true
+
+  - name: chat-star
+    script: server.js
+    args: -p
+    cwd: /var/www/html
+    interpreter: node
+    autorestart: true
