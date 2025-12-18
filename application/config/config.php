@@ -31,9 +31,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //$config['Mailchimp_api_key'] = '19bee860f7af671e03b187aaad50af1bb39c9780f270bb092e';
 
 #$config['base_url'] = getenv('DB_URL');
-$config['base_url'] = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "https");
-$config['base_url'] .= "://".$_SERVER['HTTP_HOST'] ?? '';
-$config['base_url'] .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
+$config['base_url'] = 'http://localhost/'; // fallback
+if (isset($_SERVER['HTTP_HOST'])) {
+    $config['base_url'] = 'http://'.$_SERVER['HTTP_HOST'].'/';
+    $config['base_url'] .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
+}
 define('ws_url', getenv('WS_URL'));
 define('base_url_site', getenv('DB_URL'));
 define('fileserver_url', $config['base_url'].'/api/upload/');
@@ -266,7 +268,6 @@ $config['log_threshold'] = 1;
 | application/logs/ directory. Use a full server path with trailing slash.
 |
 */
-$config['log_path'] = '';
 $config['log_file_extension'] = '';
 $config['log_path'] = FCPATH . 'logs/';
 
