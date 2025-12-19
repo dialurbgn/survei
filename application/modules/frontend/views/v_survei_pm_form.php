@@ -1063,6 +1063,8 @@ function proceedWithSubmission() {
                         html: 'Ada yang bermasalah!<br>' + (data && data.error ? data.error : 'Terjadi kesalahan')
                     });
                     
+                    submitButton.prop('disabled', false).val('Perbaharui Data Survei');
+                    
                 }
             },
             error: function(jqxhr, status, error) {
@@ -1075,6 +1077,8 @@ function proceedWithSubmission() {
                     icon: 'error',
                     html: 'Terjadi kesalahan saat mengirim data. Silakan coba lagi.'
                 });
+                
+                submitButton.prop('disabled', false).val('Perbaharui Data Survei');
 
             },
             complete: function() {
