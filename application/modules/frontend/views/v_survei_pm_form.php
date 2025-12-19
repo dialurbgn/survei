@@ -1056,14 +1056,15 @@ function proceedWithSubmission() {
                     }).then(function() {
                         window.location.reload();
                     });
+                    
                 } else {
                     Swal.fire({
                         title: '<strong>Oops...</strong>',
                         icon: 'error',
                         html: 'Ada yang bermasalah!<br>' + (data && data.error ? data.error : 'Terjadi kesalahan')
+                    }).then(() => {
+                        submitButton.prop('disabled', false).val('Perbaharui Data Survei');
                     });
-                    
-                    submitButton.prop('disabled', false).val('Perbaharui Data Survei');
                     
                 }
             },
@@ -1076,9 +1077,9 @@ function proceedWithSubmission() {
                     title: '<strong>Oops...</strong>',
                     icon: 'error',
                     html: 'Terjadi kesalahan saat mengirim data. Silakan coba lagi.'
+                }).then(() => {
+                    submitButton.prop('disabled', false).val('Perbaharui Data Survei');
                 });
-                
-                submitButton.prop('disabled', false).val('Perbaharui Data Survei');
 
             },
             complete: function() {
