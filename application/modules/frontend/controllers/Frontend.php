@@ -1665,7 +1665,7 @@ public function actiondata_survei_pm()
         return;
     }else{
 		save_history($module,           // nama table: 'data_maintenance'
-				 $saveId,                   // ID record
+				 $survei_pm_id,                   // ID record
 				[],
 				'Data diupdate' // keterangan
 		);
@@ -1702,11 +1702,19 @@ public function actiondata_survei_pm()
             $this->db->where('survei_pm_pm_id', $survei_pm_id);
             $this->db->where('active', 1);
             $success_detail = $this->db->update($module_detail, $data_detail);
+			
+			 // Ambil ID dari data yang diupdate
+			$this->db->select('id'); // ganti 'id' dengan primary key tabelmu
+			$this->db->where('survei_pm_pm_id', $survei_pm_id);
+			$this->db->where('active', 1);
+			$row = $this->db->get($module_detail)->row();
+			$survei_pm_detail_id = $row ? $row->id : null;
         } else {
             $data_detail['createdid'] = $userid;
             $data_detail['created'] = $timestamp;
             $data_detail['slug'] = $this->ortyd->sanitize('detail-' . $survei_pm_id, $module_detail);
             $success_detail = $this->db->insert($module_detail, $data_detail);
+			$survei_pm_detail_id = $this->db->insert_id();
         }
     } else {
         $data_detail['createdid'] = $userid;
@@ -1725,7 +1733,7 @@ public function actiondata_survei_pm()
         return;
     }else{
 		save_history($module_detail,           // nama table: 'data_maintenance'
-				 $saveId,                   // ID record
+				 $survei_pm_detail_id,                   // ID record
 				[],
 				'Data diupdate' // keterangan
 		);
