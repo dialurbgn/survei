@@ -299,11 +299,15 @@
                                             <?php 
                                                 // Untuk select, gunakan disabled karena readonly tidak work di select
                                                 // Tapi tambahkan hidden input untuk kirim value
-                                                $readonlyselect = $disable_identity_fields ? 'disabled' : '';
-                                                $disable = $disabled_attr;
+                                                $readonlyselect = '';  // Inisialisasi variable
+                                                $disable = '';
+                                                
                                                 if ($disable_identity_fields) {
                                                     $disable = 'disabled';
+                                                } else if (!$is_logged_in) {
+                                                    $disable = 'disabled';
                                                 }
+                                                
                                                 $linkcustom = 'select2';
                                                 if($rows_column['name'] == 'survei_pm_wil_id'){
                                                     $linkcustom = 'select2_kecamatan';
