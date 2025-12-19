@@ -61,7 +61,6 @@
 							text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15); /* bayangan halus */
 							background-color: #fff; /* jika perlu background div juga putih */
 						">
-							<?php echo title; ?>
 						</div>
 
 						<!--end::Title-->
