@@ -970,18 +970,6 @@ function proceedWithSubmission() {
             return false;
         }
         
-        // Cek reCAPTCHA
-        if (typeof grecaptcha !== 'undefined') {
-            var recaptchaResponse = grecaptcha.getResponse();
-            if (recaptchaResponse.length === 0) {
-                Swal.fire({
-                    title: '<strong>Oops...</strong>',
-                    icon: 'error',
-                    html: 'Silahkan centang kotak reCAPTCHA untuk melanjutkan.'
-                });
-                return false;
-            }
-        }
         
         // Validasi required fields
         var forminput = document.getElementById('formSurvei<?php echo $iddata; ?>');
@@ -1075,10 +1063,6 @@ function proceedWithSubmission() {
                         html: 'Ada yang bermasalah!<br>' + (data && data.error ? data.error : 'Terjadi kesalahan')
                     });
                     
-                    // Reset captcha
-                    if (typeof grecaptcha !== 'undefined') {
-                        grecaptcha.reset();
-                    }
                 }
             },
             error: function(jqxhr, status, error) {
@@ -1091,11 +1075,7 @@ function proceedWithSubmission() {
                     icon: 'error',
                     html: 'Terjadi kesalahan saat mengirim data. Silakan coba lagi.'
                 });
-                
-                // Reset captcha
-                if (typeof grecaptcha !== 'undefined') {
-                    grecaptcha.reset();
-                }
+
             },
             complete: function() {
                 // Enable button kembali
