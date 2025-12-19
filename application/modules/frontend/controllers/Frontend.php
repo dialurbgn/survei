@@ -1676,48 +1676,102 @@ public function actiondata_survei_pm()
     ]);
 }
 
-
-		public function select2_kecamatan() {
-			
-			$table = $this->input->post('table',true);
-			$id = $this->input->post('id',true);
-			$name = $this->input->post('name',true);
-			$reference = $this->input->post('reference',true) ?? null;
-			$reference_id = $this->input->post('reference_id',true) ?? null;
-			$q = $this->input->post('q',true);
-			$spk_id = $this->input->post('spk_id');
-			
-			if(!$q){
-				$q = '';
-			}
-			
-			$selectnya = $table.'.'.$id.' as id,'.$table.'.'.$name.' as name, wil_keyword';
-			
-			$this->db->select($selectnya);
-			$this->db->group_start();
-			$this->db->where($table.'.'.$name.' ~*', $q);
-			$this->db->or_where($table.'.wil_keyword ~*', $q);
-			$this->db->group_end();
-			$this->db->order_by($table.'.'.$name,'DESC');
-			$query = $this->db->get($table);
-			$query = $query->result_array();
-			if($query){
-				$i=0;
-				foreach ($query as $rows){
-					$data[$i]['id'] = (int)$rows['id'];
-					$data[$i]['name']= $rows['name'];
-					$i++;
-				}
-				$data = array('csrf_hash' =>$this->security->get_csrf_hash(),'items' => $data);
-			}else{
-				$data = array('csrf_hash' =>$this->security->get_csrf_hash(),'items' => array());
-			}
-			
-			echo json_encode($data);
-			
-		}
-
-		
+public function select2_kecamatan() {
+    header('X-Robots-Tag: noindex, nofollow', true);
+    header('Content-Type: application/json');
+    
+    $table = $this->input->post('table', true);
+    $id = $this->input->post('id', true);
+    $name = $this->input->post('name', true);
+    $q = $this->input->post('q', true);
+    $page = $this->input->post('page', true) ? (int)$this->input->post('page', true) : 1;
+    
+    // Pagination settings
+    $per_page = 30;
+    $offset = ($page - 1) * $per_page;
+    
+    // Filter parameters (opsional untuk filter provinsi/kota)
+    $provinsi_id = $this->input->post('provinsi_id', true);
+    $kota_id = $this->input->post('kota_id', true);
+    
+    if (!$q) {
+        $q = '';
+    }
+    
+    // Clean search query
+    $q = trim($q);
+    
+    // Build select query
+    $this->db->select($table.'.'.$id.' as id, '.$table.'.'.$name.' as name');
+    
+    // Add keyword field if exists
+    if ($this->db->field_exists('wil_keyword', $table)) {
+        $this->db->select($table.'.wil_keyword', false);
+    }
+    
+    // Filter by provinsi if provided
+    if (!empty($provinsi_id) && $provinsi_id != '0') {
+        if ($this->db->field_exists('wil_provinsi_id', $table)) {
+            $this->db->where($table.'.wil_provinsi_id', $provinsi_id);
+        }
+    }
+    
+    // Filter by kota if provided
+    if (!empty($kota_id) && $kota_id != '0') {
+        if ($this->db->field_exists('wil_kota_id', $table)) {
+            $this->db->where($table.'.wil_kota_id', $kota_id);
+        }
+    }
+    
+    // Search filter
+    if (!empty($q)) {
+        $this->db->group_start();
+        $this->db->like($table.'.'.$name, $q, 'both');
+        
+        // Search by keyword if field exists
+        if ($this->db->field_exists('wil_keyword', $table)) {
+            $this->db->or_like($table.'.wil_keyword', $q, 'both');
+        }
+        
+        $this->db->group_end();
+    }
+    
+    // Only active records
+    if ($this->db->field_exists('active', $table)) {
+        $this->db->where($table.'.active', 1);
+    }
+    
+    // Count total for pagination
+    $total_query = clone $this->db;
+    $total_count = $total_query->count_all_results($table, false);
+    
+    // Apply pagination and ordering
+    $this->db->order_by($table.'.'.$name, 'ASC');
+    $this->db->limit($per_page, $offset);
+    
+    $query = $this->db->get($table);
+    $results = $query->result_array();
+    
+    $data = [];
+    
+    if ($results) {
+        foreach ($results as $row) {
+            $data[] = [
+                'id' => (int)$row['id'],
+                'name' => $row['name']
+            ];
+        }
+    }
+    
+    // Prepare response in format yang sesuai dengan select2formsidefront.php
+    $response = [
+        'items' => $data,
+        'total_count' => $total_count,
+        'csrf_hash' => $this->security->get_csrf_hash()
+    ];
+    
+    echo json_encode($response);
+}
 		
 		
 }

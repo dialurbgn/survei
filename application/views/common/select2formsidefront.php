@@ -59,6 +59,9 @@
 	$label_col = $is_popup ? 'col-lg-3' : 'col-lg-3';
 	$input_col = $is_popup ? 'col-lg-12' : 'col-lg-12';
 	$select_id = $rows_column['name'] . $field_id_suffix;
+	
+	// Check if this is kecamatan field (for special handling)
+	$is_kecamatan = ($rows_column['name'] == 'survei_pm_wil_id' || strpos($rows_column['name'], 'wil_id') !== false);
 ?>
 	<div id="<?php echo $rows_column['name'].'_header'.$field_id_suffix; ?>" draggable="<?php echo $is_popup ? 'false' : 'true'; ?>" class="<?php echo $is_popup ? '' : 'drag-item'; ?> col-lg-<?php echo $width_column; ?> py-3">				
 		<div class="<?php echo $form_group_class; ?>">
@@ -95,29 +98,50 @@
 							<?php if ($is_popup): ?>
 							dropdownParent: $('#popupFormModal'),
 							<?php endif; ?>
+							<?php if ($is_kecamatan): ?>
+							// Konfigurasi khusus untuk kecamatan dengan lazy loading
+							minimumInputLength: 0,
+							placeholder: 'Ketik untuk mencari kecamatan...',
+							language: {
+								inputTooShort: function() {
+									return 'Ketik minimal 2 karakter';
+								},
+								searching: function() {
+									return '<i class="fas fa-spinner fa-spin"></i> Mencari kecamatan...';
+								},
+								noResults: function() {
+									return 'Kecamatan tidak ditemukan';
+								},
+								loadingMore: function() {
+									return '<i class="fas fa-spinner fa-spin"></i> Memuat lebih banyak...';
+								}
+							},
+							templateResult: formatKecamatanResult,
+							templateSelection: formatKecamatanSelection,
+							<?php endif; ?>
 							ajax: {
 								type: "POST",
 								url: "<?php echo base_url($headurl.'/'.$linkcustom); ?>",
 								dataType: 'json',
-								delay: 250,
+								delay: 300, // Delay untuk mengurangi request
 								data: function (params) {
 									return {
 										q: params.term, // search term
+										page: params.page || 1,
 										<?php if($readonlyselect != ''){ ?>
 										table: '<?php echo 'master_readonly'; ?>',
 										<?php }else{ ?>
 										table: '<?php echo $table; ?>',
 										<?php } ?>
 										<?php if($selectnested == 'custom'){ ?>
-											reference_id: '<?php echo $selectnestedrefid; ?>', // search term
-											reference: '<?php echo $selectnestedfieldid ?? 0; ?>', // search term
+											reference_id: '<?php echo $selectnestedrefid; ?>',
+											reference: '<?php echo $selectnestedfieldid ?? 0; ?>',
 										<?php }elseif($selectnested != 0){ ?>
-											reference_id: '<?php echo $selectnestedrefid; ?>', // search term
-											reference: $("#<?php echo $selectnestedfieldid . $field_id_suffix; ?>").val() || "0", // search term
+											reference_id: '<?php echo $selectnestedrefid; ?>',
+											reference: $("#<?php echo $selectnestedfieldid . $field_id_suffix; ?>").val() || "0",
 										<?php } ?>
 										id:'<?php echo $selecttableid; ?>',
 										name:'<?php echo $selecttablename; ?>',
-										page: params.page,
 										<?php echo $this->security->get_csrf_token_name(); ?> : csrfHash 
 									};
 								},
@@ -140,7 +164,6 @@
 										});
 									<?php } ?>
 									
-
 									return {
 										results: results,
 										pagination: {
@@ -156,7 +179,7 @@
 						$select = $("#<?php echo $select_id; ?>").select2(select2Config).on("select2:select", function(e) { 
 							if(e.params.data.id === '__addnew__') {
 								// Buka modal atau redirect ke form input baru
-								$('#<?php echo $select_id; ?>').val(null).trigger('change'); // Reset dulu
+								$('#<?php echo $select_id; ?>').val(null).trigger('change');
 
 								// Contoh: tampilkan modal
 								if (typeof showAddNewModal === 'function') {
@@ -181,6 +204,30 @@
 					});
 					<?php endif; ?>
 					
+					<?php if ($is_kecamatan): ?>
+					// Custom format untuk kecamatan
+					function formatKecamatanResult(kecamatan) {
+						if (kecamatan.loading) {
+							return '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+						}
+						
+						if (!kecamatan.id) {
+							return kecamatan.text;
+						}
+						
+						var $result = $('<div class="select2-result-kecamatan">' +
+							'<i class="fas fa-map-marker-alt text-primary me-2"></i>' +
+							'<span>' + kecamatan.text + '</span>' +
+							'</div>');
+						
+						return $result;
+					}
+					
+					function formatKecamatanSelection(kecamatan) {
+						return kecamatan.text || 'Pilih kecamatan...';
+					}
+					<?php endif; ?>
+					
 					function showAddNewModal<?php echo $field_id_suffix; ?>(table, column, callback) {
 						// Pastikan modal baru memiliki z-index yang lebih tinggi
 						var originalZIndex = $('#popupFormModal').css('z-index');
@@ -197,11 +244,10 @@
 							}
 
 							let htmlInputs = '';
-							// Tambahkan list field yang ingin dikecualikan dari input
 							const excludedFields = ['color','created', 'createdid', 'modified', 'modifiedid', 'active', 'slug'];
 
 							res.inputs.forEach(col => {
-								if (excludedFields.includes(col.name)) return; // skip kolom yang dikecualikan
+								if (excludedFields.includes(col.name)) return;
 
 								const inputType = (col.type === 'text' || col.max_length > 255) ? 'textarea' : 'input';
 								if (inputType === 'input') {
@@ -219,7 +265,6 @@
 								confirmButtonText: 'Simpan',
 								cancelButtonText: 'Batal',
 								<?php if ($is_popup): ?>
-								// Pastikan SweetAlert muncul di atas popup modal
 								backdrop: false,
 								allowOutsideClick: false,
 								didOpen: () => {
@@ -230,7 +275,6 @@
 									const values = {};
 									let errorMsg = '';
 
-									// Loop semua kolom yang dikirim dari server
 									res.inputs.forEach(col => {
 										if (excludedFields.includes(col.name)) return;
 
@@ -321,5 +365,78 @@
 	.swal2-container {
 		z-index: 99999 !important;
 	}
-	</style>
 	<?php endif; ?>
+	
+	<?php if ($is_kecamatan): ?>
+	/* Custom styling untuk kecamatan select */
+	.select2-result-kecamatan {
+		padding: 8px 12px;
+		display: flex;
+		align-items: center;
+	}
+	
+	.select2-result-kecamatan i {
+		margin-right: 8px;
+		min-width: 16px;
+	}
+	
+	.select2-container--default .select2-results__option--highlighted[aria-selected] .select2-result-kecamatan {
+		color: white;
+	}
+	
+	/* Select2 Kecamatan Styling */
+.select2-container--default .select2-selection--single {
+    min-height: 45px;
+    padding: 5px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 35px;
+    padding-left: 5px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 43px;
+    right: 5px;
+}
+
+.select2-container--default .select2-results__option {
+    padding: 8px 12px;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #0088cc;
+    color: white;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #e9ecef;
+}
+
+/* Loading animation */
+.select2-results__option--loading {
+    text-align: center;
+    padding: 15px;
+}
+
+/* Disabled state */
+.select2-container--disabled .select2-selection--single {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .select2-container--default .select2-selection--single {
+        min-height: 42px;
+    }
+    
+    .select2-dropdown {
+        font-size: 14px;
+    }
+}
+
+	<?php endif; ?>
+	</style>
