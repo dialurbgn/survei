@@ -1050,11 +1050,16 @@ class Frontend extends MX_Controller {
 				return false;
 			}
 		}
-	public function survei_pm()
+		
+public function survei_pm()
 {
+    // Cek apakah user sudah login
+    $logged_in = $this->session->userdata('logged_in');
+    $userid = $this->session->userdata('userid');
+    
     $data['title'] = 'Form Survei Penerima Manfaat';
-    $data['site_key'] = $this->site_key;
-    $data['secret_key'] = $this->secret_key;
+    $data['site_key'] = cloudflare_turnstile_site_key;
+    $data['secret_key'] = cloudflare_turnstile_secret_key;
     $data['module'] = 'data_survei_pm';
     $data['module_detail'] = 'data_survei_pm_detail';
     $data['modeldb'] = $this->m_model_data;
@@ -1067,123 +1072,218 @@ class Frontend extends MX_Controller {
     $data['meta_description'] = $data['title'].' - '.title;
     $data['action'] = base_url().'frontend/actiondata_survei_pm';
     
-    // Cek apakah user sudah login
-    $logged_in = $this->session->userdata('logged_in');
-    $userid = $this->session->userdata('userid');
+    // Setup Google OAuth
+    $google_client = new Google_Client();
+    $google_client->setClientId(google_id);
+    $google_client->setClientSecret(google_secret);
+    $google_client->setRedirectUri(base_url('frontend/google_callback_survei'));
+    $google_client->addScope('email');
+    $google_client->addScope('profile');
+    $linkgoogle = $google_client->createAuthUrl();
+    
+    $data['googlelink'] = $linkgoogle;
+    $data['is_logged_in'] = false;
+    $data['user_data'] = null;
     
     if ($logged_in && $userid) {
-        // User sudah login, cek apakah sudah pernah isi survei
-        $this->db->where('createdid', $userid);
-        $this->db->where('active', 1);
-        $existing_survey = $this->db->get('data_survei_pm')->row();
+        // User sudah login
+        $data['is_logged_in'] = true;
         
-        if ($existing_survey) {
-            // Load data existing untuk edit
-            $data['id'] = $existing_survey->id;
-            $data['typedata'] = 'Edit';
-            $data['datarow'] = $this->m_model_data->get_data_byid($existing_survey->id, 'data_survei_pm', 'data_survei_pm.id');
+        // Ambil data user yang sedang login
+        $this->db->where('id', $userid);
+        $this->db->where('active', 1);
+        $user_data = $this->db->get('users_data')->row();
+        
+        if ($user_data) {
+            $data['user_data'] = $user_data;
             
-            // Get detail data
-            $this->db->where('survei_pm_pm_id', $existing_survey->id);
+            // Cek apakah user ini sudah pernah isi survei
+            $this->db->where('createdid', $userid);
             $this->db->where('active', 1);
-            $data['datarow_detail'] = $this->db->get('data_survei_pm_detail')->result_object();
-        } else {
-            // Belum pernah isi, form baru
-            $data['id'] = null;
-            $data['typedata'] = 'Buat';
-            $data['datarow'] = null;
+            $existing_survey = $this->db->get('data_survei_pm')->row();
+            
+            if ($existing_survey) {
+                // Mode UPDATE - load data existing
+                $data['id'] = $existing_survey->id;
+                $data['typedata'] = 'Edit';
+                $data['datarow'] = $this->m_model_data->get_data_byid($existing_survey->id, 'data_survei_pm', 'data_survei_pm.id');
+                
+                // Get detail data
+                $this->db->where('survei_pm_pm_id', $existing_survey->id);
+                $this->db->where('active', 1);
+                $data['datarow_detail'] = $this->db->get('data_survei_pm_detail')->result_object();
+            } else {
+                // Mode INSERT - form baru
+                $data['id'] = null;
+                $data['typedata'] = 'Buat';
+                $data['datarow'] = null;
+                $data['datarow_detail'] = null;
+            }
         }
     } else {
-        // Belum login, form kosong
+        // User belum login - form kosong
         $data['id'] = null;
         $data['typedata'] = 'Buat';
         $data['datarow'] = null;
+        $data['datarow_detail'] = null;
     }
     
-	
-	$logged_in = $this->session->userdata('google_id');
-			if ( $logged_in != null && $logged_in != '') {
-				
-				$google_client = new Google_Client();
-			
-				$google_client->setClientId(google_id); //Define your ClientID
-				
-				$google_client->setClientSecret(google_secret); //Define your Client Secret Key
-				
-				$google_client->setRedirectUri(base_url('users_profile/google_remove')); //Define your Redirect Uri
-				
-				$google_client->addScope('email');
-				
-				$google_client->addScope('profile');
-				
-				$linkgoogle = $google_client->createAuthUrl();
-				
-				$provider = new \League\OAuth2\Client\Provider\Facebook([
-					'clientId'          => facebook_id,
-					'clientSecret'      => facebook_secret,
-					'redirectUri'       => base_url('login/facebook'),
-					'graphApiVersion'   => 'v2.10',
-				]);
-				
-				$authUrl = $provider->getAuthorizationUrl([
-					'scope' => ['email'],
-				]);
-
-			}else{
-				//$aktivasi = $this->ortyd->generateAktivasi();
-				//$data['generatelink'] = $aktivasi;
-				
-				$google_client = new Google_Client();
-			
-				$google_client->setClientId(google_id); //Define your ClientID
-				
-				$google_client->setClientSecret(google_secret); //Define your Client Secret Key
-				
-				$google_client->setRedirectUri(base_url('login/google')); //Define your Redirect Uri
-				
-				$google_client->addScope('email');
-				
-				$google_client->addScope('profile');
-				
-				$linkgoogle = $google_client->createAuthUrl();
-				
-				$provider = new \League\OAuth2\Client\Provider\Facebook([
-					'clientId'          => facebook_id,
-					'clientSecret'      => facebook_secret,
-					'redirectUri'       => base_url('login/facebook'),
-					'graphApiVersion'   => 'v2.10',
-				]);
-				
-				$authUrl = $provider->getAuthorizationUrl([
-					'scope' => ['email'],
-				]);
-
-			
-				if(isset($_GET['email'])){
-					$email_sso = $_GET['email'];
-				}else{
-					$email_sso = $this->session->userdata('email_sso');
-				}
-				if($email_sso != ''){
-					//$email_sso = $this->session->userdata('email_sso');
-					$username = $email_sso;
-					$password = $email_sso;
-					$logindata = $this->m_model_data->check_login($username, $password);
-					//echo $logindata;
-					//die();
-					if ( $logindata == 'success' || $logindata == 'validate' || $logindata == 'firstblood') {
-						$userid = 3;
-						$logged_in = $this->session->userdata('logged_in');
-						if ( $userid != null && $logged_in == TRUE) {
-							redirect('dashboard?message=success', 'refresh');
-						}
-					}
-				}
-			}
-			
-			$data['googlelink'] = $linkgoogle;
-			
     $this->template->load('frontend', 'frontend/views/v_survei_pm_form', $data);
+}
+
+// Callback setelah login Google untuk survei
+public function google_callback_survei()
+{
+    $google_client = new Google_Client();
+    $google_client->setClientId(google_id);
+    $google_client->setClientSecret(google_secret);
+    $google_client->setRedirectUri(base_url('frontend/google_callback_survei'));
+    $google_client->addScope('email');
+    $google_client->addScope('profile');
+    
+    if (isset($_GET['code'])) {
+        $token = $google_client->fetchAccessTokenWithAuthCode($_GET['code']);
+        
+        if (!isset($token['error'])) {
+            $google_client->setAccessToken($token['access_token']);
+            
+            $google_service = new Google_Service_Oauth2($google_client);
+            $data_google = $google_service->userinfo->get();
+            
+            $email = $data_google['email'];
+            $name = $data_google['name'];
+            $google_id = $data_google['id'];
+            
+            // Cek apakah user sudah terdaftar
+            $this->db->where('email', $email);
+            $this->db->or_where('google_email', $email);
+            $this->db->where('active', 1);
+            $user = $this->db->get('users_data')->row();
+            
+            if ($user) {
+                // User sudah ada, login
+                $this->auto_login_user($user->id, $user->username, $user->gid);
+            } else {
+                // User baru, daftarkan otomatis
+                $username = $this->generate_unique_username($name);
+                $timestamp = date('Y-m-d H:i:s');
+                
+                $dataUser = [
+                    'fullname' => $name,
+                    'username' => $username,
+                    'password' => $this->ortyd->hash(bin2hex(random_bytes(16))), // Random password
+                    'email' => $email,
+                    'google_email' => $email,
+                    'google_id' => $google_id,
+                    'gid' => 3,
+                    'active' => 1,
+                    'banned' => 0,
+                    'validate' => 1,
+                    'validate_admin' => 1,
+                    'register_by_google' => 1,
+                    'last_login' => $timestamp,
+                    'created' => $timestamp,
+                    'modified' => $timestamp,
+                    'createdid' => 0,
+                    'modifiedid' => 0,
+                    'slug' => $this->ortyd->sanitize($username, 'users_data'),
+                    'timezone_id' => 1,
+                    'themes_id' => 1,
+                    'sidebar' => 0,
+                    'is_test' => 0
+                ];
+                
+                $this->db->insert('users_data', $dataUser);
+                $user_id = $this->db->insert_id();
+                
+                // Auto login
+                $this->auto_login_user($user_id, $username, 3);
+            }
+            
+            // Redirect kembali ke form survei
+            redirect('survei-pm', 'refresh');
+        } else {
+            // Error dari Google
+            redirect('survei-pm?error=google_auth_failed', 'refresh');
+        }
+    } else {
+        redirect('survei-pm', 'refresh');
+    }
+}
+
+private function auto_login_user($user_id, $username, $gid)
+{
+    $session_data = [
+        'userid' => $user_id,
+        'username' => $username,
+        'group_id' => $gid,
+        'logged_in' => TRUE,
+        'login_time' => date('Y-m-d H:i:s')
+    ];
+    
+    $this->session->set_userdata($session_data);
+    
+    // Update last login
+    $this->db->where('id', $user_id);
+    $this->db->update('users_data', [
+        'last_login' => date('Y-m-d H:i:s'),
+        'online_date' => date('Y-m-d H:i:s')
+    ]);
+}
+
+private function generate_unique_username($fullname)
+{
+    $base_username = strtolower(str_replace(' ', '', $fullname));
+    $base_username = preg_replace('/[^a-z0-9]/', '', $base_username);
+    $base_username = substr($base_username, 0, 20);
+    
+    $username = $base_username;
+    $counter = 1;
+    
+    while (true) {
+        $this->db->where('username', $username);
+        $exists = $this->db->get('users_data')->num_rows();
+        
+        if ($exists == 0) {
+            break;
+        }
+        
+        $username = $base_username . $counter;
+        $counter++;
+    }
+    
+    return $username;
+}
+
+private function validate_cloudflare_turnstile()
+{
+    $token = $this->input->post('cf-turnstile-response');
+    
+    if (empty($token)) {
+        return false;
+    }
+    
+    $secret_key = cloudflare_turnstile_secret_key;
+    $ip = $this->input->ip_address();
+    
+    $data = [
+        'secret' => $secret_key,
+        'response' => $token,
+        'remoteip' => $ip
+    ];
+    
+    $ch = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+    
+    $response = curl_exec($ch);
+    curl_close($ch);
+    
+    $result = json_decode($response, true);
+    
+    return isset($result['success']) && $result['success'] === true;
 }
 
 
@@ -1294,17 +1394,32 @@ private function check_autologin_survei_pm()
 public function actiondata_survei_pm() 
 {
     header('X-Robots-Tag: noindex, nofollow', true);
+    
+    // CEK LOGIN DULU
+    $logged_in = $this->session->userdata('logged_in');
+    $userid = $this->session->userdata('userid');
+    
+    if (!$logged_in || !$userid) {
+        echo json_encode([
+            "status" => "error", 
+            "error" => "Anda harus login terlebih dahulu untuk mengisi survei.",
+            "redirect" => base_url('survei-pm')
+        ]);
+        return;
+    }
+    
     $this->load->library(['form_validation']);
     $this->load->helper(['security']);
     
-    // Validasi CAPTCHA
-    //if (!$this->captcha_validation()) {
-        //echo json_encode([
-            //"status" => "error", 
-            //"error" => "Captcha tidak valid atau belum diisi. Pastikan Anda telah mencentang reCAPTCHA."
-        //]);
-        //return;
-   // }
+    // Validasi Cloudflare Turnstile
+    if (!$this->validate_cloudflare_turnstile()) {
+        echo json_encode([
+            "status" => "error", 
+            "error" => "Verifikasi keamanan gagal. Silakan coba lagi."
+        ]);
+        return;
+    }
+    
     
     // Ambil 5 data untuk identifikasi user (dari table data_survei_pm)
     $survei_pm_nama = $this->security->xss_clean($this->input->post('survei_pm_nama', true));
@@ -1559,53 +1674,6 @@ public function actiondata_survei_pm()
         "is_update" => $isUpdate,
         "csrf_hash" => $this->security->get_csrf_hash()
     ]);
-}
-
-private function auto_login_user($user_id, $username, $gid)
-{
-    // Set session data
-    $session_data = [
-        'userid' => $user_id,
-        'username' => $username,
-        'group_id' => $gid,
-        'logged_in' => TRUE,
-        'login_time' => date('Y-m-d H:i:s')
-    ];
-    
-    $this->session->set_userdata($session_data);
-    
-    // Update last login
-    $this->db->where('id', $user_id);
-    $this->db->update('users_data', [
-        'last_login' => date('Y-m-d H:i:s'),
-        'online_date' => date('Y-m-d H:i:s')
-    ]);
-}
-
-private function generate_unique_username($fullname)
-{
-    // Generate username dari nama
-    $base_username = strtolower(str_replace(' ', '', $fullname));
-    $base_username = preg_replace('/[^a-z0-9]/', '', $base_username);
-    $base_username = substr($base_username, 0, 20);
-    
-    $username = $base_username;
-    $counter = 1;
-    
-    // Cek keunikan username
-    while (true) {
-        $this->db->where('username', $username);
-        $exists = $this->db->get('users_data')->num_rows();
-        
-        if ($exists == 0) {
-            break;
-        }
-        
-        $username = $base_username . $counter;
-        $counter++;
-    }
-    
-    return $username;
 }
 
 

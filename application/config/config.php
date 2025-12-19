@@ -82,7 +82,9 @@ define('facebook_id', getenv('FACEBOOK_ID'));
 define('facebook_secret', getenv('FACEBOOK_SECRET'));
 define('telegram_token', getenv('TELEGRAM_TOKEN') ?? '8166671529:AAGZ1Lh0kxWN2ptCrHxUnPeaEungTbuPQr0');
 define('telegram_link', getenv('TELEGRAM_LINK') ?? 't.me/SIMPKTNPMSE_BOT');
-
+// Cloudflare Turnstile Keys
+define('cloudflare_turnstile_site_key', getenv('CF_SITEKEY') ?? '8166671529:0x4AAAAAACHiZtbtfGAZaxmk');
+define('cloudflare_turnstile_secret_key',  getenv('CF_SCKEY') ?? '0x4AAAAAACHiZiRyRlPQoN_9T0lSlr-DOc4');
 /*
 |--------------------------------------------------------------------------
 | Index File

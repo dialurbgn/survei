@@ -18,6 +18,18 @@
         
         $is_edit_mode = false;
         
+        // Auto-fill dari data user yang login (jika sudah login)
+        if(isset($is_logged_in) && $is_logged_in === true && isset($user_data) && $user_data != null){
+            $survei_pm_nama = $user_data->fullname ?? '';
+            $survei_pm_email = $user_data->email ?? '';
+            $survei_pm_tlp = $user_data->notelp ?? '';
+            
+            // Coba ambil NIP dari database jika ada
+            if(property_exists($user_data, 'nip')){
+                $survei_pm_nip = $user_data->nip ?? '';
+            }
+        }
+        
         if(isset($id) && $id != null && $id != '0'){
             $iddata = $id;
             $typedata = 'Edit';
@@ -64,30 +76,61 @@
                 </div>
                 
                 <!-- Info Box -->
-                <?php if (!$is_edit_mode): ?>
+                <?php if (!$is_logged_in): ?>
+                <!-- BELUM LOGIN - Tampilkan peringatan -->
                 <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="200">
-                    <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
-                        <h5 class="alert-heading mb-2"><i class="fas fa-info-circle"></i> <strong>Informasi Penting</strong></h5>
+                    <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                        <h5 class="alert-heading mb-2">
+                            <i class="fas fa-exclamation-triangle"></i> 
+                            <strong>Login Diperlukan</strong>
+                        </h5>
+                        <p class="mb-3">Untuk mengisi form survei ini, Anda harus login terlebih dahulu menggunakan akun Google.</p>
+                        <ul class="mb-3 ps-4">
+                            <li>Login dengan Google untuk <strong>kemudahan dan keamanan</strong></li>
+                            <li>Data Anda akan <strong>otomatis terisi</strong> dari profil Google</li>
+                            <li>Anda dapat <strong>mengedit data</strong> Anda kapan saja</li>
+                            <li><strong>Email tidak dapat diubah</strong> karena digunakan sebagai identitas</li>
+                        </ul>
+                        
+                        <a href="<?php echo $googlelink; ?>" 
+                           class="btn btn-lg btn-light btn-flex btn-color-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
+                            <img alt="Google Logo" 
+                                 src="<?php echo base_url(); ?>themes/ortyd/assets/media/svg/brand-logos/google-icon.svg" 
+                                 class="h-20px me-3" />
+                            <span class="fw-bold">Login dengan Google untuk Melanjutkan</span>
+                        </a>
+                        
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+                
+                <?php elseif ($is_logged_in && !$is_edit_mode): ?>
+                <!-- SUDAH LOGIN - Form baru -->
+                <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="200">
+                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                        <h5 class="alert-heading mb-2">
+                            <i class="fas fa-check-circle"></i> 
+                            <strong>Selamat Datang, <?php echo $user_data->fullname; ?>!</strong>
+                        </h5>
                         <ul class="mb-0 ps-4">
-                            <li>Anda <strong>tidak perlu mendaftar</strong> terlebih dahulu</li>
-                            <li>Cukup isi <strong>5 data pertama</strong> (Nama, NIP, Email, No Telp, Kecamatan)</li>
-                            <li>Sistem akan otomatis mendaftarkan Anda, Pastikan email yang di daftarkan adalah email yang aktif</li>
-                            <li>Untuk mengubah data di kemudian hari, isi kembali <strong>5 data yang sama</strong></li>
-                            <li>Email digunakan sebagai identitas untuk akses data Anda</li>
+                            <li>Anda sudah login dengan email: <strong><?php echo $user_data->email; ?></strong></li>
+                            <li>Beberapa data telah <strong>terisi otomatis</strong> dari profil Anda</li>
+                            <li>Silakan <strong>lengkapi data yang masih kosong</strong></li>
+                            <li>Email <strong>tidak dapat diubah</strong> karena digunakan sebagai identitas</li>
                         </ul>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        
-                        <a href="<?php echo $googlelink; ?>" class="btn btn-flex  btn-color-black btn-outline btn-text-black-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
-										<img alt="Logo" src="<?php echo base_url(); ?>themes/ortyd/assets/media/svg/brand-logos/google-icon.svg" class="h-15px me-3" />Lanjutkan Isian dengan Google</a>
-                                        
                     </div>
-                   
                 </div>
+                
                 <?php else: ?>
+                <!-- SUDAH LOGIN - Mode Edit -->
                 <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="200">
-                    <div class="alert alert-success mb-4" role="alert">
-                        <h5 class="alert-heading mb-2"><i class="fas fa-check-circle"></i> <strong>Mode Edit Data</strong></h5>
-                        <p class="mb-0">Anda sedang mengedit data survei yang sudah tersimpan. Ubah data yang diperlukan lalu klik Simpan.</p>
+                    <div class="alert alert-info mb-4" role="alert">
+                        <h5 class="alert-heading mb-2">
+                            <i class="fas fa-edit"></i> 
+                            <strong>Mode Edit Data</strong>
+                        </h5>
+                        <p class="mb-0">Anda sedang mengedit data survei yang sudah tersimpan. Ubah data yang diperlukan lalu klik Perbarui.</p>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -95,20 +138,53 @@
                 <!-- Form -->
                 <form class="contact-form" id="formSurvei<?php echo $iddata; ?>" action="<?php echo $action; ?>" method="POST">
                     
+                    <?php if (!$is_logged_in): ?>
+                    <!-- OVERLAY untuk disable form jika belum login -->
+                    <div style="position: relative;">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                                    background: rgba(255,255,255,0.8); z-index: 999; 
+                                    display: flex; align-items: center; justify-content: center;
+                                    backdrop-filter: blur(3px);">
+                            <div class="text-center p-5">
+                                <i class="fas fa-lock fa-4x text-warning mb-3"></i>
+                                <h4 class="text-dark mb-3">Form Terkunci</h4>
+                                <p class="text-muted mb-4">Silakan login dengan Google terlebih dahulu</p>
+                                <a href="<?php echo $googlelink; ?>" 
+                                   class="btn btn-primary btn-lg">
+                                    <img alt="Google" 
+                                         src="<?php echo base_url(); ?>themes/ortyd/assets/media/svg/brand-logos/google-icon.svg" 
+                                         class="h-20px me-2" />
+                                    Login dengan Google
+                                </a>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    
                     <!-- Section 1: Data Identitas -->
                     <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="400">
-                        <div class="card border-0 shadow-sm mb-4">
+                        <div class="card border-0 shadow-sm mb-4 <?php echo !$is_logged_in ? 'opacity-50' : ''; ?>">
                             <div class="card-header bg-primary text-white">
                                 <h4 class="mb-0 font-weight-bold text-white">
                                     <i class="fas fa-user"></i> Data Identitas Petugas Survei
                                 </h4>
-                                <p class="mb-0 mt-2 small text-white"><i class="fas fa-exclamation-triangle"></i> 5 Field Wajib untuk Identifikasi</p>
+                                <?php if (!$is_logged_in): ?>
+                                <p class="mb-0 mt-2 small text-white">
+                                    <i class="fas fa-info-circle"></i> Data akan terisi otomatis setelah login
+                                </p>
+                                <?php else: ?>
+                                <p class="mb-0 mt-2 small text-white">
+                                    <i class="fas fa-check-circle"></i> Data terisi dari profil Google Anda
+                                </p>
+                                <?php endif; ?>
                             </div>
                             <div class="card-body p-4">
                                 
-                                <div class="alert alert-warning mb-4">
-                                    <strong>Penting:</strong> Pastikan data berikut diisi dengan benar. Data ini digunakan untuk mengidentifikasi Anda saat ingin mengubah data di kemudian hari.
+                                <?php if ($is_logged_in): ?>
+                                <div class="alert alert-info mb-4">
+                                    <i class="fas fa-info-circle"></i> 
+                                    <strong>Catatan:</strong> Data dengan latar abu-abu tidak dapat diubah karena digunakan sebagai identitas.
                                 </div>
+                                <?php endif; ?>
                                 
                                 <div class="row pb-2 mb-1">
                                     <?php
@@ -122,6 +198,9 @@
                                             
                                             $is_required = ($rows_column['is_nullable'] == 'NO') ? 'required' : '';
                                             $required_mark = ($rows_column['is_nullable'] == 'NO') ? '<span class="text-danger">*</span>' : '';
+                                            
+                                            // Disable semua field jika belum login
+                                            $disabled_attr = !$is_logged_in ? 'disabled' : '';
                                     ?>
                                     
                                     <?php if($tipe_data == 'TEXTAREA'){ ?>
@@ -133,6 +212,7 @@
                                                       class="form-control text-3 h-auto py-2" 
                                                       placeholder="<?php echo 'Masukkan '.$label_name_text; ?>" 
                                                       data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
+                                                      <?php echo $disabled_attr; ?>
                                                       <?php echo $is_required; ?>><?php echo ${$rows_column['name']}; ?></textarea>
                                         </div>
                                     
@@ -148,6 +228,7 @@
                                                    data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
                                                    readonly="true"
                                                    autocomplete="off"
+                                                   <?php echo $disabled_attr; ?>
                                                    <?php echo $is_required; ?> />
                                         </div>
                                     
@@ -164,15 +245,13 @@
                                                    data-msg-email="Masukkan alamat email yang valid."
                                                    maxlength="255"
                                                    autocomplete="email"
-                                                   <?php echo $is_edit_mode ? 'readonly style="background-color: #e9ecef; cursor: not-allowed;"' : 'required'; ?> />
+                                                   readonly 
+                                                   style="background-color: #e9ecef; cursor: not-allowed;"
+                                                   required />
                                             
-                                            <?php if ($is_edit_mode): ?>
-                                                <small class="form-text text-muted">
-                                                    <i class="fas fa-lock"></i> Email tidak dapat diubah (digunakan sebagai identitas)
-                                                </small>
-                                            <?php else: ?>
-                                                <small class="form-text text-muted">Email untuk identifikasi saat edit data</small>
-                                            <?php endif; ?>
+                                            <small class="form-text text-muted">
+                                                <i class="fas fa-lock"></i> Email tidak dapat diubah (digunakan sebagai identitas)
+                                            </small>
                                         </div>
                                     
                                     <?php }elseif($tipe_data == 'NUMBER'){ ?>
@@ -185,6 +264,7 @@
                                                    placeholder="<?php echo 'Masukkan '.$label_name_text; ?>" 
                                                    value="<?php echo ${$rows_column['name']}; ?>"
                                                    data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
+                                                   <?php echo $disabled_attr; ?>
                                                    <?php echo $is_required; ?> />
                                         </div>
                                     
@@ -193,7 +273,7 @@
                                             <label><?php echo $label_name; ?> <?php echo $required_mark; ?></label>
                                             <?php 
                                                 $readonlyselect = '';
-                                                $disable = '';
+                                                $disable = $disabled_attr;
                                                 $linkcustom = 'select2';
                                                 if($rows_column['name'] == 'survei_pm_wil_id'){
                                                     $linkcustom = 'select2_kecamatan';
@@ -214,6 +294,7 @@
                                                    value="<?php echo ${$rows_column['name']}; ?>"
                                                    data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
                                                    maxlength="255"
+                                                   <?php echo $disabled_attr; ?>
                                                    <?php echo $is_required; ?> />
                                         </div>
                                     <?php } ?>
@@ -228,10 +309,9 @@
                         </div>
                     </div>
                     
-                    <!-- Section 2: Data Detail POK -->
-                    <!-- Section 2: Data Detail POK -->
+                   <!-- Section 2: Data Detail POK -->
 <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="600">
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border-0 shadow-sm mb-4 <?php echo !$is_logged_in ? 'opacity-50' : ''; ?>">
         <div class="card-header bg-success text-white">
             <h4 class="mb-0 font-weight-bold text-white">
                 <i class="fas fa-list-ol"></i> Detail Jumlah Penerima Manfaat MBG per Jenis
@@ -252,6 +332,7 @@
                         $tipe_data = $this->ortyd->getTipeData($viewtable, $rows_column['name']);
                         $label_name = $this->ortyd->translate_column($viewtable, $rows_column['name']);
                         $label_name_text = $label_name;
+                        $disabled_attr = !$is_logged_in ? 'disabled' : '';
                 ?>
                 
                 <div class="form-group col-lg-<?php echo $width_column; ?> ps-3 pe-3">
@@ -265,7 +346,8 @@
                            data-label="<?php echo $label_name_text; ?>"
                            inputmode="numeric"
                            pattern="[0-9]*"
-                           autocomplete="off" />
+                           autocomplete="off"
+                           <?php echo $disabled_attr; ?> />
                     <small class="form-text text-muted">Jumlah: <span class="pok-value font-weight-semibold text-primary"><?php echo ${$rows_column['name']}; ?></span> orang</small>
                 </div>
                 
@@ -290,44 +372,80 @@
         </div>
     </div>
 </div>
-                    <!-- CSRF Token -->
-                    <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" class="csrf_token" />
-                    
-                    <!-- Section 3: Captcha & Submit -->
-                    <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="800">
-                        
-                        <!-- Captcha -->
-                        <div class="row pb-2 mb-1">
-                            <div class="form-group col">
-                                <label>Verifikasi Keamanan <span class="text-danger">*</span></label>
-                                <div class="g-recaptcha" data-sitekey="<?php echo $site_key; ?>"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Submit Button -->
-                        <div class="row">
-                            <div class="form-group col">
-                                <input type="submit" 
-                                       id="btnSubmitSurvei" 
-                                       value="<?php echo $is_edit_mode ? 'Perbarui Data Survei' : 'Simpan Data Survei'; ?>" 
-                                       class="btn btn-primary btn-modern text-uppercase font-weight-bold text-3 py-3 btn-px-5 w-100" 
-                                       data-loading-text="Memproses..." />
-                            </div>
-                        </div>
-                        
-                    </div>
-                    
-                </form>
+
+<!-- CSRF Token -->
+<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" class="csrf_token" />
+
+<!-- Section 3: Captcha & Submit -->
+<div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="800">
+    
+    <!-- Captcha -->
+    <div class="row pb-2 mb-1">
+        <div class="form-group col">
+            <label>Verifikasi Keamanan <span class="text-danger">*</span></label>
+            <!-- Cloudflare Turnstile -->
+            <div class="cf-turnstile" 
+                 data-sitekey="<?php echo $site_key; ?>"
+                 data-theme="light"
+                 data-size="normal"></div>
+        </div>
+    </div>
+    
+    <!-- Submit Button -->
+    <div class="row">
+        <div class="form-group col">
+            <?php if ($is_logged_in): ?>
+            <input type="submit" 
+                   id="btnSubmitSurvei" 
+                   value="<?php echo $is_edit_mode ? 'Perbarui Data Survei' : 'Simpan Data Survei'; ?>" 
+                   class="btn btn-primary btn-modern text-uppercase font-weight-bold text-3 py-3 btn-px-5 w-100" 
+                   data-loading-text="Memproses..." />
+            <?php else: ?>
+            <a href="<?php echo $googlelink; ?>" 
+               class="btn btn-warning btn-modern text-uppercase font-weight-bold text-3 py-3 btn-px-5 w-100">
+                <img alt="Google" 
+                     src="<?php echo base_url(); ?>themes/ortyd/assets/media/svg/brand-logos/google-icon.svg" 
+                     class="h-20px me-2" />
+                Login dengan Google untuk Melanjutkan
+            </a>
+            <?php endif; ?>
+        </div>
+    </div>
+    
+</div>
+
+<?php if (!$is_logged_in): ?>
+    </div> <!-- Close overlay div -->
+<?php endif; ?>
+
+</form>
                 
             </div>
         </div>
     </div>
 </section>
 
-<!-- Load Required Libraries -->
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<!-- Load Cloudflare Turnstile -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <script>
+// Fungsi validasi Cloudflare Turnstile
+function validateTurnstile() {
+    const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
+    if (!turnstileResponse || !turnstileResponse.value) {
+        Swal.fire({
+            title: '<strong>Oops...</strong>',
+            icon: 'error',
+            html: 'Silahkan selesaikan verifikasi keamanan untuk melanjutkan.'
+        });
+        return false;
+    }
+    return true;
+}
+
+// Cek status login
+var isLoggedIn = <?php echo $is_logged_in ? 'true' : 'false'; ?>;
+
 // Wait for all scripts to load
 (function() {
     'use strict';
@@ -358,8 +476,30 @@
     
     // Wait for document ready
     $(document).ready(function() {
-        initializeSurveiForm();
-        addInputValidation();
+        if (!isLoggedIn) {
+            // User belum login, tampilkan pesan
+            console.log('User belum login. Form di-disable.');
+            
+            // Prevent form submission
+            $('#formSurvei<?php echo $iddata; ?>').on('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: '<strong>Login Diperlukan</strong>',
+                    icon: 'warning',
+                    html: 'Silakan login dengan Google terlebih dahulu untuk mengisi form survei.',
+                    showCancelButton: false,
+                    confirmButtonText: 'Login dengan Google',
+                    confirmButtonColor: '#0088cc'
+                }).then(function() {
+                    window.location.href = '<?php echo $googlelink; ?>';
+                });
+                return false;
+            });
+        } else {
+            // User sudah login, initialize form
+            initializeSurveiForm();
+            addInputValidation();
+        }
     });
     
     function initializeSurveiForm() {
@@ -587,19 +727,10 @@ function handleFormSubmission() {
     proceedWithSubmission();
     return false;
 }
-
 function proceedWithSubmission() {
-    // Cek reCAPTCHA
-    if (typeof grecaptcha !== 'undefined') {
-        var recaptchaResponse = grecaptcha.getResponse();
-        if (recaptchaResponse.length === 0) {
-            Swal.fire({
-                title: '<strong>Oops...</strong>',
-                icon: 'error',
-                html: 'Silahkan centang kotak reCAPTCHA untuk melanjutkan.'
-            });
-            return false;
-        }
+    // Cek Cloudflare Turnstile
+    if (!validateTurnstile()) {
+        return false;
     }
     
     // Validasi required fields
@@ -621,7 +752,7 @@ function proceedWithSubmission() {
         var isEditMode = <?php echo $is_edit_mode ? 'true' : 'false'; ?>;
         var confirmText = isEditMode ? 
             'Apakah Anda yakin akan mengupdate data survei ini?' :
-            'Apakah Anda yakin akan menyimpan data survei ini?<br><br><span class="text-info"><i class="fas fa-info-circle"></i> Anda akan otomatis terdaftar di sistem</span>';
+            'Apakah Anda yakin akan menyimpan data survei ini?';
         
         Swal.fire({
             title: '<strong>' + (isEditMode ? 'Update Data' : 'Simpan Data') + '</strong>',
