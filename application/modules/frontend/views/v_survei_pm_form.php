@@ -716,10 +716,13 @@ function handleFormSubmission() {
     
     // Jika ada error validasi
     if (hasError) {
+        var submitButton = $('#btnSubmitSurvei');
         Swal.fire({
             title: '<strong>Validasi Gagal</strong>',
             icon: 'error',
             html: 'Silakan perbaiki data berikut:<br><br>' + errorMessages.join('<br>')
+        }).then(() => {
+            submitButton.prop('disabled', false).val('Perbaharui Data Survei');
         });
         return false;
     }
@@ -962,10 +965,13 @@ function proceedWithSubmission() {
         
         // Jika ada error validasi
         if (hasError) {
+            var submitButton = $('#btnSubmitSurvei');
             Swal.fire({
                 title: '<strong>Validasi Gagal</strong>',
                 icon: 'error',
                 html: 'Silakan perbaiki data berikut:<br><br>' + errorMessages.join('<br>')
+            }).then(() => {
+                submitButton.prop('disabled', false).val('Perbaharui Data Survei');
             });
             return false;
         }
