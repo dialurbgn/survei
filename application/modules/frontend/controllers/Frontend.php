@@ -1791,7 +1791,7 @@ public function select2_kecamatan() {
         
         // Search by keyword if field exists
         if ($this->db->field_exists('wil_keyword', $table)) {
-            $this->db->or_where($table.'.wil_keyword *~', $q);
+            $this->db->or_where($table.'.wil_keyword ~*', $q);
         }
         
         $this->db->group_end();
