@@ -217,9 +217,10 @@
                                             $required_mark = ($rows_column['is_nullable'] == 'NO') ? '<span class="text-danger">*</span>' : '';
                                             
                                             // Disable field jika:
-                                            // 1. User belum login
-                                            // 2. Mode edit (disable_identity_fields = true)
-                                            $disabled_attr = (!$is_logged_in || $disable_identity_fields) ? 'disabled' : '';
+                                            // 1. User belum login -> disabled (tidak kirim data)
+                                            // 2. Mode edit -> readonly (tetap kirim data tapi tidak bisa diubah)
+                                            $disabled_attr = !$is_logged_in ? 'disabled' : '';
+                                            $readonly_attr = $disable_identity_fields ? 'readonly' : '';
                                             $readonly_style = $disable_identity_fields ? 'style="background-color: #e9ecef; cursor: not-allowed;"' : '';
                                     ?>
                                     
@@ -233,6 +234,7 @@
                                                       placeholder="<?php echo 'Masukkan '.$label_name_text; ?>" 
                                                       data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
                                                       <?php echo $disabled_attr; ?>
+                                                      <?php echo $readonly_attr; ?>
                                                       <?php echo $readonly_style; ?>
                                                       <?php echo $is_required; ?>><?php echo ${$rows_column['name']}; ?></textarea>
                                         </div>
@@ -286,6 +288,7 @@
                                                    value="<?php echo ${$rows_column['name']}; ?>"
                                                    data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
                                                    <?php echo $disabled_attr; ?>
+                                                   <?php echo $readonly_attr; ?>
                                                    <?php echo $readonly_style; ?>
                                                    <?php echo $is_required; ?> />
                                         </div>
@@ -294,8 +297,13 @@
                                         <div class="form-group col-lg-<?php echo $width_column; ?>">
                                             <label><?php echo $label_name; ?> <?php echo $required_mark; ?></label>
                                             <?php 
-                                                $readonlyselect = '';
+                                                // Untuk select, gunakan disabled karena readonly tidak work di select
+                                                // Tapi tambahkan hidden input untuk kirim value
+                                                $readonlyselect = $disable_identity_fields ? 'disabled' : '';
                                                 $disable = $disabled_attr;
+                                                if ($disable_identity_fields) {
+                                                    $disable = 'disabled';
+                                                }
                                                 $linkcustom = 'select2';
                                                 if($rows_column['name'] == 'survei_pm_wil_id'){
                                                     $linkcustom = 'select2_kecamatan';
@@ -304,6 +312,10 @@
                                                 include(APPPATH."views/common/select2formsidefront.php"); 
                                             ?>
                                             <?php if ($disable_identity_fields): ?>
+                                            <!-- Hidden input untuk kirim value select yang disabled -->
+                                            <input type="hidden" 
+                                                   name="<?php echo $rows_column['name']; ?>" 
+                                                   value="<?php echo ${$rows_column['name']}; ?>" />
                                             <small class="form-text text-muted">
                                                 <i class="fas fa-lock"></i> Field ini tidak dapat diubah
                                             </small>
@@ -322,6 +334,7 @@
                                                    data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
                                                    maxlength="255"
                                                    <?php echo $disabled_attr; ?>
+                                                   <?php echo $readonly_attr; ?>
                                                    <?php echo $readonly_style; ?>
                                                    <?php echo $is_required; ?> />
                                             <?php if ($disable_identity_fields): ?>
@@ -469,19 +482,126 @@
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <script>
-// Fungsi validasi Cloudflare Turnstile
+// ==========================================
+// TURNSTILE CONFIGURATION
+// ==========================================
+var turnstileWidgetId = null;
+var turnstileToken = null;
+var turnstileReady = false;
+
+// Callback functions
+function onTurnstileSuccess(token) {
+    console.log('✓ Turnstile verified');
+    turnstileToken = token;
+    turnstileReady = true;
+}
+
+function onTurnstileExpired() {
+    console.warn('⚠ Turnstile expired');
+    turnstileReady = false;
+    turnstileToken = null;
+    if (turnstileWidgetId !== null && typeof turnstile !== 'undefined') {
+        turnstile.reset(turnstileWidgetId);
+    }
+}
+
+function onTurnstileError() {
+    console.error('✗ Turnstile error');
+    turnstileReady = false;
+    turnstileToken = null;
+}
+
+// Initialize Turnstile with explicit render
+function initializeTurnstile() {
+    var attempts = 0;
+    var maxAttempts = 50;
+    
+    var checkTurnstile = setInterval(function() {
+        attempts++;
+        
+        if (typeof turnstile !== 'undefined') {
+            clearInterval(checkTurnstile);
+            
+            try {
+                var existingWidget = document.querySelector('.cf-turnstile');
+                if (existingWidget && turnstileWidgetId !== null) {
+                    turnstile.remove(turnstileWidgetId);
+                }
+                
+                turnstileWidgetId = turnstile.render('.cf-turnstile', {
+                    sitekey: '<?php echo $site_key; ?>',
+                    theme: 'light',
+                    size: 'normal',
+                    callback: onTurnstileSuccess,
+                    'expired-callback': onTurnstileExpired,
+                    'error-callback': onTurnstileError
+                });
+                
+                console.log('✓ Turnstile initialized:', turnstileWidgetId);
+                
+            } catch (error) {
+                console.error('✗ Turnstile init error:', error);
+            }
+        } else if (attempts >= maxAttempts) {
+            clearInterval(checkTurnstile);
+            console.error('✗ Turnstile failed to load');
+        }
+    }, 100);
+}
+
+// Improved validation
 function validateTurnstile() {
-    const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
-    if (!turnstileResponse || !turnstileResponse.value) {
+    console.log('Validating Turnstile...');
+    
+    if (typeof turnstile === 'undefined') {
         Swal.fire({
-            title: '<strong>Oops...</strong>',
+            title: '<strong>Error</strong>',
             icon: 'error',
-            html: 'Silahkan selesaikan verifikasi keamanan untuk melanjutkan.'
+            html: 'Sistem verifikasi gagal dimuat. Silakan refresh halaman.'
         });
         return false;
     }
+    
+    const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
+    
+    if (!turnstileResponse || !turnstileResponse.value) {
+        Swal.fire({
+            title: '<strong>Verifikasi Diperlukan</strong>',
+            icon: 'warning',
+            html: 'Silakan centang kotak verifikasi keamanan untuk melanjutkan.',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#0088cc'
+        });
+        return false;
+    }
+    
+    console.log('✓ Turnstile valid');
     return true;
 }
+
+// Reset function
+function resetTurnstile() {
+    turnstileReady = false;
+    turnstileToken = null;
+    
+    if (turnstileWidgetId !== null && typeof turnstile !== 'undefined') {
+        try {
+            turnstile.reset(turnstileWidgetId);
+            console.log('✓ Turnstile reset');
+        } catch (error) {
+            console.error('✗ Reset failed:', error);
+            location.reload();
+        }
+    }
+}
+
+// Auto-refresh every 4 minutes
+setInterval(function() {
+    if (turnstileReady && turnstileWidgetId !== null && typeof turnstile !== 'undefined') {
+        console.log('↻ Auto-refresh Turnstile');
+        turnstile.reset(turnstileWidgetId);
+    }
+}, 4 * 60 * 1000);
 
 // Cek status login dan mode edit
 var isLoggedIn = <?php echo $is_logged_in ? 'true' : 'false'; ?>;
@@ -518,6 +638,11 @@ var disableIdentityFields = <?php echo $disable_identity_fields ? 'true' : 'fals
     
     // Wait for document ready
     $(document).ready(function() {
+        // Initialize Turnstile
+        setTimeout(function() {
+            initializeTurnstile();
+        }, 500);
+        
         if (!isLoggedIn) {
             // User belum login, tampilkan pesan
             console.log('User belum login. Form di-disable.');
@@ -548,10 +673,10 @@ var disableIdentityFields = <?php echo $disable_identity_fields ? 'true' : 'fals
     
     // Proteksi field identitas di mode edit
     if (disableIdentityFields) {
-        // Disable semua field identitas secara permanen
-        $('#survei_pm_nama, #survei_pm_nip, #survei_pm_email, #survei_pm_tlp, #survei_pm_wil_id')
+        // Set readonly pada text input (bukan disabled, agar data tetap terkirim)
+        $('#survei_pm_nama, #survei_pm_nip, #survei_pm_email, #survei_pm_tlp')
             .attr('readonly', true)
-            .removeAttr('required') // PENTING: Hapus required attribute
+            .removeAttr('required') // Hapus required
             .css({
                 'background-color': '#e9ecef',
                 'cursor': 'not-allowed',
@@ -562,13 +687,14 @@ var disableIdentityFields = <?php echo $disable_identity_fields ? 'true' : 'fals
                 return false;
             });
         
-        // Disable select2 untuk kecamatan jika ada
+        // Untuk select, disable tapi tambahkan hidden input (sudah ditambah di PHP)
         if ($('#survei_pm_wil_id').length > 0) {
             $('#survei_pm_wil_id').prop('disabled', true).removeAttr('required');
             if (typeof $.fn.select2 !== 'undefined') {
                 $('#survei_pm_wil_id').select2('destroy');
                 $('#survei_pm_wil_id').prop('disabled', true);
             }
+            // Hidden input sudah dibuat di PHP untuk mengirim value
         }
         
         // Tampilkan pesan info
@@ -994,6 +1120,7 @@ function proceedWithSubmission() {
             type: 'POST',
             data: $('#formSurvei<?php echo $iddata; ?>').serialize(),
             dataType: 'json',
+            timeout: 30000,
             success: function(data) {
                 if (data && data.csrf_hash) {
                     if (typeof updateCsrfToken === 'function') {
@@ -1021,14 +1148,31 @@ function proceedWithSubmission() {
                     });
                     
                 } else {
-                    Swal.fire({
-                        title: '<strong>Oops...</strong>',
-                        icon: 'error',
-                        html: 'Ada yang bermasalah!<br>' + (data && data.error ? data.error : 'Terjadi kesalahan')
-                    }).then(() => {
-                        submitButton.prop('disabled', false).val(originalValue);
-                    });
+                    var errorMsg = data && data.error ? data.error : 'Terjadi kesalahan';
+                    var isTurnstileError = errorMsg.toLowerCase().includes('verifikasi') || 
+                                          errorMsg.toLowerCase().includes('captcha') ||
+                                          errorMsg.toLowerCase().includes('turnstile');
                     
+                    if (isTurnstileError) {
+                        Swal.fire({
+                            title: '<strong>Verifikasi Gagal</strong>',
+                            icon: 'error',
+                            html: errorMsg + '<br><br><small>Verifikasi akan dimuat ulang otomatis.</small>',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#0088cc'
+                        }).then(() => {
+                            resetTurnstile();
+                            submitButton.prop('disabled', false).val(originalValue);
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '<strong>Oops...</strong>',
+                            icon: 'error',
+                            html: 'Ada yang bermasalah!<br>' + errorMsg
+                        }).then(() => {
+                            submitButton.prop('disabled', false).val(originalValue);
+                        });
+                    }
                 }
             },
             error: function(jqxhr, status, error) {
@@ -1036,12 +1180,24 @@ function proceedWithSubmission() {
                 console.error("Status:", status);
                 console.error("Response:", jqxhr.responseText);
                 
+                var errorMessage = 'Terjadi kesalahan saat mengirim data.';
+                
+                if (status === 'timeout') {
+                    errorMessage = 'Koneksi timeout. Silakan coba lagi.';
+                } else if (jqxhr.status === 0) {
+                    errorMessage = 'Tidak ada koneksi internet.';
+                } else if (jqxhr.status === 403) {
+                    errorMessage = 'Verifikasi keamanan gagal. Halaman akan dimuat ulang.';
+                    setTimeout(function() { location.reload(); }, 2000);
+                }
+                
                 Swal.fire({
                     title: '<strong>Oops...</strong>',
                     icon: 'error',
-                    html: 'Terjadi kesalahan saat mengirim data. Silakan coba lagi.'
+                    html: errorMessage
                 }).then(() => {
                     submitButton.prop('disabled', false).val(originalValue);
+                    resetTurnstile();
                 });
 
             },
