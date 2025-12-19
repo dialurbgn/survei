@@ -413,45 +413,8 @@ $this->output
                 <div class="header-column justify-content-end">
                     <div class="header-row h-100">
                         <ul class="header-extra-info d-flex h-100 align-items-center">
-                            <li class="align-items-center d-none d-lg-block h-100 py-4">
-                                <div class="header-extra-info-text h-100 py-2">
-                                    <div class="feature-box feature-box-style-2 align-items-center">
-                                        <div class="feature-box-icon">
-                                            <img width="34" height="28" data-lazy="<?php echo base_url(); ?>themes/ortyd_frontend/img/demos/law-firm/icons/envelope.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary'}" style="width: 34px; height: 28px;" />
-                                        </div>
-                                        <div class="feature-box-info ps-1">
-                                            <label><?php echo $this->ortyd->translate_google('Kirim Pesan'); ?></label>
-                                            <strong><a href="mailto:<?php echo $this->ortyd->getMeta('company_email'); ?>"><?php echo $this->ortyd->getMeta('company_email'); ?></a></strong>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="align-items-center d-none d-lg-block h-100 py-4">
-                                <div class="header-extra-info-text h-100 py-2">
-                                    <div class="feature-box feature-box-style-2 align-items-center">
-                                        <div class="feature-box-icon">
-                                            <img width="30" height="30" data-lazy="<?php echo base_url(); ?>themes/ortyd_frontend/img/demos/law-firm/icons/phone.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-stroke-color-primary p-relative left-3'}" style="width: 30px; height: 30px;" />
-                                        </div>
-                                        <div class="feature-box-info ps-1">
-                                            <label><?php echo $this->ortyd->translate_google('Telepon'); ?></label>
-                                            <strong><a href="tel:<?php echo $this->ortyd->getMeta('company_notelp'); ?>"><?php echo $this->ortyd->getMeta('company_notelp'); ?></a></strong>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="align-items-center d-none d-lg-block h-100 py-4">
-                                <div class="header-extra-info-text h-100 py-2">
-                                    <div class="feature-box feature-box-style-2 align-items-center">
-                                        <div class="feature-box-info ps-1">
-                                            <label>
-                                            <?php echo $this->ortyd->translate_google('Bahasa') ?>
-                                            </label>
-                                            <div id="google_translate_element2"></div>
-                                            <div id="google_translate_element1"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
+                           
+
                         </ul>
                     </div>
                 </div>
@@ -609,7 +572,7 @@ $this->output
 
 						</div>
 						
-						<div class="col-md-3">
+						<div class="col-md-6">
 							
 							<h5 class="text-4-5 text-transform-none custom-font-primary mb-3"><?php echo $this->ortyd->translate_google('Jam Layanan'); ?></h5>
 							<strong style="color:#fff !important" class="custom-footer-strong-1"><?php echo $this->ortyd->getMeta('company_bussines_hour'); ?></strong>
@@ -633,100 +596,9 @@ $this->output
 									<a href="<?php echo $this->ortyd->getMeta('company_youtube'); ?>" class="no-footer-css" target="_blank" title="Youtube"><i style="color:#fff !important"  class="text-primary fab fa-youtube"></i></a>
 								</li>
 							</ul>
-							<br>
-							<h5 class="text-4-5 text-transform-none custom-font-primary mb-3"><?php echo $this->ortyd->translate_google('Tautan'); ?></h5>
-							<div class="owl-carousel owl-carousel-light owl-carousel-light-init-fadeIn owl-theme manual dots-inside dots-modern dots-modern-lg dots-horizontal-center show-dots-hover show-dots-xs nav-style-1 nav-inside nav-inside-plus nav-dark nav-lg nav-font-size-lg show-nav-hover mb-0" data-plugin-options="{'autoplayTimeout': 3000}" data-dynamic-height="['200px','200px','200px','200px','200px']" style="height: 100px;">
-					<div class="owl-stage-outer">
-						<div class="owl-stage">
-						
-						<?php
-							$this->db->select('data_tautan.*,data_gallery.path');
-							$this->db->where('data_tautan.active',1);
-							$this->db->join('data_gallery','data_gallery.id = data_tautan.cover','left');
-							$this->db->order_by('data_tautan.sort','ASC');
-							//$this->db->limit(3);
-							$query = $this->db->get('data_tautan');
-							$query = $query->result_array();
-							if(count($query) > 0){
-								foreach($query as $rows){
-						?>
 
-							<!-- Carousel Slide 1 -->
-						
-							<div class="owl-item position-relative">
-								<a target="_blank" href="<?php echo $rows['link']; ?>">
-									<img data-lazy="<?php echo base_url().$rows['path']; ?>" />
-								</a>
-							</div>
-							
-
-							<?php 
-								}
-							}							
-							?>
-
-						</div>
-					</div>
-				</div>
-							
-							
 						</div>
 					
-						<div class="col-md-3 mb-4 mb-lg-0">
-							<h5 class="text-4-5 text-transform-none custom-font-primary mb-3">Hubungi Kami</h5>
-							<div class="row pb-3">
-								<div class="col">
-									<div class="feature-box feature-box-style-2 align-items-center">
-										<div class="feature-box-icon">
-											<img width="34" height="28" data-lazy="<?php echo base_url(); ?>themes/ortyd_frontend/img/demos/law-firm/icons/envelope.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-fill-color-primary-white'}" style="width: 34px; height: 28px;color:#fff" />
-										</div>
-										<div class="feature-box-info ps-1">
-											<label class="custom-footer-label-1"><?php echo $this->ortyd->translate_google('Kirim Pesan'); ?></label>
-											<strong class="custom-footer-strong-1"><a href="mailto:<?php echo $this->ortyd->getMeta('company_email'); ?>" class="text-color-light"><?php echo $this->ortyd->getMeta('company_email'); ?></a></strong>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="row pb-3">
-								<div class="col">
-									<div class="feature-box feature-box-style-2 align-items-center">
-										<div class="feature-box-icon">
-											<img width="30" height="30" data-lazy="<?php echo base_url(); ?>themes/ortyd_frontend/img/demos/law-firm/icons/phone.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-stroke-color-primary p-relative left-3'}" style="width: 30px; height: 30px;" />
-										</div>
-										<div class="feature-box-info ps-1">
-											<label class="custom-footer-label-1"><?php echo $this->ortyd->translate_google('Telepon/Fax'); ?></label>
-											<strong class="custom-footer-strong-1"><a href="tel:<?php echo $this->ortyd->getMeta('company_notelp'); ?>" class="text-color-light"><?php echo $this->ortyd->getMeta('company_notelp'); ?></a>/<a href="fax:<?php echo $this->ortyd->getMeta('company_fax'); ?>" class="text-color-light"><?php echo $this->ortyd->getMeta('company_fax'); ?></a></strong>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="row pb-3">
-								<div class="col">
-									<div class="feature-box feature-box-style-2 align-items-center">
-										<div class="feature-box-icon svg-fill-color-primary-white">
-											<img width="30" height="30" data-lazy="<?php echo base_url(); ?>themes/ortyd_frontend/img/demos/law-firm/icons/envelope.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-stroke-color-primary p-relative left-3'}" style="width: 30px; height: 30px;" />
-										</div>
-										<div class="feature-box-info ps-1">
-											<label class="custom-footer-label-1"><?php echo $this->ortyd->translate_google('Whatsapp'); ?></label>
-											<strong class="custom-footer-strong-1"><a href="tel:<?php echo $this->ortyd->getMeta('company_whatsapp'); ?>" class="text-color-light"><?php echo $this->ortyd->getMeta('company_whatsapp'); ?></a></strong>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col">
-									<div class="feature-box feature-box-style-2 align-items-center">
-										<div class="feature-box-icon svg-fill-color-primary-white">
-											<img width="30" height="30" data-lazy="<?php echo base_url(); ?>themes/ortyd_frontend/img/demos/law-firm/icons/arrow-right.svg" alt="" data-icon data-plugin-options="{'onlySVG': true, 'extraClass': 'svg-stroke-color-primary p-relative left-3'}" style="width: 30px; height: 30px;" />
-										</div>
-										<div class="feature-box-info ps-1">
-											<label class="custom-footer-label-1"><?php echo $this->ortyd->translate_google('Alamat'); ?></label>
-											<strong class="custom-footer-strong-1"><a href="<?php echo base_url('kontak').'#mapid'; ?>" class="text-color-light"><?php echo $this->ortyd->getMeta('company_address'); ?></a></strong>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
 					
 					</div>
 				</div>
