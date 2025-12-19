@@ -405,7 +405,7 @@ $this->output
 								}
 								?>
 
-								<img alt="INAMS" height="75" src="<?php echo base_url($logoPath); ?>">
+								<img alt="BGN" height="75" src="<?php echo base_url($logoPath); ?>">
                             </a>
                         </div>
                     </div>
@@ -560,7 +560,7 @@ $this->output
 									}
 									?>
 									
-									<img style="width: 100%;max-width: 400px;border-radius: 10px;" alt="INAMS" width="" height="" src="<?php echo base_url($logoPath); ?>">
+									<img style="width: 100%;max-width: 400px;border-radius: 10px;" alt="BGN" width="" height="" src="<?php echo base_url($logoPath); ?>">
 								
 								
 							</a>
