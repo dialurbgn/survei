@@ -10,7 +10,7 @@
                     <div class="hero-content-wrap">
                         <span class="hero-badge animate-fade-in">Program Nasional BGN</span>
                         <h1 class="hero-main-title animate-fade-in-up">Survei Penerima Manfaat<br><span class="text-gradient">Badan Gizi Nasional</span></h1>
-                        <p class="hero-description animate-fade-in-up">Pendataan akurat untuk mencegah pemenuhan dan meningkatkan kualitas gizi anak Indonesia</p>
+                        <p class="hero-description animate-fade-in-up">Pendataan akurat untuk pemenuhan dan meningkatkan kualitas gizi anak Indonesia</p>
                         
                     </div>
                 </div>
