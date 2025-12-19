@@ -558,7 +558,11 @@ function validateTurnstile() {
         Swal.fire({
             title: '<strong>Error</strong>',
             icon: 'error',
-            html: 'Sistem verifikasi gagal dimuat. Silakan refresh halaman.'
+            html: 'Sistem verifikasi keamanan gagal dimuat. Silakan refresh halaman.'
+        }).then(() => {
+            var submitButton = $('#btnSubmitSurvei');
+            submitButton.prop('disabled', false).val(originalValue);
+            //resetTurnstile();
         });
         return false;
     }
@@ -567,11 +571,15 @@ function validateTurnstile() {
     
     if (!turnstileResponse || !turnstileResponse.value) {
         Swal.fire({
-            title: '<strong>Verifikasi Diperlukan</strong>',
+            title: '<strong>Verifikasi Keamanan Diperlukan</strong>',
             icon: 'warning',
             html: 'Silakan centang kotak verifikasi keamanan untuk melanjutkan.',
             confirmButtonText: 'OK',
             confirmButtonColor: '#0088cc'
+        }).then(() => {
+            var submitButton = $('#btnSubmitSurvei');
+            submitButton.prop('disabled', false).val(originalValue);
+            //resetTurnstile();
         });
         return false;
     }
