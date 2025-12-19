@@ -590,25 +590,15 @@ function validateTurnstile() {
 
 // Reset function
 function resetTurnstile() {
-    turnstileReady = false;
-    turnstileToken = null;
-    
-    if (turnstileWidgetId !== null && typeof turnstile !== 'undefined') {
-        try {
-            turnstile.reset(turnstileWidgetId);
-            console.log('✓ Turnstile reset');
-        } catch (error) {
-            console.error('✗ Reset failed:', error);
-            location.reload();
-        }
-    }
+    console.log('Reloading page to reset Turnstile...');
+    location.reload();
 }
 
 // Auto-refresh every 4 minutes
 setInterval(function() {
     if (turnstileReady && turnstileWidgetId !== null && typeof turnstile !== 'undefined') {
-        console.log('↻ Auto-refresh Turnstile');
-        turnstile.reset(turnstileWidgetId);
+        console.log('Reloading page to reset Turnstile...');
+        location.reload();
     }
 }, 4 * 60 * 1000);
 
