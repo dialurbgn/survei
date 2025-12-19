@@ -17,6 +17,7 @@
         }
         
         $is_edit_mode = false;
+        $disable_identity_fields = false; // Default: field bisa diisi
         
         // Auto-fill dari data user yang login (jika sudah login)
         if(isset($is_logged_in) && $is_logged_in === true && isset($user_data) && $user_data != null){
@@ -34,6 +35,7 @@
             $iddata = $id;
             $typedata = 'Edit';
             $is_edit_mode = true;
+            $disable_identity_fields = true; // DISABLE field identitas di mode edit
             
             // Load master data
             if(isset($datarow) && $datarow != null){
@@ -55,6 +57,7 @@
         }else{
             $iddata = 0;
             $typedata = 'Buat';
+            $disable_identity_fields = false; // Field identitas bisa diisi di mode buat baru
         }
     }else{
         $newURL = base_url('frontend');
@@ -125,12 +128,17 @@
                 <?php else: ?>
                 <!-- SUDAH LOGIN - Mode Edit -->
                 <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="200">
-                    <div class="alert alert-info mb-4" role="alert">
+                    <div class="alert alert-warning mb-4" role="alert">
                         <h5 class="alert-heading mb-2">
                             <i class="fas fa-edit"></i> 
                             <strong>Mode Edit Data</strong>
                         </h5>
-                        <p class="mb-0">Anda sedang mengedit data survei yang sudah tersimpan. Ubah data yang diperlukan lalu klik Perbarui.</p>
+                        <p class="mb-2">Anda sedang mengedit data survei yang sudah tersimpan.</p>
+                        <div class="alert alert-info mt-3 mb-0">
+                            <i class="fas fa-lock"></i> 
+                            <strong>PENTING:</strong> Data identitas (Nama, NIP, Email, No. Telp, Kecamatan) <strong>tidak dapat diubah</strong>. 
+                            Anda hanya dapat mengubah <strong>jumlah penerima manfaat</strong>.
+                        </div>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -163,13 +171,17 @@
                     <!-- Section 1: Data Identitas -->
                     <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="400">
                         <div class="card border-0 shadow-sm mb-4 <?php echo !$is_logged_in ? 'opacity-50' : ''; ?>">
-                            <div class="card-header bg-primary text-white">
+                            <div class="card-header <?php echo $disable_identity_fields ? 'bg-secondary' : 'bg-primary'; ?> text-white">
                                 <h4 class="mb-0 font-weight-bold text-white">
                                     <i class="fas fa-user"></i> Data Identitas Petugas Survei
                                 </h4>
                                 <?php if (!$is_logged_in): ?>
                                 <p class="mb-0 mt-2 small text-white">
                                     <i class="fas fa-info-circle"></i> Data akan terisi otomatis setelah login
+                                </p>
+                                <?php elseif ($disable_identity_fields): ?>
+                                <p class="mb-0 mt-2 small text-white">
+                                    <i class="fas fa-lock"></i> Data identitas tidak dapat diubah (sudah terdaftar)
                                 </p>
                                 <?php else: ?>
                                 <p class="mb-0 mt-2 small text-white">
@@ -180,9 +192,14 @@
                             <div class="card-body p-4">
                                 
                                 <?php if ($is_logged_in): ?>
-                                <div class="alert alert-info mb-4">
+                                <div class="alert <?php echo $disable_identity_fields ? 'alert-warning' : 'alert-info'; ?> mb-4">
                                     <i class="fas fa-info-circle"></i> 
-                                    <strong>Catatan:</strong> Data dengan latar abu-abu tidak dapat diubah karena digunakan sebagai identitas.
+                                    <strong>Catatan:</strong> 
+                                    <?php if ($disable_identity_fields): ?>
+                                        Data identitas <strong>TERKUNCI</strong> dan tidak dapat diubah. Hanya jumlah penerima manfaat yang dapat diupdate.
+                                    <?php else: ?>
+                                        Data dengan latar abu-abu tidak dapat diubah karena digunakan sebagai identitas.
+                                    <?php endif; ?>
                                 </div>
                                 <?php endif; ?>
                                 
@@ -199,8 +216,11 @@
                                             $is_required = ($rows_column['is_nullable'] == 'NO') ? 'required' : '';
                                             $required_mark = ($rows_column['is_nullable'] == 'NO') ? '<span class="text-danger">*</span>' : '';
                                             
-                                            // Disable semua field jika belum login
-                                            $disabled_attr = !$is_logged_in ? 'disabled' : '';
+                                            // Disable field jika:
+                                            // 1. User belum login
+                                            // 2. Mode edit (disable_identity_fields = true)
+                                            $disabled_attr = (!$is_logged_in || $disable_identity_fields) ? 'disabled' : '';
+                                            $readonly_style = $disable_identity_fields ? 'style="background-color: #e9ecef; cursor: not-allowed;"' : '';
                                     ?>
                                     
                                     <?php if($tipe_data == 'TEXTAREA'){ ?>
@@ -213,6 +233,7 @@
                                                       placeholder="<?php echo 'Masukkan '.$label_name_text; ?>" 
                                                       data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
                                                       <?php echo $disabled_attr; ?>
+                                                      <?php echo $readonly_style; ?>
                                                       <?php echo $is_required; ?>><?php echo ${$rows_column['name']}; ?></textarea>
                                         </div>
                                     
@@ -265,6 +286,7 @@
                                                    value="<?php echo ${$rows_column['name']}; ?>"
                                                    data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
                                                    <?php echo $disabled_attr; ?>
+                                                   <?php echo $readonly_style; ?>
                                                    <?php echo $is_required; ?> />
                                         </div>
                                     
@@ -281,6 +303,11 @@
                                                 
                                                 include(APPPATH."views/common/select2formsidefront.php"); 
                                             ?>
+                                            <?php if ($disable_identity_fields): ?>
+                                            <small class="form-text text-muted">
+                                                <i class="fas fa-lock"></i> Field ini tidak dapat diubah
+                                            </small>
+                                            <?php endif; ?>
                                         </div>
                                     
                                     <?php }else{ ?>
@@ -295,7 +322,13 @@
                                                    data-msg-required="<?php echo $label_name_text; ?> wajib diisi."
                                                    maxlength="255"
                                                    <?php echo $disabled_attr; ?>
+                                                   <?php echo $readonly_style; ?>
                                                    <?php echo $is_required; ?> />
+                                            <?php if ($disable_identity_fields): ?>
+                                            <small class="form-text text-muted">
+                                                <i class="fas fa-lock"></i> Field ini tidak dapat diubah
+                                            </small>
+                                            <?php endif; ?>
                                         </div>
                                     <?php } ?>
                                     
@@ -316,6 +349,11 @@
             <h4 class="mb-0 font-weight-bold text-white">
                 <i class="fas fa-list-ol"></i> Detail Jumlah Penerima Manfaat MBG per Jenis
             </h4>
+            <?php if ($is_edit_mode): ?>
+            <p class="mb-0 mt-2 small text-white">
+                <i class="fas fa-edit"></i> Anda dapat mengubah jumlah penerima manfaat di bawah ini
+            </p>
+            <?php endif; ?>
         </div>
         <div class="card-body p-4">
             
@@ -332,6 +370,8 @@
                         $tipe_data = $this->ortyd->getTipeData($viewtable, $rows_column['name']);
                         $label_name = $this->ortyd->translate_column($viewtable, $rows_column['name']);
                         $label_name_text = $label_name;
+                        
+                        // Detail POK TIDAK DI-DISABLE - tetap bisa diubah di mode edit
                         $disabled_attr = !$is_logged_in ? 'disabled' : '';
                 ?>
                 
@@ -397,7 +437,7 @@
             <?php if ($is_logged_in): ?>
             <input type="submit" 
                    id="btnSubmitSurvei" 
-                   value="<?php echo $is_edit_mode ? 'Perbarui Data Survei' : 'Simpan Data Survei'; ?>" 
+                   value="<?php echo $is_edit_mode ? 'Update Jumlah Penerima Manfaat' : 'Simpan Data Survei'; ?>" 
                    class="btn btn-primary btn-modern text-uppercase font-weight-bold text-3 py-3 btn-px-5 w-100" 
                    data-loading-text="Memproses..." />
             <?php else: ?>
@@ -443,8 +483,10 @@ function validateTurnstile() {
     return true;
 }
 
-// Cek status login
+// Cek status login dan mode edit
 var isLoggedIn = <?php echo $is_logged_in ? 'true' : 'false'; ?>;
+var isEditMode = <?php echo $is_edit_mode ? 'true' : 'false'; ?>;
+var disableIdentityFields = <?php echo $disable_identity_fields ? 'true' : 'false'; ?>;
 
 // Wait for all scripts to load
 (function() {
@@ -503,37 +545,57 @@ var isLoggedIn = <?php echo $is_logged_in ? 'true' : 'false'; ?>;
     });
     
     function initializeSurveiForm() {
-    var isEditMode = <?php echo $is_edit_mode ? 'true' : 'false'; ?>;
     
-    // Proteksi email di mode edit
-    if (isEditMode) {
-        $('#survei_pm_email').attr('readonly', true)
-                             .css({
-                                 'background-color': '#e9ecef',
-                                 'cursor': 'not-allowed'
-                             })
-                             .on('keydown keypress keyup paste', function(e) {
-                                 e.preventDefault();
-                                 return false;
-                             });
+    // Proteksi field identitas di mode edit
+    if (disableIdentityFields) {
+        // Disable semua field identitas secara permanen
+        $('#survei_pm_nama, #survei_pm_nip, #survei_pm_email, #survei_pm_tlp, #survei_pm_wil_id')
+            .attr('readonly', true)
+            .css({
+                'background-color': '#e9ecef',
+                'cursor': 'not-allowed',
+                'pointer-events': 'none'
+            })
+            .on('keydown keypress keyup paste cut', function(e) {
+                e.preventDefault();
+                return false;
+            });
+        
+        // Disable select2 untuk kecamatan jika ada
+        if ($('#survei_pm_wil_id').length > 0) {
+            $('#survei_pm_wil_id').prop('disabled', true);
+            if (typeof $.fn.select2 !== 'undefined') {
+                $('#survei_pm_wil_id').select2('destroy');
+                $('#survei_pm_wil_id').prop('disabled', true);
+            }
+        }
+        
+        // Tampilkan pesan info
+        Swal.fire({
+            title: '<strong>Mode Edit</strong>',
+            icon: 'info',
+            html: 'Data identitas Anda sudah terdaftar dan tidak dapat diubah.<br>Anda hanya dapat mengubah <strong>jumlah penerima manfaat</strong>.',
+            confirmButtonText: 'OK, Mengerti',
+            confirmButtonColor: '#0088cc'
+        });
     }
     
-    // Initialize Select2 if available
-    if (typeof $.fn.select2 !== 'undefined') {
-        $('.select2-popup').select2({
+    // Initialize Select2 untuk field yang masih aktif (non-disabled)
+    if (typeof $.fn.select2 !== 'undefined' && !disableIdentityFields) {
+        $('.select2-popup:not([disabled])').select2({
             placeholder: 'Pilih...',
             allowClear: true,
             width: '100%'
         });
     }
     
-    // Initialize Datetime Picker with fallback
+    // Initialize Datetime Picker dengan fallback
     initializeDatePicker();
     
     // Calculate total penerima
     calculateTotal();
     
-    // Proteksi input POK - hanya angka
+    // Proteksi input POK - hanya angka (SELALU AKTIF - tidak tergantung mode)
     $('.pok-input').on('input', function() {
         var value = $(this).val();
         // Hapus semua karakter kecuali angka
@@ -608,64 +670,67 @@ function handleFormSubmission() {
     var hasError = false;
     var errorMessages = [];
     
-    // Validasi Nama
-    var nama = $('#survei_pm_nama').val().trim();
-    if (nama) {
-        if (!/^[a-zA-Z\s]+$/.test(nama)) {
-            showValidationMessage($('#survei_pm_nama'), 'Nama hanya boleh mengandung huruf dan spasi');
-            errorMessages.push('Nama tidak valid (hanya boleh huruf dan spasi)');
+    // SKIP VALIDASI FIELD IDENTITAS jika mode edit (disabled)
+    if (!disableIdentityFields) {
+        // Validasi Nama
+        var nama = $('#survei_pm_nama').val().trim();
+        if (nama) {
+            if (!/^[a-zA-Z\s]+$/.test(nama)) {
+                showValidationMessage($('#survei_pm_nama'), 'Nama hanya boleh mengandung huruf dan spasi');
+                errorMessages.push('Nama tidak valid (hanya boleh huruf dan spasi)');
+                hasError = true;
+            } else if (nama.length < 3) {
+                showValidationMessage($('#survei_pm_nama'), 'Nama minimal 3 karakter');
+                errorMessages.push('Nama minimal 3 karakter');
+                hasError = true;
+            }
+        }
+        
+        // Validasi NIP
+        var nip = $('#survei_pm_nip').val().trim();
+        if (nip) {
+            if (!/^[0-9]+$/.test(nip)) {
+                showValidationMessage($('#survei_pm_nip'), 'NIP hanya boleh mengandung angka');
+                errorMessages.push('NIP tidak valid (hanya boleh angka)');
+                hasError = true;
+            } else if (nip.length < 8) {
+                showValidationMessage($('#survei_pm_nip'), 'NIP minimal 8 digit');
+                errorMessages.push('NIP minimal 8 digit');
+                hasError = true;
+            }
+        }
+        
+        // Validasi Email
+        var email = $('#survei_pm_email').val().trim();
+        if (email) {
+            if (!isValidEmail(email)) {
+                showValidationMessage($('#survei_pm_email'), 'Format email tidak valid (contoh: nama@email.com)');
+                errorMessages.push('Format email tidak valid');
+                hasError = true;
+            }
+        } else {
+            showValidationMessage($('#survei_pm_email'), 'Email wajib diisi');
+            errorMessages.push('Email wajib diisi');
             hasError = true;
-        } else if (nama.length < 3) {
-            showValidationMessage($('#survei_pm_nama'), 'Nama minimal 3 karakter');
-            errorMessages.push('Nama minimal 3 karakter');
-            hasError = true;
+        }
+        
+        // Validasi Telepon
+        var tlp = $('#survei_pm_tlp').val().trim();
+        if (tlp) {
+            var tlpDigits = tlp.replace(/[^0-9]/g, '');
+            if (tlpDigits.length < 10) {
+                showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon minimal 10 digit');
+                errorMessages.push('Nomor telepon minimal 10 digit');
+                hasError = true;
+            } else if (tlpDigits.length > 15) {
+                showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon maksimal 15 digit');
+                errorMessages.push('Nomor telepon maksimal 15 digit');
+                hasError = true;
+            }
         }
     }
     
-    // Validasi NIP
-    var nip = $('#survei_pm_nip').val().trim();
-    if (nip) {
-        if (!/^[0-9]+$/.test(nip)) {
-            showValidationMessage($('#survei_pm_nip'), 'NIP hanya boleh mengandung angka');
-            errorMessages.push('NIP tidak valid (hanya boleh angka)');
-            hasError = true;
-        } else if (nip.length < 8) {
-            showValidationMessage($('#survei_pm_nip'), 'NIP minimal 8 digit');
-            errorMessages.push('NIP minimal 8 digit');
-            hasError = true;
-        }
-    }
-    
-    // Validasi Email
-    var email = $('#survei_pm_email').val().trim();
-    if (email) {
-        if (!isValidEmail(email)) {
-            showValidationMessage($('#survei_pm_email'), 'Format email tidak valid (contoh: nama@email.com)');
-            errorMessages.push('Format email tidak valid');
-            hasError = true;
-        }
-    } else {
-        showValidationMessage($('#survei_pm_email'), 'Email wajib diisi');
-        errorMessages.push('Email wajib diisi');
-        hasError = true;
-    }
-    
-    // Validasi Telepon
-    var tlp = $('#survei_pm_tlp').val().trim();
-    if (tlp) {
-        var tlpDigits = tlp.replace(/[^0-9]/g, '');
-        if (tlpDigits.length < 10) {
-            showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon minimal 10 digit');
-            errorMessages.push('Nomor telepon minimal 10 digit');
-            hasError = true;
-        } else if (tlpDigits.length > 15) {
-            showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon maksimal 15 digit');
-            errorMessages.push('Nomor telepon maksimal 15 digit');
-            hasError = true;
-        }
-    }
-    
-    // Validasi POK Input - harus angka
+    // Validasi POK Input - harus angka (SELALU DIVALIDASI)
     var pokError = false;
     $('.pok-input').each(function() {
         var value = $(this).val();
@@ -722,7 +787,7 @@ function handleFormSubmission() {
             icon: 'error',
             html: 'Silakan perbaiki data berikut:<br><br>' + errorMessages.join('<br>')
         }).then(() => {
-            submitButton.prop('disabled', false).val('Perbaharui Data Survei');
+            submitButton.prop('disabled', false).val(isEditMode ? 'Update Jumlah Penerima Manfaat' : 'Simpan Data Survei');
         });
         return false;
     }
@@ -737,12 +802,17 @@ function proceedWithSubmission() {
         return false;
     }
     
-    // Validasi required fields
+    // Validasi required fields (skip field yang disabled)
     var forminput = document.getElementById('formSurvei<?php echo $iddata; ?>');
     var requiredattr = 0;
     var requiredattrdata = [];
     
     for(var i=0; i < forminput.elements.length; i++){
+        // Skip jika element disabled
+        if (forminput.elements[i].disabled) {
+            continue;
+        }
+        
         if(forminput.elements[i].value === '' && forminput.elements[i].hasAttribute('required')){
             var fieldName = forminput.elements[i].getAttribute('data-msg-required') || 
                            forminput.elements[i].getAttribute('placeholder') || 
@@ -753,9 +823,8 @@ function proceedWithSubmission() {
     }
     
     if(requiredattr == 0){
-        var isEditMode = <?php echo $is_edit_mode ? 'true' : 'false'; ?>;
         var confirmText = isEditMode ? 
-            'Apakah Anda yakin akan mengupdate data survei ini?' :
+            'Apakah Anda yakin akan mengupdate jumlah penerima manfaat?' :
             'Apakah Anda yakin akan menyimpan data survei ini?';
         
         Swal.fire({
@@ -783,6 +852,11 @@ function proceedWithSubmission() {
 }
 
     function addInputValidation() {
+        // SKIP VALIDASI INPUT jika field disabled (mode edit)
+        if (disableIdentityFields) {
+            return;
+        }
+        
         // Validasi Nama - hanya huruf dan spasi
         $('#survei_pm_nama').on('input', function() {
             var value = $(this).val();
@@ -943,7 +1017,7 @@ function proceedWithSubmission() {
                         icon: 'error',
                         html: 'Ada yang bermasalah!<br>' + (data && data.error ? data.error : 'Terjadi kesalahan')
                     }).then(() => {
-                        submitButton.prop('disabled', false).val('Perbaharui Data Survei');
+                        submitButton.prop('disabled', false).val(originalValue);
                     });
                     
                 }
@@ -958,7 +1032,7 @@ function proceedWithSubmission() {
                     icon: 'error',
                     html: 'Terjadi kesalahan saat mengirim data. Silakan coba lagi.'
                 }).then(() => {
-                    submitButton.prop('disabled', false).val('Perbaharui Data Survei');
+                    submitButton.prop('disabled', false).val(originalValue);
                 });
 
             },
