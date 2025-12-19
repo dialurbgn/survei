@@ -1325,13 +1325,15 @@ private function check_autologin_survei_pm()
         ];
     }
 
-	if (!is_valid_email($email)) {
+	$email_pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
+    if (!preg_match($email_pattern, $email)) {
         echo json_encode([
             "status" => "error", 
             "error" => "Format email tidak valid."
         ]);
         return;
     }
+
 	
 	$this->db->where('survei_pm_email', $email);
 	$this->db->where('survei_pm_nama', $nama);
@@ -1443,8 +1445,8 @@ public function actiondata_survei_pm()
         return;
     }
     
-    // Validasi email format - Gunakan helper function
-    if (!is_valid_email($survei_pm_email)) {
+	$email_pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
+    if (!preg_match($email_pattern, $survei_pm_email)) {
         echo json_encode([
             "status" => "error", 
             "error" => "Format email tidak valid."
