@@ -1325,12 +1325,12 @@ private function check_autologin_survei_pm()
         ];
     }
 
-    // Validasi email
-    if (!filter_var($email ?? '', FILTER_VALIDATE_EMAIL)) {
-        return [
-            'status' => false,
-            'error'  => 'Format email tidak valid'
-        ];
+	if (!is_valid_email($email)) {
+        echo json_encode([
+            "status" => "error", 
+            "error" => "Format email tidak valid."
+        ]);
+        return;
     }
 	
 	$this->db->where('survei_pm_email', $email);
