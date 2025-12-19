@@ -1326,7 +1326,7 @@ private function check_autologin_survei_pm()
     }
 
     // Validasi email
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (!filter_var($email ?? '', FILTER_VALIDATE_EMAIL)) {
         return [
             'status' => false,
             'error'  => 'Format email tidak valid'
@@ -1439,7 +1439,7 @@ public function actiondata_survei_pm()
     }
     
     // Validasi email format
-    if (!filter_var($survei_pm_email, FILTER_VALIDATE_EMAIL)) {
+    if (!filter_var($survei_pm_email ?? '', FILTER_VALIDATE_EMAIL)) {
         echo json_encode([
             "status" => "error", 
             "error" => "Format email tidak valid."
