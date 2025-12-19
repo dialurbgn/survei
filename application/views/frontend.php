@@ -540,7 +540,7 @@ $this->output
 				
 			</div>
 			
-			<footer id="footer" class="border-top-0 mt-0">
+			<footer id="footer" class="border-top-0 mt-0" style="background:#606365">
 				<div class="container py-4">
 					<div class="row py-5">
 						<div class="col-md-6 mb-4 mb-lg-0">
