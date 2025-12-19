@@ -164,8 +164,15 @@
                                                    data-msg-email="Masukkan alamat email yang valid."
                                                    maxlength="255"
                                                    autocomplete="email"
-                                                   required />
-                                            <small class="form-text text-muted">Email untuk identifikasi saat edit data</small>
+                                                   <?php echo $is_edit_mode ? 'readonly style="background-color: #e9ecef; cursor: not-allowed;"' : 'required'; ?> />
+                                            
+                                            <?php if ($is_edit_mode): ?>
+                                                <small class="form-text text-muted">
+                                                    <i class="fas fa-lock"></i> Email tidak dapat diubah (digunakan sebagai identitas)
+                                                </small>
+                                            <?php else: ?>
+                                                <small class="form-text text-muted">Email untuk identifikasi saat edit data</small>
+                                            <?php endif; ?>
                                         </div>
                                     
                                     <?php }elseif($tipe_data == 'NUMBER'){ ?>
@@ -222,65 +229,67 @@
                     </div>
                     
                     <!-- Section 2: Data Detail POK -->
-                    <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="600">
-                        <div class="card border-0 shadow-sm mb-4">
-                            <div class="card-header bg-success text-white">
-                                <h4 class="mb-0 font-weight-bold text-white">
-                                    <i class="fas fa-list-ol"></i> Detail Jumlah Penerima Manfaat MBG per Jenis
-                                </h4>
-                            </div>
-                            <div class="card-body p-4">
-                                
-                                <div class="alert alert-info mb-4">
-                                    <i class="fas fa-info-circle"></i> Masukkan jumlah penerima manfaat untuk setiap kategori. Isi dengan <strong>0</strong> jika tidak ada.
-                                </div>
-                                
-                                <div class="row">
-                                    <?php
-                                    if($query_column_detail){
-                                        foreach($query_column_detail as $rows_column){ 
-                                            $viewtable = $module_detail;
-                                            $width_column = 4;
-                                            $tipe_data = $this->ortyd->getTipeData($viewtable, $rows_column['name']);
-                                            $label_name = $this->ortyd->translate_column($viewtable, $rows_column['name']);
-                                            $label_name_text = $label_name;
-                                    ?>
-                                    
-                                    <div class="form-group col-lg-<?php echo $width_column; ?> ps-3 pe-3">
-                                        <label><?php echo $label_name; ?></label>
-                                        <input type="number" 
-                                               name="<?php echo $rows_column['name']; ?>" 
-                                               id="<?php echo $rows_column['name']; ?>" 
-                                               class="form-control text-3 h-auto py-2 pok-input" 
-                                               placeholder="0" 
-                                               value="<?php echo ${$rows_column['name']}; ?>"
-                                               min="0"
-                                               step="1" />
-                                        <small class="form-text text-muted">Jumlah: <span class="pok-value font-weight-semibold text-primary"><?php echo ${$rows_column['name']}; ?></span> orang</small>
-                                    </div>
-                                    
-                                    <?php 
-                                        }
-                                    } 
-                                    ?>
-                                </div>
-                                
-                                <!-- Total Penerima -->
-                                <div class="row mt-3">
-                                    <div class="col-lg-12">
-                                        <div class="alert alert-success mb-0">
-                                            <h5 class="mb-0 font-weight-bold">
-                                                <i class="fas fa-calculator"></i> Total Penerima Manfaat: 
-                                                <span id="totalPenerima" class="text-dark">0</span> Orang
-                                            </h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        </div>
+                    <!-- Section 2: Data Detail POK -->
+<div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="600">
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0 font-weight-bold text-white">
+                <i class="fas fa-list-ol"></i> Detail Jumlah Penerima Manfaat MBG per Jenis
+            </h4>
+        </div>
+        <div class="card-body p-4">
+            
+            <div class="alert alert-info mb-4">
+                <i class="fas fa-info-circle"></i> Masukkan jumlah penerima manfaat untuk setiap kategori. Isi dengan <strong>0</strong> jika tidak ada.
+            </div>
+            
+            <div class="row">
+                <?php
+                if($query_column_detail){
+                    foreach($query_column_detail as $rows_column){ 
+                        $viewtable = $module_detail;
+                        $width_column = 4;
+                        $tipe_data = $this->ortyd->getTipeData($viewtable, $rows_column['name']);
+                        $label_name = $this->ortyd->translate_column($viewtable, $rows_column['name']);
+                        $label_name_text = $label_name;
+                ?>
+                
+                <div class="form-group col-lg-<?php echo $width_column; ?> ps-3 pe-3">
+                    <label><?php echo $label_name; ?></label>
+                    <input type="text" 
+                           name="<?php echo $rows_column['name']; ?>" 
+                           id="<?php echo $rows_column['name']; ?>" 
+                           class="form-control text-3 h-auto py-2 pok-input" 
+                           placeholder="0" 
+                           value="<?php echo ${$rows_column['name']}; ?>"
+                           data-label="<?php echo $label_name_text; ?>"
+                           inputmode="numeric"
+                           pattern="[0-9]*"
+                           autocomplete="off" />
+                    <small class="form-text text-muted">Jumlah: <span class="pok-value font-weight-semibold text-primary"><?php echo ${$rows_column['name']}; ?></span> orang</small>
+                </div>
+                
+                <?php 
+                    }
+                } 
+                ?>
+            </div>
+            
+            <!-- Total Penerima -->
+            <div class="row mt-3">
+                <div class="col-lg-12">
+                    <div class="alert alert-success mb-0">
+                        <h5 class="mb-0 font-weight-bold">
+                            <i class="fas fa-calculator"></i> Total Penerima Manfaat: 
+                            <span id="totalPenerima" class="text-dark">0</span> Orang
+                        </h5>
                     </div>
-                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
                     <!-- CSRF Token -->
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" class="csrf_token" />
                     
@@ -318,21 +327,6 @@
 <!-- Load Required Libraries -->
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-<!-- Load Moment.js jika belum ada -->
-<script>
-if (typeof moment === 'undefined') {
-    document.write('<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"><\/script>');
-}
-</script>
-
-<!-- Load Daterangepicker jika belum ada -->
-<script>
-if (typeof $.fn.daterangepicker === 'undefined') {
-    document.write('<script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.14.1/daterangepicker.min.js"><\/script>');
-    document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.14.1/daterangepicker.css" />');
-}
-</script>
-
 <script>
 // Wait for all scripts to load
 (function() {
@@ -365,40 +359,367 @@ if (typeof $.fn.daterangepicker === 'undefined') {
     // Wait for document ready
     $(document).ready(function() {
         initializeSurveiForm();
+        addInputValidation();
     });
     
     function initializeSurveiForm() {
-        var isEditMode = <?php echo $is_edit_mode ? 'true' : 'false'; ?>;
+    var isEditMode = <?php echo $is_edit_mode ? 'true' : 'false'; ?>;
+    
+    // Proteksi email di mode edit
+    if (isEditMode) {
+        $('#survei_pm_email').attr('readonly', true)
+                             .css({
+                                 'background-color': '#e9ecef',
+                                 'cursor': 'not-allowed'
+                             })
+                             .on('keydown keypress keyup paste', function(e) {
+                                 e.preventDefault();
+                                 return false;
+                             });
+    }
+    
+    // Initialize Select2 if available
+    if (typeof $.fn.select2 !== 'undefined') {
+        $('.select2-popup').select2({
+            placeholder: 'Pilih...',
+            allowClear: true,
+            width: '100%'
+        });
+    }
+    
+    // Initialize Datetime Picker with fallback
+    initializeDatePicker();
+    
+    // Calculate total penerima
+    calculateTotal();
+    
+    // Proteksi input POK - hanya angka
+    $('.pok-input').on('input', function() {
+        var value = $(this).val();
+        // Hapus semua karakter kecuali angka
+        var cleaned = value.replace(/[^0-9]/g, '');
         
-        // Initialize Select2 if available
-        if (typeof $.fn.select2 !== 'undefined') {
-            $('.select2-popup').select2({
-                placeholder: 'Pilih...',
-                allowClear: true,
-                width: '100%'
-            });
+        if (value !== cleaned) {
+            $(this).val(cleaned);
+            var label = $(this).attr('data-label') || 'Field ini';
+            showValidationMessage($(this), label + ' hanya boleh diisi dengan angka');
+            setTimeout(() => {
+                clearValidationMessage($(this));
+            }, 2000);
         }
         
-        // Initialize Datetime Picker with fallback
-        initializeDatePicker();
-        
-        // Calculate total penerima
+        // Update display value
+        var val = parseInt(cleaned || 0);
+        if (val < 0) val = 0;
+        $(this).val(val);
+        $(this).next('.form-text').find('.pok-value').text(val);
         calculateTotal();
-        
-        // Update total on input change
-        $('.pok-input').on('input change', function() {
-            var val = parseInt($(this).val() || 0);
-            if (val < 0) val = 0;
-            $(this).val(val);
-            $(this).next('.form-text').find('.pok-value').text(val);
-            calculateTotal();
-        });
-        
-        // Form submission handler
-        $('#formSurvei<?php echo $iddata; ?>').on('submit', function(e) {
+    });
+    
+    // Proteksi paste - hanya angka
+    $('.pok-input').on('paste', function(e) {
+        e.preventDefault();
+        var pastedData = (e.originalEvent || e).clipboardData.getData('text/plain');
+        var cleaned = pastedData.replace(/[^0-9]/g, '');
+        $(this).val(cleaned).trigger('input');
+    });
+    
+    // Proteksi keypress - hanya angka
+    $('.pok-input').on('keypress', function(e) {
+        // Allow: backspace, delete, tab, escape, enter
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
+            // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.keyCode === 65 && e.ctrlKey === true) ||
+            (e.keyCode === 67 && e.ctrlKey === true) ||
+            (e.keyCode === 86 && e.ctrlKey === true) ||
+            (e.keyCode === 88 && e.ctrlKey === true) ||
+            // Allow: home, end, left, right
+            (e.keyCode >= 35 && e.keyCode <= 39)) {
+            return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && 
+            (e.keyCode < 96 || e.keyCode > 105)) {
             e.preventDefault();
-            handleFormSubmission();
+        }
+    });
+    
+    // Prevent negative values
+    $('.pok-input').on('change blur', function() {
+        var val = parseInt($(this).val() || 0);
+        if (val < 0) val = 0;
+        $(this).val(val);
+        $(this).next('.form-text').find('.pok-value').text(val);
+        calculateTotal();
+    });
+    
+    // Form submission handler
+    $('#formSurvei<?php echo $iddata; ?>').on('submit', function(e) {
+        e.preventDefault();
+        handleFormSubmission();
+    });
+}
+
+function handleFormSubmission() {
+    // Hapus semua pesan error sebelumnya
+    $('.is-invalid').removeClass('is-invalid');
+    $('.invalid-feedback').remove();
+    
+    var hasError = false;
+    var errorMessages = [];
+    
+    // Validasi Nama
+    var nama = $('#survei_pm_nama').val().trim();
+    if (nama) {
+        if (!/^[a-zA-Z\s]+$/.test(nama)) {
+            showValidationMessage($('#survei_pm_nama'), 'Nama hanya boleh mengandung huruf dan spasi');
+            errorMessages.push('Nama tidak valid (hanya boleh huruf dan spasi)');
+            hasError = true;
+        } else if (nama.length < 3) {
+            showValidationMessage($('#survei_pm_nama'), 'Nama minimal 3 karakter');
+            errorMessages.push('Nama minimal 3 karakter');
+            hasError = true;
+        }
+    }
+    
+    // Validasi NIP
+    var nip = $('#survei_pm_nip').val().trim();
+    if (nip) {
+        if (!/^[0-9]+$/.test(nip)) {
+            showValidationMessage($('#survei_pm_nip'), 'NIP hanya boleh mengandung angka');
+            errorMessages.push('NIP tidak valid (hanya boleh angka)');
+            hasError = true;
+        } else if (nip.length < 8) {
+            showValidationMessage($('#survei_pm_nip'), 'NIP minimal 8 digit');
+            errorMessages.push('NIP minimal 8 digit');
+            hasError = true;
+        }
+    }
+    
+    // Validasi Email
+    var email = $('#survei_pm_email').val().trim();
+    if (email) {
+        if (!isValidEmail(email)) {
+            showValidationMessage($('#survei_pm_email'), 'Format email tidak valid (contoh: nama@email.com)');
+            errorMessages.push('Format email tidak valid');
+            hasError = true;
+        }
+    } else {
+        showValidationMessage($('#survei_pm_email'), 'Email wajib diisi');
+        errorMessages.push('Email wajib diisi');
+        hasError = true;
+    }
+    
+    // Validasi Telepon
+    var tlp = $('#survei_pm_tlp').val().trim();
+    if (tlp) {
+        var tlpDigits = tlp.replace(/[^0-9]/g, '');
+        if (tlpDigits.length < 10) {
+            showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon minimal 10 digit');
+            errorMessages.push('Nomor telepon minimal 10 digit');
+            hasError = true;
+        } else if (tlpDigits.length > 15) {
+            showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon maksimal 15 digit');
+            errorMessages.push('Nomor telepon maksimal 15 digit');
+            hasError = true;
+        }
+    }
+    
+    // Validasi POK Input - harus angka
+    var pokError = false;
+    $('.pok-input').each(function() {
+        var value = $(this).val();
+        var label = $(this).attr('data-label') || 'Jumlah penerima';
+        
+        // Cek apakah ada karakter selain angka
+        if (value && !/^[0-9]+$/.test(value)) {
+            showValidationMessage($(this), label + ' hanya boleh diisi dengan angka');
+            errorMessages.push(label + ' tidak valid (hanya boleh angka)');
+            pokError = true;
+            hasError = true;
+        }
+        
+        // Cek nilai negatif
+        var numValue = parseInt(value || 0);
+        if (numValue < 0) {
+            $(this).val(0);
+            showValidationMessage($(this), label + ' tidak boleh negatif');
+            errorMessages.push(label + ' tidak boleh negatif');
+            pokError = true;
+            hasError = true;
+        }
+    });
+    
+    // Validasi total penerima tidak 0 (opsional)
+    var totalPenerima = 0;
+    $('.pok-input').each(function() {
+        totalPenerima += parseInt($(this).val() || 0);
+    });
+    
+    if (totalPenerima === 0) {
+        Swal.fire({
+            title: '<strong>Peringatan</strong>',
+            icon: 'warning',
+            html: 'Total penerima manfaat adalah 0. Apakah Anda yakin ingin melanjutkan?',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Lanjutkan',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#ffc107',
+            cancelButtonColor: '#6c757d'
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                proceedWithSubmission();
+            }
         });
+        return false;
+    }
+    
+    // Jika ada error validasi
+    if (hasError) {
+        Swal.fire({
+            title: '<strong>Validasi Gagal</strong>',
+            icon: 'error',
+            html: 'Silakan perbaiki data berikut:<br><br>' + errorMessages.join('<br>')
+        });
+        return false;
+    }
+    
+    proceedWithSubmission();
+    return false;
+}
+
+function proceedWithSubmission() {
+    // Cek reCAPTCHA
+    if (typeof grecaptcha !== 'undefined') {
+        var recaptchaResponse = grecaptcha.getResponse();
+        if (recaptchaResponse.length === 0) {
+            Swal.fire({
+                title: '<strong>Oops...</strong>',
+                icon: 'error',
+                html: 'Silahkan centang kotak reCAPTCHA untuk melanjutkan.'
+            });
+            return false;
+        }
+    }
+    
+    // Validasi required fields
+    var forminput = document.getElementById('formSurvei<?php echo $iddata; ?>');
+    var requiredattr = 0;
+    var requiredattrdata = [];
+    
+    for(var i=0; i < forminput.elements.length; i++){
+        if(forminput.elements[i].value === '' && forminput.elements[i].hasAttribute('required')){
+            var fieldName = forminput.elements[i].getAttribute('data-msg-required') || 
+                           forminput.elements[i].getAttribute('placeholder') || 
+                           forminput.elements[i].name;
+            requiredattrdata.push(fieldName + '<br>');
+            requiredattr = 1;
+        }
+    }
+    
+    if(requiredattr == 0){
+        var isEditMode = <?php echo $is_edit_mode ? 'true' : 'false'; ?>;
+        var confirmText = isEditMode ? 
+            'Apakah Anda yakin akan mengupdate data survei ini?' :
+            'Apakah Anda yakin akan menyimpan data survei ini?<br><br><span class="text-info"><i class="fas fa-info-circle"></i> Anda akan otomatis terdaftar di sistem</span>';
+        
+        Swal.fire({
+            title: '<strong>' + (isEditMode ? 'Update Data' : 'Simpan Data') + '</strong>',
+            icon: 'question',
+            html: confirmText + '<br><br><strong>Total Penerima: ' + $('#totalPenerima').text() + ' Orang</strong>',
+            showCancelButton: true,
+            confirmButtonText: isEditMode ? 'Ya, Update' : 'Ya, Simpan',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#0088cc',
+            cancelButtonColor: '#dc3545'
+        }).then(function(result) {
+            if (result.isConfirmed) {
+                submitForm();
+            }
+        });
+    } else {
+        var datanya = requiredattrdata.join('');
+        Swal.fire({
+            title: '<strong>Oops...</strong>',
+            icon: 'error',
+            html: 'Masih ada data wajib yang belum terisi:<br><br>' + datanya
+        });
+    }
+}
+
+    function addInputValidation() {
+        // Validasi Nama - hanya huruf dan spasi
+        $('#survei_pm_nama').on('input', function() {
+            var value = $(this).val();
+            // Hapus karakter yang bukan huruf atau spasi
+            var cleaned = value.replace(/[^a-zA-Z\s]/g, '');
+            if (value !== cleaned) {
+                $(this).val(cleaned);
+                showValidationMessage($(this), 'Nama hanya boleh mengandung huruf dan spasi');
+            } else {
+                clearValidationMessage($(this));
+            }
+        });
+        
+        // Validasi NIP - hanya angka
+        $('#survei_pm_nip').on('input', function() {
+            var value = $(this).val();
+            // Hapus karakter yang bukan angka
+            var cleaned = value.replace(/[^0-9]/g, '');
+            if (value !== cleaned) {
+                $(this).val(cleaned);
+                showValidationMessage($(this), 'NIP hanya boleh mengandung angka');
+            } else {
+                clearValidationMessage($(this));
+            }
+        });
+        
+        // Validasi Telepon - hanya angka, +, -, (, ), dan spasi
+        $('#survei_pm_tlp').on('input', function() {
+            var value = $(this).val();
+            // Hapus karakter selain angka dan karakter telepon yang valid
+            var cleaned = value.replace(/[^0-9+\-() ]/g, '');
+            if (value !== cleaned) {
+                $(this).val(cleaned);
+                showValidationMessage($(this), 'Nomor telepon hanya boleh mengandung angka dan karakter +, -, (, )');
+            } else {
+                clearValidationMessage($(this));
+            }
+        });
+        
+        // Validasi Email - real-time format check
+        $('#survei_pm_email').on('blur', function() {
+            var email = $(this).val();
+            if (email && !isValidEmail(email)) {
+                showValidationMessage($(this), 'Format email tidak valid');
+            } else {
+                clearValidationMessage($(this));
+            }
+        });
+    }
+    
+    function isValidEmail(email) {
+        var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailPattern.test(email);
+    }
+    
+    function showValidationMessage(element, message) {
+        // Hapus pesan error yang ada
+        element.removeClass('is-valid').addClass('is-invalid');
+        element.next('.invalid-feedback').remove();
+        
+        // Tambah pesan error baru
+        element.after('<div class="invalid-feedback d-block">' + message + '</div>');
+    }
+    
+    function clearValidationMessage(element) {
+        element.removeClass('is-invalid').addClass('is-valid');
+        element.next('.invalid-feedback').remove();
+        
+        // Hapus is-valid jika field kosong
+        if (!element.val()) {
+            element.removeClass('is-valid');
+        }
     }
     
     function initializeDatePicker() {
@@ -443,15 +764,77 @@ if (typeof $.fn.daterangepicker === 'undefined') {
     }
     
     function handleFormSubmission() {
-        // Validasi email
-        var email = $("input[name='survei_pm_email']").val();
-        var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        // Hapus semua pesan error sebelumnya
+        $('.is-invalid').removeClass('is-invalid');
+        $('.invalid-feedback').remove();
         
-        if (!emailPattern.test(email)) {
+        var hasError = false;
+        var errorMessages = [];
+        
+        // Validasi Nama
+        var nama = $('#survei_pm_nama').val().trim();
+        if (nama) {
+            if (!/^[a-zA-Z\s]+$/.test(nama)) {
+                showValidationMessage($('#survei_pm_nama'), 'Nama hanya boleh mengandung huruf dan spasi');
+                errorMessages.push('Nama tidak valid (hanya boleh huruf dan spasi)');
+                hasError = true;
+            } else if (nama.length < 3) {
+                showValidationMessage($('#survei_pm_nama'), 'Nama minimal 3 karakter');
+                errorMessages.push('Nama minimal 3 karakter');
+                hasError = true;
+            }
+        }
+        
+        // Validasi NIP
+        var nip = $('#survei_pm_nip').val().trim();
+        if (nip) {
+            if (!/^[0-9]+$/.test(nip)) {
+                showValidationMessage($('#survei_pm_nip'), 'NIP hanya boleh mengandung angka');
+                errorMessages.push('NIP tidak valid (hanya boleh angka)');
+                hasError = true;
+            } else if (nip.length < 8) {
+                showValidationMessage($('#survei_pm_nip'), 'NIP minimal 8 digit');
+                errorMessages.push('NIP minimal 8 digit');
+                hasError = true;
+            }
+        }
+        
+        // Validasi Email
+        var email = $('#survei_pm_email').val().trim();
+        if (email) {
+            if (!isValidEmail(email)) {
+                showValidationMessage($('#survei_pm_email'), 'Format email tidak valid (contoh: nama@email.com)');
+                errorMessages.push('Format email tidak valid');
+                hasError = true;
+            }
+        } else {
+            showValidationMessage($('#survei_pm_email'), 'Email wajib diisi');
+            errorMessages.push('Email wajib diisi');
+            hasError = true;
+        }
+        
+        // Validasi Telepon
+        var tlp = $('#survei_pm_tlp').val().trim();
+        if (tlp) {
+            // Hapus semua karakter kecuali angka untuk pengecekan
+            var tlpDigits = tlp.replace(/[^0-9]/g, '');
+            if (tlpDigits.length < 10) {
+                showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon minimal 10 digit');
+                errorMessages.push('Nomor telepon minimal 10 digit');
+                hasError = true;
+            } else if (tlpDigits.length > 15) {
+                showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon maksimal 15 digit');
+                errorMessages.push('Nomor telepon maksimal 15 digit');
+                hasError = true;
+            }
+        }
+        
+        // Jika ada error validasi
+        if (hasError) {
             Swal.fire({
-                title: '<strong>Oops...</strong>',
+                title: '<strong>Validasi Gagal</strong>',
                 icon: 'error',
-                html: 'Silahkan masukkan alamat email yang valid.'
+                html: 'Silakan perbaiki data berikut:<br><br>' + errorMessages.join('<br>')
             });
             return false;
         }
@@ -593,76 +976,47 @@ if (typeof $.fn.daterangepicker === 'undefined') {
 })();
 </script>
 
-<script>
-$(document).ready(function () {
-    let typingTimer;
-    const doneTypingInterval = 500; // ms
-    
-    // Field input text biasa
-    const textFields = [
-        '#survei_pm_nama',
-        '#survei_pm_nip',
-        '#survei_pm_email',
-        '#survei_pm_tlp'
-    ];
-    
-    // Field Select2
-    const select2Fields = [
-        '#survei_pm_kec_code'
-    ];
-    
-    // Event untuk input text biasa
-    $(textFields.join(',')).on('keydown', function (e) {
-        // Jika ENTER ditekan → langsung cek
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            getDataExist();
-            return;
-        }
-        // Debounce untuk key lain
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(function () {
-            getDataExist();
-        }, doneTypingInterval);
-    });
-    
-    // Event untuk Select2 - trigger saat value berubah
-    $(select2Fields.join(',')).on('change', function () {
-        getDataExist();
-    });
-    
-    function getDataExist() {
-        $.ajax({
-            url: '<?= site_url("frontend/getDataExist"); ?>',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                survei_pm_nama: $('#survei_pm_nama').val(),
-                survei_pm_nip: $('#survei_pm_nip').val(),
-                survei_pm_email: $('#survei_pm_email').val(),
-                survei_pm_tlp: $('#survei_pm_tlp').val(),
-                survei_pm_kec_code: $('#survei_pm_kec_code').val(),
-                <?= $this->security->get_csrf_token_name(); ?>:
-                    '<?= $this->security->get_csrf_hash(); ?>'
-            },
-            success: function (res) {
-                if (res.status === 'success') {
-                    location.reload(); // 🔥 AUTO RELOAD
-                } else if (res.status === 'error') {
-                    console.warn(res.error);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Ajax error:', error);
-            }
-        });
-    }
-});
-</script>
-
 
 <style>
 /* Custom Styling */
+
+/* Validation Styling */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-valid {
+    border-color: #28a745;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+.form-control:focus.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control:focus.is-valid {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
 .section {
     background-color: #f8f9fa;
 }
