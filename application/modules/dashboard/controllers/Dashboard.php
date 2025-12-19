@@ -157,6 +157,11 @@ class Dashboard extends MX_Controller {
 		
 		public function index()
 		{
+			$gid = $this->session->userdata('group_id');
+			if($gid == 3){
+				redirect('survei', 'refresh');			
+			}
+						
 			$logged_in = $this->session->userdata('google_id');
 			if ( $logged_in != null && $logged_in != '') {
 				
