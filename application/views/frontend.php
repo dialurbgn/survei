@@ -245,6 +245,19 @@ $this->output
                 width: 150px;
             }
         }
+		
+		@media (max-width: 991px) {
+			#header .header-nav-main:not(.header-nav-main-mobile-dark) nav > ul > li > a {
+				color: #FFF !important;
+			}
+			
+			#header .header-nav.header-nav-line nav .dropdown-reverse .current-page-active, #header .header-nav.header-nav-line nav > ul:not(:hover) li > a.active {
+			color: #FFF !Important;
+		}
+		
+		}
+		
+		
     </style>
 	
 	

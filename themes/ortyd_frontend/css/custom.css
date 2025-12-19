@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5 {
 }
 
 #header .header-nav.header-nav-line nav .dropdown-reverse .current-page-active, #header .header-nav.header-nav-line nav > ul:not(:hover) li > a.active {
-    color: #000 !Important;
+    color: #000;
 }
 
 #footer {
@@ -106,6 +106,12 @@ p {
 	#header .header-nav-main:not(.header-nav-main-mobile-dark) nav > ul > li > a {
 		color: #141d38 !important;
 	}
+}
+
+@media (max-width: 991px) {
+    #header .header-nav-main:not(.header-nav-main-mobile-dark) nav > ul > li > a.active {
+        background: #000 !important;
+    }
 }
 
 .goog-te-gadget-icon{
