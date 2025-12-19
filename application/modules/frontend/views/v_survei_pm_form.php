@@ -440,11 +440,8 @@
     <div class="row pb-2 mb-1">
         <div class="form-group col">
             <label>Verifikasi Keamanan <span class="text-danger">*</span></label>
-            <!-- Cloudflare Turnstile -->
-            <div class="cf-turnstile" 
-                 data-sitekey="<?php echo $site_key; ?>"
-                 data-theme="light"
-                 data-size="normal"></div>
+            <!-- Cloudflare Turnstile - Will be rendered explicitly by JavaScript -->
+            <div class="cf-turnstile"></div>
         </div>
     </div>
     
