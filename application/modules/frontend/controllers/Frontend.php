@@ -1651,9 +1651,22 @@ public function actiondata_survei_pm()
         $this->db->where('id', $survei_pm_id);
         $this->db->where('createdid', $userid);
         $success = $this->db->update($module, $data);
+		
+		save_history($module,           // nama table: 'data_maintenance'
+				 $survei_pm_id,                   // ID record
+				[],
+				'Data Update' // keterangan
+		);
+		
     } else {
         $success = $this->db->insert($module, $data);
         $survei_pm_id = $this->db->insert_id();
+		
+		save_history($module,           // nama table: 'data_maintenance'
+				 $survei_pm_id,                   // ID record
+				[],
+				'Data Insert' // keterangan
+		);
     }
     
     if (!$success) {
@@ -1663,13 +1676,7 @@ public function actiondata_survei_pm()
             "error" => "Gagal menyimpan data survei"
         ]);
         return;
-    }else{
-		save_history($module,           // nama table: 'data_maintenance'
-				 $survei_pm_id,                   // ID record
-				[],
-				'Data diupdate' // keterangan
-		);
-	}
+    }
     
     // Process detail data
     $data_detail = [];
@@ -1709,18 +1716,36 @@ public function actiondata_survei_pm()
 			$this->db->where('active', 1);
 			$row = $this->db->get($module_detail)->row();
 			$survei_pm_detail_id = $row ? $row->id : null;
+			
+			save_history($module_detail,           // nama table: 'data_maintenance'
+				 $survei_pm_detail_id,                   // ID record
+				[],
+				'Data Update' // keterangan
+			);
         } else {
             $data_detail['createdid'] = $userid;
             $data_detail['created'] = $timestamp;
             $data_detail['slug'] = $this->ortyd->sanitize('detail-' . $survei_pm_id, $module_detail);
             $success_detail = $this->db->insert($module_detail, $data_detail);
 			$survei_pm_detail_id = $this->db->insert_id();
+			
+			save_history($module_detail,           // nama table: 'data_maintenance'
+				 $survei_pm_detail_id,                   // ID record
+				[],
+				'Data Insert' // keterangan
+			);
         }
     } else {
         $data_detail['createdid'] = $userid;
         $data_detail['created'] = $timestamp;
         $data_detail['slug'] = $this->ortyd->sanitize('detail-' . $survei_pm_id, $module_detail);
         $success_detail = $this->db->insert($module_detail, $data_detail);
+		
+		save_history($module_detail,           // nama table: 'data_maintenance'
+				 $survei_pm_detail_id,                   // ID record
+				[],
+				'Data Insert' // keterangan
+		);
     }
     
     // Check transaction
@@ -1731,13 +1756,7 @@ public function actiondata_survei_pm()
             "error" => "Gagal menyimpan data detail"
         ]);
         return;
-    }else{
-		save_history($module_detail,           // nama table: 'data_maintenance'
-				 $survei_pm_detail_id,                   // ID record
-				[],
-				'Data diupdate' // keterangan
-		);
-	}
+    }
     
     $this->db->trans_commit();
     
