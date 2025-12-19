@@ -1088,5 +1088,85 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 
+
+<style>
+/* Banner cookie */
+#cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #333;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    display: none;
+    z-index: 9999;
+    font-family: Arial, sans-serif;
+}
+#cookie-banner button {
+    background: #f0c040;
+    color: #000;
+    border: none;
+    padding: 8px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+</style>
+
+<div id="cookie-banner">
+    This website uses cookies to ensure you get the best experience.
+    <button id="accept-cookies">Accept</button>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Fungsi untuk mendapatkan cookie
+    function getCookie(name) {
+        const value = "; " + document.cookie;
+        const parts = value.split("; " + name + "=");
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+    }
+
+    // Fungsi untuk membuat cookie
+    function setCookie(name, value, days) {
+        const d = new Date();
+        d.setTime(d.getTime() + (days*24*60*60*1000));
+        document.cookie = name + "=" + value + "; expires=" + d.toUTCString() + "; path=/";
+    }
+
+    // Cek apakah cookies di browser diizinkan
+    function areCookiesEnabled() {
+        try {
+            document.cookie = "testcookie=1";
+            const enabled = document.cookie.indexOf("testcookie") !== -1;
+            // Hapus cookie percobaan
+            document.cookie = "testcookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            return enabled;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // Tampilkan banner jika cookie permission belum ada
+    if (!getCookie('cookie_permission')) {
+        $('#cookie-banner').fadeIn();
+    }
+
+    // Klik tombol Accept
+    $('#accept-cookies').click(function() {
+        if (areCookiesEnabled()) {
+            setCookie('cookie_permission', 'granted', 30);
+            $('#cookie-banner').fadeOut();
+            alert('Thank you! Cookies are now enabled.');
+        } else {
+            alert('Cookies are blocked in your browser. Please enable cookies to continue.');
+        }
+    });
+});
+</script>
+
 </body>
 </html>
