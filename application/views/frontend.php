@@ -1006,9 +1006,6 @@ $this->output
                 const elapsedTime = Date.now() - this.startTime;
                 const remainingTime = Math.max(0, this.minLoadTime - elapsedTime);
                 
-                setTimeout(() => {
-                    this.hidePreloader();
-                }, remainingTime);
             }
             
             hidePreloader() {
