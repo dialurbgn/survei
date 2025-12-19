@@ -690,93 +690,6 @@ $this->output
 		
 		<?php //echo $this->ortyd->getHistoryAkses(); ?>
 		
-		
-		
- 
-<script type="text/javascript">
-                            function googleTranslateElementInit() {
-                                if ($(window).width() < 760) {
-                                    var objgoogle = new google.translate.TranslateElement({
-                                        pageLanguage: '',
-                                        includedLanguages: 'en,id,ar,zh-CN,fr,es',
-                                        autoDisplay: false
-                                    }, 'google_translate_element2');
-
-                                } else {
-                                    var objgoogle = new google.translate.TranslateElement({
-                                        pageLanguage: '',
-                                        includedLanguages: 'en,id,ar,zh-CN,fr,es',
-                                        autoDisplay: false
-                                    }, 'google_translate_element1');
-                                }
-
-                                function formatState(state) {
-                                    if (!state.id) {
-                                        return state.text;
-                                    }
-                                    var $state = $(
-                                        '<span><img src="https://www.kemendag.go.id/assets/flag/' + state.element.value.toLowerCase() +
-                                        '.png" width="32" class="img-flag" /> ' + state.text + '</span>'
-                                    );
-                                    return $state;
-                                };
-
-                                var select2 = $("#google_translate_element1 .skiptranslate select").select2({
-									width: '100%',	
-                                    templateSelection: formatState,
-                                    templateResult: formatState
-                                });
-
-                                var select3 = $("#google_translate_element2 .skiptranslate select").select2({
-									width: '100%',	
-                                    templateSelection: formatState,
-                                    templateResult: formatState
-                                });
-
-                                var totalchange = 0;
-                                select2.on('change', function(e) {
-                                    if (totalchange < 1) {
-                                        var gObj = $('.goog-te-combo');
-                                        var db = gObj.get(0);
-                                        totalchange += 1;
-                                        fireEvent(db, 'change');
-                                    } else {
-                                        setTimeout(function() {
-                                            totalchange = 0;
-                                        }, 100)
-                                    }
-
-                                });
-                                select3.on('change', function(e) {
-                                    if (totalchange < 1) {
-                                        var gObj = $('.goog-te-combo');
-                                        var db = gObj.get(0);
-                                        totalchange += 1;
-                                        fireEvent(db, 'change');
-                                    } else {
-                                        setTimeout(function() {
-                                            totalchange = 0;
-                                        }, 100)
-                                    }
-
-                                });
-                            }
-
-                            function fireEvent(el, e) {
-                                if (document.createEventObject) {
-                                    //for IE
-                                    var evt = document.createEventObject();
-                                    return el.fireEvent('on' + e, evt)
-                                } else {
-                                    // For other browsers
-                                    var evt = document.createEvent("HTMLEvents");
-                                    evt.initEvent(e, true, true);
-                                    return !el.dispatchEvent(evt);
-                                }
-                            }
-
-</script>
-
 
 <?php require_once('common/changeheader.php'); ?>
 
@@ -1027,10 +940,6 @@ $this->output
 		  }
 	</script>
 	
-	<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-						
-
-
 	</div>
 	
 		
