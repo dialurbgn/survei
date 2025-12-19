@@ -31,11 +31,35 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //$config['Mailchimp_api_key'] = '19bee860f7af671e03b187aaad50af1bb39c9780f270bb092e';
 
 #$config['base_url'] = getenv('DB_URL');
-$config['base_url'] = 'http://localhost/'; // fallback
-if (isset($_SERVER['HTTP_HOST'])) {
-    $config['base_url'] = 'http://'.$_SERVER['HTTP_HOST'].'/';
-    $config['base_url'] .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
+// Ambil host dari server
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+// Cek apakah running di localhost
+$is_localhost = (
+    $host === 'localhost' ||
+    $host === '127.0.0.1' ||
+    strpos($host, 'localhost:') === 0 ||
+    strpos($host, '127.0.0.1:') === 0 ||
+    preg_match('/^192\.168\./', $host) ||
+    preg_match('/^10\./', $host) ||
+    preg_match('/^172\.(1[6-9]|2[0-9]|3[0-1])\./', $host)
+);
+
+/*
+|--------------------------------------------------------------------------
+| Base Site URL
+|--------------------------------------------------------------------------
+*/
+if ($is_localhost) {
+    // Untuk localhost, gunakan HTTP (bukan HTTPS)
+    $config['base_url'] = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http";
+} else {
+    // Untuk production, gunakan HTTPS
+    $config['base_url'] = "https";
 }
+$config['base_url'] .= "://" . ($host ?: 'localhost');
+$config['base_url'] .= str_replace(basename($_SERVER['SCRIPT_NAME']), "", $_SERVER['SCRIPT_NAME']);
+
 define('ws_url', getenv('WS_URL'));
 define('base_url_site', getenv('DB_URL'));
 define('fileserver_url', $config['base_url'].'/api/upload/');

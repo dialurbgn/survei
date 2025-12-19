@@ -95,7 +95,7 @@
                         <div class="card border-0 shadow-sm mb-4">
                             <div class="card-header bg-primary text-white">
                                 <h4 class="mb-0 font-weight-bold text-white">
-                                    <i class="fas fa-user"></i> Data Identitas Penerima Manfaat
+                                    <i class="fas fa-user"></i> Data Identitas Petugas Survei
                                 </h4>
                                 <p class="mb-0 mt-2 small text-white"><i class="fas fa-exclamation-triangle"></i> 5 Field Wajib untuk Identifikasi</p>
                             </div>
@@ -182,6 +182,11 @@
                                             <?php 
                                                 $readonlyselect = '';
                                                 $disable = '';
+                                                $linkcustom = 'select2';
+                                                if($rows_column['name'] == 'survei_pm_wil_id'){
+                                                    $linkcustom = 'select2_kecamatan';
+                                                }
+                                                
                                                 include(APPPATH."views/common/select2formsidefront.php"); 
                                             ?>
                                         </div>
@@ -216,7 +221,7 @@
                         <div class="card border-0 shadow-sm mb-4">
                             <div class="card-header bg-success text-white">
                                 <h4 class="mb-0 font-weight-bold text-white">
-                                    <i class="fas fa-list-ol"></i> Detail Jumlah Penerima per Kategori (POK)
+                                    <i class="fas fa-list-ol"></i> Detail Jumlah Penerima Manfaat MBG per Jenis
                                 </h4>
                             </div>
                             <div class="card-body p-4">

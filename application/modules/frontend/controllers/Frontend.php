@@ -1524,6 +1524,47 @@ private function generate_unique_username($fullname)
     return $username;
 }
 
+
+		public function select2_kecamatan() {
+			
+			$table = $this->input->post('table',true);
+			$id = $this->input->post('id',true);
+			$name = $this->input->post('name',true);
+			$reference = $this->input->post('reference',true) ?? null;
+			$reference_id = $this->input->post('reference_id',true) ?? null;
+			$q = $this->input->post('q',true);
+			$spk_id = $this->input->post('spk_id');
+			
+			if(!$q){
+				$q = '';
+			}
+			
+			$selectnya = $table.'.'.$id.' as id,'.$table.'.'.$name.' as name, wil_keyword';
+			
+			$this->db->select($selectnya);
+			$this->db->group_start();
+			$this->db->where($table.'.'.$name.' ~*', $q);
+			$this->db->or_where($table.'.wil_keyword ~*', $q);
+			$this->db->group_end();
+			$this->db->order_by($table.'.'.$name,'DESC');
+			$query = $this->db->get($table);
+			$query = $query->result_array();
+			if($query){
+				$i=0;
+				foreach ($query as $rows){
+					$data[$i]['id'] = (int)$rows['id'];
+					$data[$i]['name']= $rows['name'];
+					$i++;
+				}
+				$data = array('csrf_hash' =>$this->security->get_csrf_hash(),'items' => $data);
+			}else{
+				$data = array('csrf_hash' =>$this->security->get_csrf_hash(),'items' => array());
+			}
+			
+			echo json_encode($data);
+			
+		}
+
 		
 		
 		

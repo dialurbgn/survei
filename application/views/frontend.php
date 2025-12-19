@@ -547,40 +547,6 @@ $this->output
 													<?= buildMenuItem($row, $tree, $this->ortyd); ?>
 												<?php endforeach; ?>
 
-												<?php if (!$this->session->userdata('userid')): ?>
-													<li style="display:none"><a class="nav-link" href="<?= base_url('register'); ?>"><i class="fas fa-user-plus me-1"></i>Daftar</a></li>
-													<li><a class="nav-link" href="<?= base_url('login'); ?>"><i class="fas fa-sign-in-alt me-1"></i>Log In</a></li>
-												<?php else: ?>
-													<li><a class="nav-link" href="<?= base_url('dashboard'); ?>"><i class="fa fa-desktop me-1"></i>Dashboard</a></li>
-													<li>
-													  <a href="javascript:;" class="nav-link logout-link">
-														<i class="fa fa-sign-out-alt me-1"></i>Keluar
-													  </a>
-													</li>
-													
-													<script>
-													  document.addEventListener('DOMContentLoaded', function () {
-														const logoutLink = document.querySelector('.logout-link');
-														logoutLink.addEventListener('click', function (e) {
-														  e.preventDefault();
-														  Swal.fire({
-															title: 'Yakin ingin keluar?',
-															text: 'Anda akan keluar dari sesi login.',
-															icon: 'warning',
-															showCancelButton: true,
-															confirmButtonColor: '#d33',
-															cancelButtonColor: '#6c757d',
-															confirmButtonText: 'Ya, keluar',
-															cancelButtonText: 'Batal'
-														  }).then((result) => {
-															if (result.isConfirmed) {
-															  window.location.href = "<?= base_url('login/logout'); ?>";
-															}
-														  });
-														});
-													  });
-													</script>
-												<?php endif; ?>
 											</ul>
 										</nav>
 									</div>
