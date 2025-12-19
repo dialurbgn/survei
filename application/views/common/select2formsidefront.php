@@ -365,9 +365,11 @@
 	.swal2-container {
 		z-index: 99999 !important;
 	}
+	</style>
 	<?php endif; ?>
 	
 	<?php if ($is_kecamatan): ?>
+	<style>
 	/* Custom styling untuk kecamatan select */
 	.select2-result-kecamatan {
 		padding: 8px 12px;
@@ -437,6 +439,5 @@
         font-size: 14px;
     }
 }
-
-	<?php endif; ?>
 	</style>
+	<?php endif; ?>
