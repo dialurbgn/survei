@@ -1663,7 +1663,13 @@ public function actiondata_survei_pm()
             "error" => "Gagal menyimpan data survei"
         ]);
         return;
-    }
+    }else{
+		save_history($module,           // nama table: 'data_maintenance'
+				 $saveId,                   // ID record
+				[],
+				'Data diupdate' // keterangan
+		);
+	}
     
     // Process detail data
     $data_detail = [];
@@ -1717,7 +1723,13 @@ public function actiondata_survei_pm()
             "error" => "Gagal menyimpan data detail"
         ]);
         return;
-    }
+    }else{
+		save_history($module_detail,           // nama table: 'data_maintenance'
+				 $saveId,                   // ID record
+				[],
+				'Data diupdate' // keterangan
+		);
+	}
     
     $this->db->trans_commit();
     
@@ -1727,7 +1739,7 @@ public function actiondata_survei_pm()
     $message = $isUpdate ? 
         "Data survei berhasil diupdate" : 
         "Data survei berhasil disimpan. Anda telah terdaftar di sistem.";
-    
+    			
     echo json_encode([
         "status" => "success",
         "message" => $message,
