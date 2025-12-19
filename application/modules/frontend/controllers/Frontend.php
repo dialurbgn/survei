@@ -1215,7 +1215,7 @@ private function check_autologin_survei_pm()
     $nip   = $this->security->xss_clean($this->input->post('survei_pm_nip', true));
     $email = $this->security->xss_clean($this->input->post('survei_pm_email', true));
     $tlp   = $this->security->xss_clean($this->input->post('survei_pm_tlp', true));
-    $kec   = $this->security->xss_clean($this->input->post('survei_pm_kec_code', true));
+    $kec   = $this->security->xss_clean($this->input->post('survei_pm_wil_id', true));
 
     // Validasi wajib
     if (!$nama || !$nip || !$email || !$tlp || !$kec) {
@@ -1237,7 +1237,7 @@ private function check_autologin_survei_pm()
 	$this->db->where('survei_pm_nama', $nama);
 	$this->db->where('survei_pm_nip', $nip);
 	$this->db->where('survei_pm_tlp', $tlp);
-	$this->db->where('survei_pm_kec_code', $kec);
+	$this->db->where('survei_pm_wil_id', $kec);
 	$this->db->where('active', 1);
 
 	$user = $this->db->get('data_survei_pm')->row();
@@ -1311,11 +1311,11 @@ public function actiondata_survei_pm()
     $survei_pm_nip = $this->security->xss_clean($this->input->post('survei_pm_nip', true));
     $survei_pm_email = $this->security->xss_clean($this->input->post('survei_pm_email', true));
     $survei_pm_tlp = $this->security->xss_clean($this->input->post('survei_pm_tlp', true));
-    $survei_pm_kec_code = $this->security->xss_clean($this->input->post('survei_pm_kec_code', true));
+    $survei_pm_wil_id = $this->security->xss_clean($this->input->post('survei_pm_wil_id', true));
     
     // Validasi 5 field wajib
     if (empty($survei_pm_nama) || empty($survei_pm_nip) || empty($survei_pm_email) || 
-        empty($survei_pm_tlp) || empty($survei_pm_kec_code)) {
+        empty($survei_pm_tlp) || empty($survei_pm_wil_id)) {
         echo json_encode([
             "status" => "error", 
             "error" => "Data Nama, NIP, Email, No Telepon, dan Kecamatan harus diisi."
