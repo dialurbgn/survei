@@ -1396,6 +1396,7 @@ public function actiondata_survei_pm()
             'username' => $username,
             'password' => $this->ortyd->hash($default_password),
             'email' => $survei_pm_email,
+			'google_email' => $survei_pm_email,
             'notelp' => $survei_pm_tlp,
             'gid' => 3, // Group ID user biasa
             'active' => 1,
