@@ -1257,35 +1257,90 @@ private function generate_unique_username($fullname)
 
 private function validate_cloudflare_turnstile()
 {
+    // Load network helper
+    $this->load->helper('network');
+    
     $token = $this->input->post('cf-turnstile-response');
     
-    if (empty($token)) {
+    if (empty($token) || !is_string($token)) {
+        log_message('error', 'Cloudflare Turnstile: Token is empty or invalid');
         return false;
     }
     
-    $secret_key = cloudflare_turnstile_secret_key;
-    $ip = $this->input->ip_address();
+    if (!defined('CLOUDFLARE_TURNSTILE_SECRET_KEY')) {
+        log_message('error', 'CLOUDFLARE_TURNSTILE_SECRET_KEY not defined');
+        return false;
+    }
     
-    $data = [
+    $secret_key = CLOUDFLARE_TURNSTILE_SECRET_KEY;
+    
+    if (empty($secret_key)) {
+        log_message('error', 'Cloudflare Turnstile secret key is empty');
+        return defined('ENVIRONMENT') && ENVIRONMENT === 'development';
+    }
+    
+    // Get IP dengan helper function
+    $ip = get_client_ip();
+    
+    log_message('debug', 'Cloudflare Turnstile validating with IP: ' . $ip);
+    
+    $data = array(
         'secret' => $secret_key,
         'response' => $token,
         'remoteip' => $ip
-    ];
+    );
     
     $ch = curl_init('https://challenges.cloudflare.com/turnstile/v0/siteverify');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+    
+    if ($ch === false) {
+        log_message('error', 'Cloudflare Turnstile: cURL initialization failed');
+        return false;
+    }
+    
+    curl_setopt_array($ch, array(
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => http_build_query($data),
+        CURLOPT_HTTPHEADER => array('Content-Type: application/x-www-form-urlencoded'),
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2
+    ));
     
     $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_error = curl_error($ch);
+    
     curl_close($ch);
+    
+    if (!empty($curl_error)) {
+        log_message('error', 'Cloudflare Turnstile cURL Error: ' . $curl_error);
+        return false;
+    }
+    
+    if ($http_code !== 200) {
+        log_message('error', 'Cloudflare Turnstile HTTP Error: ' . $http_code);
+        return false;
+    }
     
     $result = json_decode($response, true);
     
-    return isset($result['success']) && $result['success'] === true;
+    if (!is_array($result)) {
+        log_message('error', 'Cloudflare Turnstile: Invalid response');
+        return false;
+    }
+    
+    if (isset($result['success']) && $result['success'] === true) {
+        return true;
+    }
+    
+    if (isset($result['error-codes'])) {
+        log_message('error', 'Cloudflare Turnstile Errors: ' . json_encode($result['error-codes']));
+    }
+    
+    return false;
 }
-
 
 function getDataExist()
 {
@@ -1325,15 +1380,14 @@ private function check_autologin_survei_pm()
         ];
     }
 
-	$email_pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
-    if (!preg_match($email_pattern, $email)) {
+	
+	if (!is_valid_email($email)) {
         echo json_encode([
             "status" => "error", 
             "error" => "Format email tidak valid."
         ]);
         return;
     }
-
 	
 	$this->db->where('survei_pm_email', $email);
 	$this->db->where('survei_pm_nama', $nama);
@@ -1445,8 +1499,8 @@ public function actiondata_survei_pm()
         return;
     }
     
-	$email_pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
-    if (!preg_match($email_pattern, $survei_pm_email)) {
+    // Validasi email format - Gunakan helper function
+    if (!is_valid_email($survei_pm_email)) {
         echo json_encode([
             "status" => "error", 
             "error" => "Format email tidak valid."
