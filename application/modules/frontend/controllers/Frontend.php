@@ -1267,12 +1267,12 @@ private function validate_cloudflare_turnstile()
         return false;
     }
     
-    if (!defined('CLOUDFLARE_TURNSTILE_SECRET_KEY')) {
-        log_message('error', 'CLOUDFLARE_TURNSTILE_SECRET_KEY not defined');
+    if (!defined('cloudflare_turnstile_secret_key')) {
+        log_message('error', 'cloudflare_turnstile_secret_key not defined');
         return false;
     }
     
-    $secret_key = CLOUDFLARE_TURNSTILE_SECRET_KEY;
+    $secret_key = cloudflare_turnstile_secret_key;
     
     if (empty($secret_key)) {
         log_message('error', 'Cloudflare Turnstile secret key is empty');
