@@ -730,6 +730,7 @@ function handleFormSubmission() {
     proceedWithSubmission();
     return false;
 }
+
 function proceedWithSubmission() {
     // Cek Cloudflare Turnstile
     if (!validateTurnstile()) {
@@ -896,134 +897,7 @@ function proceedWithSubmission() {
         });
         $('#totalPenerima').text(total.toLocaleString('id-ID'));
     }
-    
-    function handleFormSubmission() {
-        // Hapus semua pesan error sebelumnya
-        $('.is-invalid').removeClass('is-invalid');
-        $('.invalid-feedback').remove();
-        
-        var hasError = false;
-        var errorMessages = [];
-        
-        // Validasi Nama
-        var nama = $('#survei_pm_nama').val().trim();
-        if (nama) {
-            if (!/^[a-zA-Z\s]+$/.test(nama)) {
-                showValidationMessage($('#survei_pm_nama'), 'Nama hanya boleh mengandung huruf dan spasi');
-                errorMessages.push('Nama tidak valid (hanya boleh huruf dan spasi)');
-                hasError = true;
-            } else if (nama.length < 3) {
-                showValidationMessage($('#survei_pm_nama'), 'Nama minimal 3 karakter');
-                errorMessages.push('Nama minimal 3 karakter');
-                hasError = true;
-            }
-        }
-        
-        // Validasi NIP
-        var nip = $('#survei_pm_nip').val().trim();
-        if (nip) {
-            if (!/^[0-9]+$/.test(nip)) {
-                showValidationMessage($('#survei_pm_nip'), 'NIP hanya boleh mengandung angka');
-                errorMessages.push('NIP tidak valid (hanya boleh angka)');
-                hasError = true;
-            } else if (nip.length < 8) {
-                showValidationMessage($('#survei_pm_nip'), 'NIP minimal 8 digit');
-                errorMessages.push('NIP minimal 8 digit');
-                hasError = true;
-            }
-        }
-        
-        // Validasi Email
-        var email = $('#survei_pm_email').val().trim();
-        if (email) {
-            if (!isValidEmail(email)) {
-                showValidationMessage($('#survei_pm_email'), 'Format email tidak valid (contoh: nama@email.com)');
-                errorMessages.push('Format email tidak valid');
-                hasError = true;
-            }
-        } else {
-            showValidationMessage($('#survei_pm_email'), 'Email wajib diisi');
-            errorMessages.push('Email wajib diisi');
-            hasError = true;
-        }
-        
-        // Validasi Telepon
-        var tlp = $('#survei_pm_tlp').val().trim();
-        if (tlp) {
-            // Hapus semua karakter kecuali angka untuk pengecekan
-            var tlpDigits = tlp.replace(/[^0-9]/g, '');
-            if (tlpDigits.length < 10) {
-                showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon minimal 10 digit');
-                errorMessages.push('Nomor telepon minimal 10 digit');
-                hasError = true;
-            } else if (tlpDigits.length > 15) {
-                showValidationMessage($('#survei_pm_tlp'), 'Nomor telepon maksimal 15 digit');
-                errorMessages.push('Nomor telepon maksimal 15 digit');
-                hasError = true;
-            }
-        }
-        
-        // Jika ada error validasi
-        if (hasError) {
-            var submitButton = $('#btnSubmitSurvei');
-            Swal.fire({
-                title: '<strong>Validasi Gagal</strong>',
-                icon: 'error',
-                html: 'Silakan perbaiki data berikut:<br><br>' + errorMessages.join('<br>')
-            }).then(() => {
-                submitButton.prop('disabled', false).val('Perbaharui Data Survei');
-            });
-            return false;
-        }
-        
-        
-        // Validasi required fields
-        var forminput = document.getElementById('formSurvei<?php echo $iddata; ?>');
-        var requiredattr = 0;
-        var requiredattrdata = [];
-        
-        for(var i=0; i < forminput.elements.length; i++){
-            if(forminput.elements[i].value === '' && forminput.elements[i].hasAttribute('required')){
-                var fieldName = forminput.elements[i].getAttribute('data-msg-required') || 
-                               forminput.elements[i].getAttribute('placeholder') || 
-                               forminput.elements[i].name;
-                requiredattrdata.push(fieldName + '<br>');
-                requiredattr = 1;
-            }
-        }
-        
-        if(requiredattr == 0){
-            var isEditMode = <?php echo $is_edit_mode ? 'true' : 'false'; ?>;
-            var confirmText = isEditMode ? 
-                'Apakah Anda yakin akan mengupdate data survei ini?' :
-                'Apakah Anda yakin akan menyimpan data survei ini?<br><br><span class="text-info"><i class="fas fa-info-circle"></i> Anda akan otomatis terdaftar di sistem</span>';
-            
-            Swal.fire({
-                title: '<strong>' + (isEditMode ? 'Update Data' : 'Simpan Data') + '</strong>',
-                icon: 'question',
-                html: confirmText + '<br><br><strong>Total Penerima: ' + $('#totalPenerima').text() + ' Orang</strong>',
-                showCancelButton: true,
-                confirmButtonText: isEditMode ? 'Ya, Update' : 'Ya, Simpan',
-                cancelButtonText: 'Batal',
-                confirmButtonColor: '#0088cc',
-                cancelButtonColor: '#dc3545'
-            }).then(function(result) {
-                if (result.isConfirmed) {
-                    submitForm();
-                }
-            });
-        } else {
-            var datanya = requiredattrdata.join('');
-            Swal.fire({
-                title: '<strong>Oops...</strong>',
-                icon: 'error',
-                html: 'Masih ada data wajib yang belum terisi:<br><br>' + datanya
-            });
-        }
-        
-        return false;
-    }
-    
+
     function submitForm() {
         var submitButton = $('#btnSubmitSurvei');
         var originalValue = submitButton.val();
