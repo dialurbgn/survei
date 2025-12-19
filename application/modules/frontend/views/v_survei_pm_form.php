@@ -779,4 +779,10 @@ $(document).ready(function () {
         padding-right: 2rem !important;
     }
 }
+
+.select2-container--default .select2-selection--single {
+   padding-top: 5px !important;
+    padding-bottom: 10px !important;
+    height: 40px !important;
+}
 </style>
