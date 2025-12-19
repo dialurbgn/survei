@@ -1208,6 +1208,8 @@ function proceedWithSubmission() {
 })();
 </script>
 
+<!-- Load Cloudflare Turnstile -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <style>
 /* Custom Styling */

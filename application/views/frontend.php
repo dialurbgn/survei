@@ -324,9 +324,7 @@ $this->output
 		<script type="text/javascript" src="<?php echo base_url(); ?>themes/ortyd_frontend/vendor/select2/js/select2.min.js" ></script> 
 		<script type="text/javascript" src="<?php echo base_url(); ?>themes/ortyd/assets/js/custom/bootbox.min.js" type="text/javascript"></script> 
 		
-		<!-- Load Cloudflare Turnstile -->
-		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
+	
 		<script>
 			let csrfName = '<?= $this->security->get_csrf_token_name(); ?>';
 			let csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
