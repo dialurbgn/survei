@@ -71,12 +71,17 @@
                         <ul class="mb-0 ps-4">
                             <li>Anda <strong>tidak perlu mendaftar</strong> terlebih dahulu</li>
                             <li>Cukup isi <strong>5 data pertama</strong> (Nama, NIP, Email, No Telp, Kecamatan)</li>
-                            <li>Sistem akan otomatis mendaftarkan Anda</li>
+                            <li>Sistem akan otomatis mendaftarkan Anda, Pastikan email yang di daftarkan adalah email yang aktif</li>
                             <li>Untuk mengubah data di kemudian hari, isi kembali <strong>5 data yang sama</strong></li>
                             <li>Email digunakan sebagai identitas untuk akses data Anda</li>
                         </ul>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        
+                        <a href="<?php echo $googlelink; ?>" class="btn btn-flex  btn-color-black btn-outline btn-text-black-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
+										<img alt="Logo" src="<?php echo base_url(); ?>themes/ortyd/assets/media/svg/brand-logos/google-icon.svg" class="h-15px me-3" />Lanjutkan Isian dengan Google</a>
+                                        
                     </div>
+                   
                 </div>
                 <?php else: ?>
                 <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="200">

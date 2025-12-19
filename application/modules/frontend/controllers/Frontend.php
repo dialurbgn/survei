@@ -1100,6 +1100,89 @@ class Frontend extends MX_Controller {
         $data['datarow'] = null;
     }
     
+	
+	$logged_in = $this->session->userdata('google_id');
+			if ( $logged_in != null && $logged_in != '') {
+				
+				$google_client = new Google_Client();
+			
+				$google_client->setClientId(google_id); //Define your ClientID
+				
+				$google_client->setClientSecret(google_secret); //Define your Client Secret Key
+				
+				$google_client->setRedirectUri(base_url('users_profile/google_remove')); //Define your Redirect Uri
+				
+				$google_client->addScope('email');
+				
+				$google_client->addScope('profile');
+				
+				$linkgoogle = $google_client->createAuthUrl();
+				
+				$provider = new \League\OAuth2\Client\Provider\Facebook([
+					'clientId'          => facebook_id,
+					'clientSecret'      => facebook_secret,
+					'redirectUri'       => base_url('login/facebook'),
+					'graphApiVersion'   => 'v2.10',
+				]);
+				
+				$authUrl = $provider->getAuthorizationUrl([
+					'scope' => ['email'],
+				]);
+
+			}else{
+				//$aktivasi = $this->ortyd->generateAktivasi();
+				//$data['generatelink'] = $aktivasi;
+				
+				$google_client = new Google_Client();
+			
+				$google_client->setClientId(google_id); //Define your ClientID
+				
+				$google_client->setClientSecret(google_secret); //Define your Client Secret Key
+				
+				$google_client->setRedirectUri(base_url('login/google')); //Define your Redirect Uri
+				
+				$google_client->addScope('email');
+				
+				$google_client->addScope('profile');
+				
+				$linkgoogle = $google_client->createAuthUrl();
+				
+				$provider = new \League\OAuth2\Client\Provider\Facebook([
+					'clientId'          => facebook_id,
+					'clientSecret'      => facebook_secret,
+					'redirectUri'       => base_url('login/facebook'),
+					'graphApiVersion'   => 'v2.10',
+				]);
+				
+				$authUrl = $provider->getAuthorizationUrl([
+					'scope' => ['email'],
+				]);
+
+			
+				if(isset($_GET['email'])){
+					$email_sso = $_GET['email'];
+				}else{
+					$email_sso = $this->session->userdata('email_sso');
+				}
+				if($email_sso != ''){
+					//$email_sso = $this->session->userdata('email_sso');
+					$username = $email_sso;
+					$password = $email_sso;
+					$logindata = $this->m_model_data->check_login($username, $password);
+					//echo $logindata;
+					//die();
+					if ( $logindata == 'success' || $logindata == 'validate' || $logindata == 'firstblood') {
+						$userid = 3;
+						$logged_in = $this->session->userdata('logged_in');
+						if ( $userid != null && $logged_in == TRUE) {
+							redirect('dashboard?message=success', 'refresh');
+						}
+					}
+				}
+			}
+			
+			$data['googlelink'] = $linkgoogle;
+			
     $this->template->load('frontend', 'frontend/views/v_survei_pm_form', $data);
 }
 
