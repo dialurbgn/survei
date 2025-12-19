@@ -1068,7 +1068,7 @@ public function survei_pm()
     $data['headurl'] = 'frontend';
     $data['og_tipe'] = 'Form Survei PM - '.title;
     $data['og_title'] = $data['title'].' - '.title;
-    $data['og_url'] = base_url('survei-pm');
+    $data['og_url'] = base_url('survei');
     $data['meta_description'] = $data['title'].' - '.title;
     $data['action'] = base_url().'frontend/actiondata_survei_pm';
     
@@ -1201,13 +1201,13 @@ public function google_callback_survei()
             }
             
             // Redirect kembali ke form survei
-            redirect('survei-pm', 'refresh');
+            redirect('survei', 'refresh');
         } else {
             // Error dari Google
-            redirect('survei-pm?error=google_auth_failed', 'refresh');
+            redirect('survei?error=google_auth_failed', 'refresh');
         }
     } else {
-        redirect('survei-pm', 'refresh');
+        redirect('survei', 'refresh');
     }
 }
 
