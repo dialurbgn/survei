@@ -1741,6 +1741,7 @@ public function select2_kecamatan() {
         $this->db->where($table.'.active', 1);
     }
     
+	$this->db->where($table.'.wil_level', 3);
     // Count total for pagination
     $total_query = clone $this->db;
     $total_count = $total_query->count_all_results($table, false);
