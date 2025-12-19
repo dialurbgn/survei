@@ -1390,7 +1390,6 @@ private function check_autologin_survei_pm()
     ];
 }
 
-
 public function actiondata_survei_pm() 
 {
     header('X-Robots-Tag: noindex, nofollow', true);
@@ -1409,7 +1408,7 @@ public function actiondata_survei_pm()
     }
     
     $this->load->library(['form_validation']);
-    $this->load->helper(['security']);
+    $this->load->helper(['security', 'validation']);
     
     // Validasi Cloudflare Turnstile
     if (!$this->validate_cloudflare_turnstile()) {
@@ -1421,20 +1420,18 @@ public function actiondata_survei_pm()
     }
     
     // Ambil dan sanitasi data dengan pengecekan null
-    $survei_pm_nama = $this->input->post('survei_pm_nama', true);
-    $survei_pm_nama = $survei_pm_nama ? $this->security->xss_clean($survei_pm_nama) : '';
+    $survei_pm_nama = $this->input->post('survei_pm_nama', true) ?? '';
+    $survei_pm_nip = $this->input->post('survei_pm_nip', true) ?? '';
+    $survei_pm_email = $this->input->post('survei_pm_email', true) ?? '';
+    $survei_pm_tlp = $this->input->post('survei_pm_tlp', true) ?? '';
+    $survei_pm_wil_id = $this->input->post('survei_pm_wil_id', true) ?? '';
     
-    $survei_pm_nip = $this->input->post('survei_pm_nip', true);
-    $survei_pm_nip = $survei_pm_nip ? $this->security->xss_clean($survei_pm_nip) : '';
-    
-    $survei_pm_email = $this->input->post('survei_pm_email', true);
-    $survei_pm_email = $survei_pm_email ? $this->security->xss_clean($survei_pm_email) : '';
-    
-    $survei_pm_tlp = $this->input->post('survei_pm_tlp', true);
-    $survei_pm_tlp = $survei_pm_tlp ? $this->security->xss_clean($survei_pm_tlp) : '';
-    
-    $survei_pm_wil_id = $this->input->post('survei_pm_wil_id', true);
-    $survei_pm_wil_id = $survei_pm_wil_id ? $this->security->xss_clean($survei_pm_wil_id) : '';
+    // Trim whitespace
+    $survei_pm_nama = trim($survei_pm_nama);
+    $survei_pm_nip = trim($survei_pm_nip);
+    $survei_pm_email = trim($survei_pm_email);
+    $survei_pm_tlp = trim($survei_pm_tlp);
+    $survei_pm_wil_id = trim($survei_pm_wil_id);
     
     // Validasi 5 field wajib
     if (empty($survei_pm_nama) || empty($survei_pm_nip) || empty($survei_pm_email) || 
@@ -1446,8 +1443,8 @@ public function actiondata_survei_pm()
         return;
     }
     
-    // Validasi email format - FIX untuk PHP 8.1+
-    if (!filter_var($survei_pm_email, FILTER_VALIDATE_EMAIL)) {
+    // Validasi email format - Gunakan helper function
+    if (!is_valid_email($survei_pm_email)) {
         echo json_encode([
             "status" => "error", 
             "error" => "Format email tidak valid."
