@@ -297,6 +297,25 @@ $this->output
 
 		<script src="<?php echo base_url(); ?>themes/ortyd_frontend/vendor/jquery/jquery.min.js"></script>
 		
+		<?php
+		if (ENVIRONMENT == 'production') {
+			?>
+			<script>
+				// Nonaktifkan semua console methods
+				(function() {
+					var noop = function() {};
+					if (typeof window.console === "object") {
+						var methods = ["log", "warn", "error", "info", "debug", "trace", "group", "groupCollapsed", "groupEnd", "assert"];
+						for (var i = 0; i < methods.length; i++) {
+							window.console[methods[i]] = noop;
+						}
+					}
+				})();
+			</script>
+			<?php
+		}
+		?>
+		
 		<!-- Head Libs -->
 		<script src="<?php echo base_url(); ?>themes/ortyd_frontend/vendor/modernizr/modernizr.min.js"></script>
 		
