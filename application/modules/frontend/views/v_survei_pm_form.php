@@ -551,6 +551,7 @@ var disableIdentityFields = <?php echo $disable_identity_fields ? 'true' : 'fals
         // Disable semua field identitas secara permanen
         $('#survei_pm_nama, #survei_pm_nip, #survei_pm_email, #survei_pm_tlp, #survei_pm_wil_id')
             .attr('readonly', true)
+            .removeAttr('required') // PENTING: Hapus required attribute
             .css({
                 'background-color': '#e9ecef',
                 'cursor': 'not-allowed',
@@ -563,7 +564,7 @@ var disableIdentityFields = <?php echo $disable_identity_fields ? 'true' : 'fals
         
         // Disable select2 untuk kecamatan jika ada
         if ($('#survei_pm_wil_id').length > 0) {
-            $('#survei_pm_wil_id').prop('disabled', true);
+            $('#survei_pm_wil_id').prop('disabled', true).removeAttr('required');
             if (typeof $.fn.select2 !== 'undefined') {
                 $('#survei_pm_wil_id').select2('destroy');
                 $('#survei_pm_wil_id').prop('disabled', true);
@@ -802,21 +803,29 @@ function proceedWithSubmission() {
         return false;
     }
     
-    // Validasi required fields (skip field yang disabled)
+    // Validasi required fields (skip field yang disabled atau readonly)
     var forminput = document.getElementById('formSurvei<?php echo $iddata; ?>');
     var requiredattr = 0;
     var requiredattrdata = [];
     
     for(var i=0; i < forminput.elements.length; i++){
-        // Skip jika element disabled
-        if (forminput.elements[i].disabled) {
+        var element = forminput.elements[i];
+        
+        // Skip jika element disabled, readonly, atau hidden
+        if (element.disabled || element.readOnly || element.type === 'hidden') {
             continue;
         }
         
-        if(forminput.elements[i].value === '' && forminput.elements[i].hasAttribute('required')){
-            var fieldName = forminput.elements[i].getAttribute('data-msg-required') || 
-                           forminput.elements[i].getAttribute('placeholder') || 
-                           forminput.elements[i].name;
+        // Skip jika element memiliki style pointer-events: none (disabled via CSS)
+        var style = window.getComputedStyle(element);
+        if (style.pointerEvents === 'none') {
+            continue;
+        }
+        
+        if(element.value === '' && element.hasAttribute('required')){
+            var fieldName = element.getAttribute('data-msg-required') || 
+                           element.getAttribute('placeholder') || 
+                           element.name;
             requiredattrdata.push(fieldName + '<br>');
             requiredattr = 1;
         }
