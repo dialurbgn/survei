@@ -1403,7 +1403,7 @@ public function actiondata_survei_pm()
         echo json_encode([
             "status" => "error", 
             "error" => "Anda harus login terlebih dahulu untuk mengisi survei.",
-            "redirect" => base_url('survei-pm')
+            "redirect" => base_url('survei')
         ]);
         return;
     }
