@@ -44,8 +44,8 @@ COPY . .
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html && \
-    mkdir -p /var/www/html/writable && \
-    chmod -R 777 /var/www/html/writable
+    mkdir -p /var/www/html/log && \
+    chmod -R 777 /var/www/html/log
 
 # Expose port
 EXPOSE 9000
