@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Jalankan Node.js PM2 jika ada
 if [ -f /var/www/html/process.yml ]; then
