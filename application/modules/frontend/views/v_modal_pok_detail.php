@@ -1372,7 +1372,7 @@ input[type=number] {
         $('#btnSaveText').text('Simpan');
         
         if ($('#wil_id').length && typeof $.fn.select2 !== 'undefined') {
-            $('#wil_id').val('').trigger('change');
+            //$('#wil_id').val('').trigger('change');
         }
         
         $('.border-danger, .border-warning, .border-success').removeClass('border-danger border-warning border-success');
