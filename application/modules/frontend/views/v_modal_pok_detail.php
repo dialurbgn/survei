@@ -512,8 +512,14 @@
     
     $(document).ready(function() {
         console.log('POK Detail Handler - Initializing...');
-        initPOKDetailHandlers();
-        initFormHandlers();
+        // HANYA INIT JIKA MODE EDIT
+		if (typeof isEditMode !== 'undefined' && isEditMode === true) {
+			initPOKDetailHandlers();
+			initFormHandlers();
+			console.log('POK Detail Handler - Ready for EDIT MODE!');
+		} else {
+			console.log('POK Detail Handler - Skipped (not in edit mode)');
+		}
     });
     
     /**

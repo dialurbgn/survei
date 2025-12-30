@@ -396,7 +396,7 @@
                             </div>
                         </div>
                     </div>
-                    
+ <?php if ($is_edit_mode): ?>                   
                    <!-- Section 2: Data Detail POK -->
 <div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="600">
     <div class="card border-0 shadow-sm mb-4 <?php echo !$is_logged_in ? 'opacity-50' : ''; ?>">
@@ -467,6 +467,24 @@
         </div>
     </div>
 </div>
+
+<?php else: ?>
+<!-- MODE CREATE - INFO MESSAGE -->
+<div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="600">
+    <div class="card border-0 shadow-sm mb-4 border-warning">
+        <div class="card-body p-4 text-center">
+            <i class="fas fa-info-circle fa-3x text-warning mb-3"></i>
+            <h5 class="font-weight-bold">Detail Penerima Manfaat</h5>
+            <p class="text-muted mb-3">
+                Detail jumlah penerima manfaat per kategori akan muncul setelah Anda menyimpan data identitas survei.
+            </p>
+            <p class="text-muted small mb-0">
+                <i class="fas fa-arrow-down"></i> Silakan simpan data identitas terlebih dahulu di bawah ini.
+            </p>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- CSRF Token -->
 <input type="hidden" id="token_csrf" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" class="csrf_token" />
@@ -725,8 +743,14 @@ var disableIdentityFields = <?php echo $disable_identity_fields ? 'true' : 'fals
     // Initialize Datetime Picker dengan fallback
     initializeDatePicker();
     
-    // Calculate total penerima
-    calculateTotal();
+    // HANYA INIT POK DETAIL JIKA MODE EDIT
+    if (isEditMode) {
+        // Calculate total penerima
+        calculateTotal();
+        
+        // Initialize POK detail buttons (akan dibuat di v_modal_pok_detail.php)
+        initPOKDetailButtons();
+    }
     
     // Proteksi input POK - hanya angka (SELALU AKTIF - tidak tergantung mode)
     $('.pok-input').on('input', function() {
@@ -794,6 +818,16 @@ var disableIdentityFields = <?php echo $disable_identity_fields ? 'true' : 'fals
         handleFormSubmission();
     });
 }
+
+// Function untuk initialize POK detail buttons
+function initPOKDetailButtons() {
+    // Hanya jalankan jika mode edit
+    if (!isEditMode) return;
+    
+    // POK detail handler akan di-init dari v_modal_pok_detail.php
+    console.log('POK Detail buttons ready for edit mode');
+}
+
 
 function handleFormSubmission() {
     // Hapus semua pesan error sebelumnya
@@ -1088,6 +1122,12 @@ function proceedWithSubmission() {
     }
     
     function calculateTotal() {
+        // HANYA HITUNG JIKA MODE EDIT
+        if (!isEditMode) {
+            $('#totalPenerima').text('0');
+            return;
+        }
+        
         var total = 0;
         $('.pok-input').each(function() {
             total += parseInt($(this).val() || 0);
@@ -1118,11 +1158,11 @@ function proceedWithSubmission() {
                     }
                 }
                 
-                if(data && data.status == "success"){
+                 if(data && data.status == "success"){
                     var successMessage = data.message || 'Data berhasil disimpan';
                     
                     if (data.is_new_user) {
-                        successMessage += '<br><br><div class="alert alert-info mt-3 text-start">✓ Anda telah terdaftar di sistem<br>✓ Gunakan 5 data yang sama untuk edit data di kemudian hari</div>';
+                        successMessage += '<br><br><div class="alert alert-info mt-3 text-start">✓ Anda telah terdaftar di sistem<br>✓ Data identitas Anda tersimpan</div>';
                     }
                     
                     Swal.fire({
@@ -1132,7 +1172,12 @@ function proceedWithSubmission() {
                         confirmButtonText: 'OK',
                         confirmButtonColor: '#0088cc'
                     }).then(function() {
-                        window.location.reload();
+                        // REDIRECT KE MODE EDIT JIKA INSERT BARU
+                        if (data.redirect_to_edit && data.survei_id) {
+                            window.location.href = '<?php echo base_url("survei-pm"); ?>';
+                        } else {
+                            window.location.reload();
+                        }
                     });
                     
                 } else {

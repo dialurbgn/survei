@@ -1765,16 +1765,18 @@ public function actiondata_survei_pm()
     //$this->saveEvidence($survei_pm_id, $module);
     
     $message = $isUpdate ? 
-        "Data survei berhasil diupdate" : 
-        "Data survei berhasil disimpan. Anda telah terdaftar di sistem.";
-    			
-    echo json_encode([
-        "status" => "success",
-        "message" => $message,
-        "is_new_user" => !$existing_user,
-        "is_update" => $isUpdate,
-        "csrf_hash" => $this->security->get_csrf_hash()
-    ]);
+		"Data survei berhasil diupdate" : 
+		"Data survei berhasil disimpan. Halaman akan dimuat ulang untuk mengisi detail penerima manfaat.";
+
+	echo json_encode([
+		"status" => "success",
+		"message" => $message,
+		"is_new_user" => !$existing_user,
+		"is_update" => $isUpdate,
+		"survei_id" => $survei_pm_id, // TAMBAHKAN INI
+		"redirect_to_edit" => !$isUpdate, // TAMBAHKAN INI - true jika insert baru
+		"csrf_hash" => $this->security->get_csrf_hash()
+	]);
 }
 
 public function select2_kecamatan() {
