@@ -1019,18 +1019,25 @@ function proceedWithSubmission() {
             return;
         }
         
-        // Validasi Nama - hanya huruf dan spasi
-        $('#survei_pm_nama').on('input', function() {
-            var value = $(this).val();
-            // Hapus karakter yang bukan huruf atau spasi
-            var cleaned = value.replace(/[^a-zA-Z\s]/g, '');
-            if (value !== cleaned) {
-                $(this).val(cleaned);
+       $('#survei_pm_nama').on('input', function () {
+            let value = $(this).val();
+
+            // hanya huruf & spasi
+            let cleaned = value.replace(/[^a-zA-Z\s]/g, '');
+
+            // batasi maksimal 20 karakter
+            if (cleaned.length > 20) {
+                cleaned = cleaned.substring(0, 20);
+                showValidationMessage($(this), 'Nama maksimal 20 huruf');
+            } else if (value !== cleaned) {
                 showValidationMessage($(this), 'Nama hanya boleh mengandung huruf dan spasi');
             } else {
                 clearValidationMessage($(this));
             }
+
+            $(this).val(cleaned);
         });
+
         
         // Validasi NIP - hanya angka, max 20 digit
         $('#survei_pm_nip').on('input', function() {
