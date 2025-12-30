@@ -1675,7 +1675,7 @@ $(document).on('keypress', '#searchAddressInput', function(e) {
                         timer: 2000
                     });
                 } else {
-                    Swal.fire('Tidak Ditemukan', 'Coba kata kunci lain', 'warning');
+                    Swal.fire('Posisi Map Tidak Ditemukan', 'Coba kata kunci lain pada pencarian alamat', 'warning');
                 }
             })
             .catch(err => {
