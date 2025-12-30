@@ -1101,7 +1101,7 @@ public function survei_pm()
             $this->db->where('createdid', $userid);
             $this->db->where('active', 1);
             $existing_survey = $this->db->get('data_survei_pm')->row();
-            
+            //print_r($existing_survey);
             if ($existing_survey) {
                 // Mode UPDATE - load data existing
                 $data['id'] = $existing_survey->id;
@@ -1116,7 +1116,7 @@ public function survei_pm()
                 
                 // PERBAIKAN: Load detail data dengan cara yang benar
                 // Cari berdasarkan survei_pm_pm_id (bukan survei_pm_id)
-                $this->db->where('survei_pm_pm_id', $existing_survey->id);
+                $this->db->where('survei_pm_pm_id', $existing_survey->survei_pm_id);
                 $this->db->where('active', 1);
                 $detail_query = $this->db->get('data_survei_pm_detail');
                 

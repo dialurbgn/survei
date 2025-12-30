@@ -44,12 +44,12 @@
                     }
                 }
             }
-            
+            //echo 'asa';
             // Load detail data - PERBAIKAN DI SINI
             if(isset($datarow_detail) && $datarow_detail != null && count($datarow_detail) > 0){
                 // Ambil data detail pertama (karena harusnya cuma 1 row per survei_pm_id)
                 $detail_row = $datarow_detail[0];
-                
+                //print_r($detail_row);
                 foreach($query_column_detail as $rows_column){
                     $field_name = $rows_column['name'];
                     
