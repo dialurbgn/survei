@@ -17,7 +17,7 @@
         }
         
         $is_edit_mode = false;
-        $disable_identity_fields = false; // Default: field bisa diisi
+        $disable_identity_fields = false;
         
         // Auto-fill dari data user yang login (jika sudah login)
         if(isset($is_logged_in) && $is_logged_in === true && isset($user_data) && $user_data != null){
@@ -25,7 +25,6 @@
             $survei_pm_email = $user_data->email ?? '';
             $survei_pm_tlp = $user_data->notelp ?? '';
             
-            // Coba ambil NIP dari database jika ada
             if(property_exists($user_data, 'nip')){
                 $survei_pm_nip = $user_data->nip ?? '';
             }
@@ -35,7 +34,7 @@
             $iddata = $id;
             $typedata = 'Edit';
             $is_edit_mode = true;
-            $disable_identity_fields = true; // DISABLE field identitas di mode edit
+            $disable_identity_fields = true;
             
             // Load master data
             if(isset($datarow) && $datarow != null){
@@ -46,18 +45,24 @@
                 }
             }
             
-            // Load detail data
-            if(isset($datarow_detail) && $datarow_detail != null){
+            // Load detail data - PERBAIKAN DI SINI
+            if(isset($datarow_detail) && $datarow_detail != null && count($datarow_detail) > 0){
+                // Ambil data detail pertama (karena harusnya cuma 1 row per survei_pm_id)
+                $detail_row = $datarow_detail[0];
+                
                 foreach($query_column_detail as $rows_column){
-                    foreach ($datarow_detail as $rows) {
-                        ${$rows_column['name']} = $rows->{$rows_column['name']};
+                    $field_name = $rows_column['name'];
+                    
+                    // Cek apakah property ada di object
+                    if(property_exists($detail_row, $field_name)){
+                        ${$field_name} = $detail_row->{$field_name};
                     }
                 }
             }
         }else{
             $iddata = 0;
             $typedata = 'Buat';
-            $disable_identity_fields = false; // Field identitas bisa diisi di mode buat baru
+            $disable_identity_fields = false;
         }
     }else{
         $newURL = base_url('frontend');

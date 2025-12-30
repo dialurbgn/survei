@@ -1106,12 +1106,29 @@ public function survei_pm()
                 // Mode UPDATE - load data existing
                 $data['id'] = $existing_survey->id;
                 $data['typedata'] = 'Edit';
-                $data['datarow'] = $this->m_model_data->get_data_byid($existing_survey->id, 'data_survei_pm', 'data_survei_pm.id');
                 
-                // Get detail data
+                // Load master data
+                $data['datarow'] = $this->m_model_data->get_data_byid(
+                    $existing_survey->id, 
+                    'data_survei_pm', 
+                    'data_survei_pm.id'
+                );
+                
+                // PERBAIKAN: Load detail data dengan cara yang benar
+                // Cari berdasarkan survei_pm_pm_id (bukan survei_pm_id)
                 $this->db->where('survei_pm_pm_id', $existing_survey->id);
                 $this->db->where('active', 1);
-                $data['datarow_detail'] = $this->db->get('data_survei_pm_detail')->result_object();
+                $detail_query = $this->db->get('data_survei_pm_detail');
+                
+                if($detail_query->num_rows() > 0){
+                    $data['datarow_detail'] = $detail_query->result(); // Harus result() bukan result_object()
+                } else {
+                    $data['datarow_detail'] = null;
+                }
+                
+                // Debug - hapus setelah berhasil
+                // log_message('debug', 'Detail data: ' . print_r($data['datarow_detail'], true));
+                
             } else {
                 // Mode INSERT - form baru
                 $data['id'] = null;
