@@ -354,6 +354,50 @@
     </div>
 </div>
 
+
+<!-- Modal Search Address (Custom, bukan SweetAlert) -->
+<div class="modal fade" id="modalSearchAddress" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-search"></i> Cari Alamat
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Masukkan alamat atau nama tempat</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="searchAddressInput" 
+                           placeholder="Contoh: Monas Jakarta atau Jl. Sudirman"
+                           autocomplete="off">
+                    <small class="form-text text-muted">
+                        <i class="fas fa-info-circle"></i> 
+                        Tips: Gunakan nama landmark atau jalan yang terkenal untuk hasil lebih akurat
+                    </small>
+                </div>
+                
+                <!-- Search Results Preview (optional) -->
+                <div id="searchPreview" class="d-none">
+                    <div class="alert alert-info mb-0">
+                        <small id="searchPreviewText"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <button type="button" class="btn btn-primary" id="btnDoSearch">
+                    <i class="fas fa-search"></i> Cari Lokasi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 /* Modal Styling */
 .modal-xl {
@@ -530,6 +574,26 @@ input[type=number] {
     font-weight: bold;
     background-color: #d4edda !important;
     color: #155724;
+}
+
+/* Custom Search Modal Styling */
+#modalSearchAddress .modal-dialog {
+    max-width: 500px;
+}
+
+#modalSearchAddress .form-control {
+    font-size: 14px;
+    padding: 10px 15px;
+    border: 2px solid #ced4da;
+}
+
+#modalSearchAddress .form-control:focus {
+    border-color: #0088cc;
+    box-shadow: 0 0 0 0.2rem rgba(0, 136, 204, 0.25);
+}
+
+#searchPreview {
+    animation: fadeIn 0.3s ease-in;
 }
 </style>
 
@@ -1535,23 +1599,58 @@ input[type=number] {
     }
     
     function searchAddress() {
+    // Reset input
+    $('#searchAddressInput').val('');
+    $('#searchPreview').addClass('d-none');
+    
+    // Show custom modal instead of SweetAlert
+    $('#modalSearchAddress').modal('show');
+    
+    // Auto-focus ke input setelah modal muncul
+    $('#modalSearchAddress').on('shown.bs.modal', function() {
+        $('#searchAddressInput').focus();
+    });
+}
+
+// Handler untuk button "Cari Lokasi"
+$(document).on('click', '#btnDoSearch', function() {
+    const query = $('#searchAddressInput').val().trim();
+    
+    if (!query) {
         Swal.fire({
-            title: 'Cari Alamat',
-            input: 'text',
-            inputPlaceholder: 'Contoh: Monas Jakarta',
-            showCancelButton: true,
-            confirmButtonText: 'Cari',
-            cancelButtonText: 'Batal',
-            inputValidator: (value) => {
-                if (!value) return 'Silakan masukkan alamat';
-            }
-        }).then((result) => {
-            if (result.isConfirmed && result.value) {
-                performSearch(result.value);
-            }
+            icon: 'warning',
+            title: 'Input Kosong',
+            text: 'Silakan masukkan alamat yang akan dicari',
+            timer: 2000
         });
+        return;
     }
     
+    if (query.length < 3) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Input Terlalu Pendek',
+            text: 'Minimal 3 karakter',
+            timer: 2000
+        });
+        return;
+    }
+    
+    // Close search modal
+    $('#modalSearchAddress').modal('hide');
+    
+    // Perform search
+    performSearch(query);
+});
+
+// Allow Enter key to trigger search
+$(document).on('keypress', '#searchAddressInput', function(e) {
+    if (e.which === 13) { // Enter key
+        e.preventDefault();
+        $('#btnDoSearch').click();
+    }
+});
+
     function performSearch(query) {
         Swal.fire({
             title: 'Mencari...',
