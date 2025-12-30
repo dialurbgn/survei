@@ -479,11 +479,63 @@
         font-size: 16px;
     }
 }
+
+/* Input Validation Styles */
+.border-warning {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25) !important;
+}
+
+.border-danger {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.input-warning {
+    font-size: 0.875rem;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Select2 validation */
+.select2-container.border-danger .select2-selection {
+    border-color: #dc3545 !important;
+}
+
+/* Disabled field style */
+input[readonly],
+textarea[readonly],
+select[disabled] {
+    background-color: #e9ecef !important;
+    cursor: not-allowed !important;
+}
+
+/* Number input - remove spinner */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Jumlah total readonly highlight */
+#jumlah_total {
+    font-weight: bold;
+    background-color: #d4edda !important;
+    color: #155724;
+}
 </style>
 
 <script>
 /**
- * POK Detail Handler - Simplified Version
+ * POK Detail Handler - Complete Version with Full Validation
  * Wilayah: Single select (wil_id, wil_name) - Same as main form
  */
 
@@ -512,14 +564,16 @@
     
     $(document).ready(function() {
         console.log('POK Detail Handler - Initializing...');
+        
         // HANYA INIT JIKA MODE EDIT
-		if (typeof isEditMode !== 'undefined' && isEditMode === true) {
-			initPOKDetailHandlers();
-			initFormHandlers();
-			console.log('POK Detail Handler - Ready for EDIT MODE!');
-		} else {
-			console.log('POK Detail Handler - Skipped (not in edit mode)');
-		}
+        if (typeof isEditMode !== 'undefined' && isEditMode === true) {
+            initPOKDetailHandlers();
+            initFormHandlers();
+            addRealTimeValidation();
+            console.log('POK Detail Handler - Ready for EDIT MODE!');
+        } else {
+            console.log('POK Detail Handler - Skipped (not in edit mode)');
+        }
     });
     
     /**
@@ -573,7 +627,7 @@
             },
             dataType: 'json',
             success: function(response) {
-				updateCsrfToken(response.csrf_hash);
+                updateCsrfToken(response.csrf_hash);
                 if (response.status === 'success') {
                     currentPOKName = response.data.nama_kelompok;
                     currentMasterKelompokId = response.data.id;
@@ -620,7 +674,7 @@
                 },
                 dataType: 'json',
                 success: function(response) {
-					updateCsrfToken(response.csrf_hash);
+                    updateCsrfToken(response.csrf_hash);
                     if (response.status === 'success') {
                         currentSurveiPmDetailId = response.detail_id || null;
                         $('#survei_pm_detail_id').val(currentSurveiPmDetailId || '0');
@@ -662,7 +716,7 @@
             },
             dataType: 'json',
             success: function(response) {
-				updateCsrfToken(response.csrf_hash);
+                updateCsrfToken(response.csrf_hash);
                 if (response.status === 'success') {
                     renderDetailList(response.data);
                     updateTotalInModal(response.total);
@@ -734,8 +788,8 @@
         inputField.val(total || 0);
         inputField.trigger('change');
         
-        if (typeof window.calculateTotalPenerima === 'function') {
-            window.calculateTotalPenerima();
+        if (typeof window.calculateTotal === 'function') {
+            window.calculateTotal();
         }
     }
     
@@ -790,9 +844,9 @@
                     if (!params) params = {};
                     return {
                         q: params.term || '',
-						table: 'm_set_wil_administratif',
-						id:'wil_id',
-						name:'wil_keyword',
+                        table: 'm_set_wil_administratif',
+                        id:'wil_id',
+                        name:'wil_keyword',
                         page: params.page || 1,
                         '<?= $this->security->get_csrf_token_name(); ?>': $('.csrf_token').val()
                     };
@@ -842,16 +896,121 @@
     // ===================================
     
     function initFormHandlers() {
-        $(document).on('input change', '#jumlah_pria, #jumlah_wanita', function() {
-            const pria = parseInt($('#jumlah_pria').val()) || 0;
-            const wanita = parseInt($('#jumlah_wanita').val()) || 0;
-            $('#jumlah_total').val(pria + wanita);
+        // ===================================
+        // INPUT VALIDATION & FORMATTING
+        // ===================================
+        
+        // 1. KODE UNIT - Hanya huruf, angka, dan dash
+        $(document).on('input', '#kode_unit', function() {
+            var value = $(this).val();
+            var cleaned = value.replace(/[^a-zA-Z0-9\-_]/g, '');
+            
+            if (value !== cleaned) {
+                $(this).val(cleaned);
+                showInputWarning($(this), 'Hanya huruf, angka, dan tanda hubung (-) yang diperbolehkan');
+            }
         });
+        
+        // 2. NAMA UNIT - Hanya huruf, angka, spasi, dan beberapa karakter khusus
+        $(document).on('input', '#nama_unit', function() {
+            var value = $(this).val();
+            var cleaned = value.replace(/[^a-zA-Z0-9\s\.,\-()]/g, '');
+            
+            if (value !== cleaned) {
+                $(this).val(cleaned);
+                showInputWarning($(this), 'Karakter khusus tidak diperbolehkan');
+            }
+            
+            if (cleaned.length > 100) {
+                $(this).val(cleaned.substring(0, 100));
+                showInputWarning($(this), 'Maksimal 100 karakter');
+            }
+        });
+        
+        // 3. KODE POS - Hanya angka, max 5 digit
+        $(document).on('input', '#kode_pos', function() {
+            var value = $(this).val();
+            var cleaned = value.replace(/[^0-9]/g, '');
+            
+            if (cleaned.length > 5) {
+                cleaned = cleaned.substring(0, 5);
+            }
+            
+            if (value !== cleaned) {
+                $(this).val(cleaned);
+                showInputWarning($(this), 'Kode pos hanya boleh 5 digit angka');
+            }
+        });
+        
+        // 4. ALAMAT - Batasi panjang
+        $(document).on('input', '#alamat', function() {
+            var value = $(this).val();
+            
+            if (value.length > 200) {
+                $(this).val(value.substring(0, 200));
+                showInputWarning($(this), 'Maksimal 200 karakter');
+            }
+        });
+        
+        // 5. JUMLAH PRIA & WANITA - Hanya angka positif
+        $(document).on('input', '#jumlah_pria, #jumlah_wanita', function() {
+            var value = $(this).val();
+            var cleaned = value.replace(/[^0-9]/g, '');
+            
+            var numValue = parseInt(cleaned || 0);
+            if (numValue > 9999) {
+                numValue = 9999;
+            }
+            
+            if (value !== cleaned) {
+                $(this).val(numValue);
+                showInputWarning($(this), 'Hanya angka 0-9999 yang diperbolehkan');
+            } else {
+                $(this).val(numValue);
+            }
+            
+            calculateJumlahTotal();
+        });
+        
+        // Prevent paste non-numeric
+        $(document).on('paste', '#jumlah_pria, #jumlah_wanita', function(e) {
+            e.preventDefault();
+            var pastedData = (e.originalEvent || e).clipboardData.getData('text/plain');
+            var cleaned = pastedData.replace(/[^0-9]/g, '');
+            var numValue = parseInt(cleaned || 0);
+            
+            if (numValue > 9999) numValue = 9999;
+            
+            $(this).val(numValue);
+            calculateJumlahTotal();
+        });
+        
+        // Prevent negative values
+        $(document).on('blur', '#jumlah_pria, #jumlah_wanita', function() {
+            var val = parseInt($(this).val() || 0);
+            if (val < 0) val = 0;
+            if (val > 9999) val = 9999;
+            $(this).val(val);
+            calculateJumlahTotal();
+        });
+        
+        // ===================================
+        // FORM SUBMIT HANDLER
+        // ===================================
         
         $(document).on('submit', '#formPOKDetail', function(e) {
             e.preventDefault();
+            
+            if (!validateFormBeforeSubmit()) {
+                return false;
+            }
+            
             savePOKDetail();
         });
+        
+        // ===================================
+        // BUTTON HANDLERS
+        // ===================================
         
         $(document).on('click', '#btnResetForm', resetForm);
         $(document).on('click', '.btn-edit-detail', function() {
@@ -859,6 +1018,166 @@
         });
         $(document).on('click', '.btn-delete-detail', function() {
             deletePOKDetail($(this).data('id'));
+        });
+    }
+    
+    // ===================================
+    // HELPER FUNCTIONS
+    // ===================================
+    
+    /**
+     * Calculate jumlah total otomatis
+     */
+    function calculateJumlahTotal() {
+        var pria = parseInt($('#jumlah_pria').val() || 0);
+        var wanita = parseInt($('#jumlah_wanita').val() || 0);
+        var total = pria + wanita;
+        
+        $('#jumlah_total').val(total);
+    }
+    
+    /**
+     * Show input warning/error message
+     */
+    function showInputWarning(element, message) {
+        element.next('.input-warning').remove();
+        element.removeClass('border-warning');
+        
+        element.addClass('border-warning');
+        element.after('<small class="input-warning text-warning d-block mt-1">' +
+                      '<i class="fas fa-exclamation-triangle"></i> ' + message + '</small>');
+        
+        setTimeout(function() {
+            element.removeClass('border-warning');
+            element.next('.input-warning').fadeOut(300, function() {
+                $(this).remove();
+            });
+        }, 3000);
+    }
+    
+    /**
+     * Validate form before submit
+     */
+    function validateFormBeforeSubmit() {
+        var isValid = true;
+        var errors = [];
+        
+        // 1. Nama Unit (required)
+        var namaUnit = $('#nama_unit').val().trim();
+        if (!namaUnit || namaUnit.length < 3) {
+            errors.push('Nama unit kelompok minimal 3 karakter');
+            $('#nama_unit').addClass('border-danger');
+            isValid = false;
+        } else {
+            $('#nama_unit').removeClass('border-danger');
+        }
+        
+        // 2. Kode Unit (optional tapi jika diisi harus valid)
+        var kodeUnit = $('#kode_unit').val().trim();
+        if (kodeUnit && kodeUnit.length < 2) {
+            errors.push('Kode unit minimal 2 karakter');
+            $('#kode_unit').addClass('border-danger');
+            isValid = false;
+        } else {
+            $('#kode_unit').removeClass('border-danger');
+        }
+        
+        // 3. Jenis Kepemilikan (required)
+        var jenisKepemilikan = $('#jenis_kepemilikan').val();
+        if (!jenisKepemilikan) {
+            errors.push('Jenis kepemilikan harus dipilih');
+            $('#jenis_kepemilikan').addClass('border-danger');
+            isValid = false;
+        } else {
+            $('#jenis_kepemilikan').removeClass('border-danger');
+        }
+        
+        // 4. Wilayah (required)
+        var wilId = $('#wil_id').val();
+        if (!wilId) {
+            errors.push('Wilayah (Kecamatan) harus dipilih');
+            $('#wil_id').next('.select2-container').find('.select2-selection').addClass('border-danger');
+            isValid = false;
+        } else {
+            $('#wil_id').next('.select2-container').find('.select2-selection').removeClass('border-danger');
+        }
+        
+        // 5. Alamat (required)
+        var alamat = $('#alamat').val().trim();
+        if (!alamat || alamat.length < 10) {
+            errors.push('Alamat minimal 10 karakter');
+            $('#alamat').addClass('border-danger');
+            isValid = false;
+        } else {
+            $('#alamat').removeClass('border-danger');
+        }
+        
+        // 6. Jumlah Anggota (minimal 1)
+        var jumlahTotal = parseInt($('#jumlah_total').val() || 0);
+        if (jumlahTotal < 1) {
+            errors.push('Jumlah anggota kelompok minimal 1 orang');
+            $('#jumlah_pria, #jumlah_wanita').addClass('border-danger');
+            isValid = false;
+        } else {
+            $('#jumlah_pria, #jumlah_wanita').removeClass('border-danger');
+        }
+        
+        // 7. Koordinat (required)
+        var lat = parseFloat($('#posisi_latitude').val() || 0);
+        var lng = parseFloat($('#posisi_longitude').val() || 0);
+        
+        if (lat === 0 && lng === 0) {
+            errors.push('Koordinat lokasi harus diisi (gunakan peta)');
+            $('#display_latitude, #display_longitude').addClass('border-danger');
+            isValid = false;
+        } else {
+            $('#display_latitude, #display_longitude').removeClass('border-danger');
+        }
+        
+        if (!isValid) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validasi Gagal',
+                html: '<div class="text-start"><ul class="mb-0">' + 
+                      errors.map(e => '<li>' + e + '</li>').join('') + 
+                      '</ul></div>',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#ffc107'
+            });
+        }
+        
+        return isValid;
+    }
+    
+    /**
+     * Add real-time visual feedback
+     */
+    function addRealTimeValidation() {
+        // Validasi saat blur
+        $('#nama_unit, #alamat').on('blur', function() {
+            var val = $(this).val().trim();
+            var minLength = $(this).attr('id') === 'nama_unit' ? 3 : 10;
+            
+            if (val.length > 0 && val.length < minLength) {
+                $(this).addClass('border-warning');
+            } else if (val.length >= minLength) {
+                $(this).removeClass('border-warning').addClass('border-success');
+                setTimeout(() => {
+                    $(this).removeClass('border-success');
+                }, 2000);
+            }
+        });
+        
+        // Validasi select2
+        $('#wil_id').on('change', function() {
+            if ($(this).val()) {
+                $(this).next('.select2-container').find('.select2-selection')
+                    .addClass('border-success');
+                setTimeout(() => {
+                    $(this).next('.select2-container').find('.select2-selection')
+                        .removeClass('border-success');
+                }, 2000);
+            }
         });
     }
     
@@ -901,7 +1220,7 @@
                     }
                     
                     loadPOKDetailList();
-                    resetForm();
+                    performResetForm();
                 } else {
                     Swal.fire('Error', response.message || 'Gagal menyimpan', 'error');
                 }
@@ -962,7 +1281,6 @@
                         }, 500);
                     }
                     
-                    $('#formTitle').text('Edit Unit Kelompok');
                     $('#btnSaveText').text('Update');
                     
                     $('.modal-body').animate({ scrollTop: 0 }, 300);
@@ -1022,6 +1340,27 @@
     }
     
     function resetForm() {
+        if ($('#detail_id').val() !== '0') {
+            Swal.fire({
+                title: 'Reset Form?',
+                text: 'Data yang sedang diedit akan dibatalkan',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Reset',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#6c757d',
+                cancelButtonColor: '#0088cc'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    performResetForm();
+                }
+            });
+        } else {
+            performResetForm();
+        }
+    }
+    
+    function performResetForm() {
         $('#formPOKDetail')[0].reset();
         $('#detail_id').val('0');
         $('#display_jenis_kelompok').val(currentPOKName);
@@ -1030,14 +1369,20 @@
         $('#jumlah_total, #jumlah_pria, #jumlah_wanita').val('0');
         $('#posisi_latitude, #posisi_longitude').val('0');
         $('#display_latitude, #display_longitude').val('');
-        $('#formTitle').text('Tambah Unit Kelompok Baru');
         $('#btnSaveText').text('Simpan');
         
-        //$('#wil_id').val('').trigger('change');
+        if ($('#wil_id').length && typeof $.fn.select2 !== 'undefined') {
+            $('#wil_id').val('').trigger('change');
+        }
+        
+        $('.border-danger, .border-warning, .border-success').removeClass('border-danger border-warning border-success');
+        $('.input-warning').remove();
         
         if (map && marker) {
             setMapCoordinates(DEFAULT_CENTER[0], DEFAULT_CENTER[1], DEFAULT_ZOOM);
         }
+        
+        $('.modal-body').animate({ scrollTop: 0 }, 300);
     }
     
     // ===================================
@@ -1245,6 +1590,34 @@
     $(document).on('click', '#btnResetMap', resetMapPosition);
     $(document).on('click', '#btnSearchAddress', searchAddress);
     
+    // Clear coordinates button
+    $(document).on('click', '#btnClearCoordinates', function() {
+        $('#posisi_latitude, #posisi_longitude').val('0');
+        $('#display_latitude, #display_longitude').val('');
+        
+        if (map && marker) {
+            setMapCoordinates(DEFAULT_CENTER[0], DEFAULT_CENTER[1], DEFAULT_ZOOM);
+        }
+        
+        Swal.fire({
+            icon: 'info',
+            title: 'Koordinat Dikosongkan',
+            text: 'Silakan tandai lokasi baru di peta',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    });
+    
+    // ===================================
+    // CSRF TOKEN UPDATE HELPER
+    // ===================================
+    
+    function updateCsrfToken(hash) {
+        if (hash) {
+            $('.csrf_token').val(hash);
+        }
+    }
+    
     // ===================================
     // EXPOSE GLOBAL
     // ===================================
@@ -1255,12 +1628,11 @@
         resetMap: resetMapPosition
     };
     
-    console.log('POK Detail Handler - Ready!');
+    console.log('POK Detail Handler - Fully Loaded!');
     
 })();
 </script>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
         crossorigin=""></script>

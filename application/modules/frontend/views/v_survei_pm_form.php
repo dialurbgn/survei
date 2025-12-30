@@ -141,7 +141,7 @@
                         <p class="mb-2">Anda sedang mengedit data survei yang sudah tersimpan.</p>
                         <div class="alert alert-info mt-3 mb-0">
                             <i class="fas fa-lock"></i> 
-                            <strong>PENTING:</strong> Data identitas (Nama, NIP, Email, No. Telp, Kecamatan) <strong>tidak dapat diubah</strong>. 
+                            <strong>PENTING:</strong> Data identitas (Nama, NIP, Email, No. Telp, Wilayah) <strong>tidak dapat diubah</strong>. 
                             Anda hanya dapat mengubah <strong>jumlah penerima manfaat</strong>.
                         </div>
                     </div>
