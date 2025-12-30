@@ -1057,6 +1057,17 @@ input[type=number] {
             $(this).val(val);
             calculateJumlahTotal();
         });
+		
+		// PENTING: Prevent manual input di jumlah_total
+		$(document).on('keydown keypress paste', '#jumlah_total', function(e) {
+			e.preventDefault();
+			return false;
+		});
+		
+		$(document).on('input', '#jumlah_total', function() {
+			// Revert ke nilai yang benar jika somehow berubah
+			calculateJumlahTotal();
+		});
         
         // ===================================
         // FORM SUBMIT HANDLER
