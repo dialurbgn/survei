@@ -986,15 +986,15 @@ function proceedWithSubmission() {
     
     if(requiredattr == 0){
         var confirmText = isEditMode ? 
-            'Apakah Anda yakin akan mengupdate jumlah penerima manfaat?' :
-            'Apakah Anda yakin akan menyimpan data survei ini?';
+            'Apakah Anda yakin akan mengupdate data Identitas Ini ?' :
+            'Apakah Anda yakin akan menyimpan data Identitas Ini dan melanjukan untuk mengisi survei?';
         
         Swal.fire({
             title: '<strong>' + (isEditMode ? 'Update Data' : 'Simpan Data') + '</strong>',
             icon: 'question',
-            html: confirmText + '<br><br><strong>Total Penerima: ' + $('#totalPenerima').text() + ' Orang</strong>',
+            html: confirmText,
             showCancelButton: true,
-            confirmButtonText: isEditMode ? 'Ya, Update' : 'Ya, Simpan',
+            confirmButtonText: isEditMode ? 'Ya, Update' : 'Ya, Simpan dan Lanjutkan',
             cancelButtonText: 'Batal',
             confirmButtonColor: '#0088cc',
             cancelButtonColor: '#dc3545'
@@ -1032,14 +1032,27 @@ function proceedWithSubmission() {
             }
         });
         
-        // Validasi NIP - hanya angka
+        // Validasi NIP - hanya angka, max 20 digit
         $('#survei_pm_nip').on('input', function() {
             var value = $(this).val();
             // Hapus karakter yang bukan angka
             var cleaned = value.replace(/[^0-9]/g, '');
-            if (value !== cleaned) {
-                $(this).val(cleaned);
+            
+            // Batasi maksimal 20 digit
+            if (cleaned.length > 20) {
+                cleaned = cleaned.substring(0, 20);
+            }
+            
+            // Update value dengan cleaned value
+            $(this).val(cleaned);
+            
+            // Tampilkan pesan sesuai kondisi
+            if (value !== cleaned && cleaned.length <= 20) {
                 showValidationMessage($(this), 'NIP hanya boleh mengandung angka');
+            } else if (cleaned.length === 20) {
+                showValidationMessage($(this), 'NIP sudah mencapai batas maksimal (20 digit)');
+            } else if (value.length > 20) {
+                showValidationMessage($(this), 'NIP maksimal 20 digit');
             } else {
                 clearValidationMessage($(this));
             }
