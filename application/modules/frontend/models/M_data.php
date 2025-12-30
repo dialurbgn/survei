@@ -321,4 +321,199 @@ class M_data extends CI_Model {
 			return true;
 		}
 		
+		
+/**
+ * POK Detail Model Methods
+ * Add these methods to M_data.php model
+ */
+
+/**
+ * Get POK detail list with location names
+ */
+public function get_pok_detail_list($survei_pm_detail_id, $master_kelompok_id) {
+    $this->db->select('
+        data_survei_pm_detail_list.*,
+        wil_provinsi.wil_nama as provinsi_name,
+        wil_kabkota.wil_nama as kabkota_name,
+        wil_kecamatan.wil_nama as kecamatan_name,
+        wil_kelurahan.wil_nama as kelurahan_name
+    ');
+    $this->db->where('data_survei_pm_detail_list.survei_pm_detail_id', $survei_pm_detail_id);
+    $this->db->where('data_survei_pm_detail_list.master_kelompok_id', $master_kelompok_id);
+    $this->db->where('data_survei_pm_detail_list.active', 1);
+    
+    // Join wilayah
+    $this->db->join('data_wilayah as wil_provinsi', 
+                    'wil_provinsi.id = data_survei_pm_detail_list.provinsi_id', 'left');
+    $this->db->join('data_wilayah as wil_kabkota', 
+                    'wil_kabkota.id = data_survei_pm_detail_list.kabkota_id', 'left');
+    $this->db->join('data_wilayah as wil_kecamatan', 
+                    'wil_kecamatan.id = data_survei_pm_detail_list.kecamatan_id', 'left');
+    $this->db->join('data_wilayah as wil_kelurahan', 
+                    'wil_kelurahan.id = data_survei_pm_detail_list.kelurahandes_id', 'left');
+    
+    $this->db->order_by('data_survei_pm_detail_list.created', 'DESC');
+    
+    $query = $this->db->get('data_survei_pm_detail_list');
+    return $query->result_array();
+}
+
+/**
+ * Get total penerima for specific POK
+ */
+public function get_pok_total($survei_pm_detail_id, $master_kelompok_id) {
+    $this->db->select_sum('jumlah_total');
+    $this->db->where('survei_pm_detail_id', $survei_pm_detail_id);
+    $this->db->where('master_kelompok_id', $master_kelompok_id);
+    $this->db->where('active', 1);
+    
+    $result = $this->db->get('data_survei_pm_detail_list')->row();
+    return $result->jumlah_total ?? 0;
+}
+
+/**
+ * Get single POK detail by ID
+ */
+public function get_pok_detail_by_id($id) {
+    $this->db->where('id', $id);
+    $this->db->where('active', 1);
+    
+    $query = $this->db->get('data_survei_pm_detail_list');
+    return $query->row_array();
+}
+
+/**
+ * Save POK detail (insert or update)
+ */
+public function save_pok_detail($data, $id = null) {
+    if ($id && $id != '0') {
+        // Update
+        $this->db->where('id', $id);
+        return $this->db->update('data_survei_pm_detail_list', $data);
+    } else {
+        // Insert
+        return $this->db->insert('data_survei_pm_detail_list', $data);
+    }
+}
+
+/**
+ * Delete POK detail (soft delete)
+ */
+public function delete_pok_detail($id, $userid) {
+    $data = [
+        'active' => 0,
+        'modifiedid' => $userid,
+        'modified' => date('Y-m-d H:i:s')
+    ];
+    
+    $this->db->where('id', $id);
+    return $this->db->update('data_survei_pm_detail_list', $data);
+}
+
+/**
+ * Update POK total in master detail table
+ */
+public function update_pok_total_in_master($survei_pm_detail_id, $pok_field, $total) {
+    $this->db->where('id', $survei_pm_detail_id);
+    return $this->db->update('data_survei_pm_detail', [
+        $pok_field => $total,
+        'modified' => date('Y-m-d H:i:s')
+    ]);
+}
+
+/**
+ * Get master kelompok by urutan (POK number)
+ */
+public function get_master_kelompok_by_urutan($urutan) {
+    $this->db->where('urutan', $urutan);
+    $this->db->where('active', 1);
+    
+    $query = $this->db->get('master_kelompok');
+    return $query->row_array();
+}
+
+/**
+ * Get master kelompok by ID
+ */
+public function get_master_kelompok_by_id($id) {
+    $this->db->where('id', $id);
+    $this->db->where('active', 1);
+    
+    $query = $this->db->get('master_kelompok');
+    return $query->row_array();
+}
+
+/**
+ * Get all active master kelompok
+ */
+public function get_all_master_kelompok() {
+    $this->db->where('active', 1);
+    $this->db->order_by('urutan', 'ASC');
+    
+    $query = $this->db->get('master_kelompok');
+    return $query->result_array();
+}
+
+/**
+ * Get wilayah name by ID
+ */
+public function get_wilayah_name($id) {
+    if (!$id) return null;
+    
+    $this->db->select('wil_nama');
+    $this->db->where('id', $id);
+    $result = $this->db->get('data_wilayah')->row();
+    
+    return $result ? $result->wil_nama : null;
+}
+
+/**
+ * Get survei detail ID by survei PM ID
+ */
+public function get_survei_detail_id($survei_pm_id) {
+    $this->db->select('id');
+    $this->db->where('survei_pm_pm_id', $survei_pm_id);
+    $this->db->where('active', 1);
+    
+    $result = $this->db->get('data_survei_pm_detail')->row();
+    return $result ? $result->id : null;
+}
+
+/**
+ * Get POK detail statistics
+ */
+public function get_pok_detail_stats($survei_pm_detail_id) {
+    $this->db->select('
+        master_kelompok.id,
+        master_kelompok.kode_kelompok,
+        master_kelompok.nama_kelompok,
+        master_kelompok.urutan,
+        COUNT(data_survei_pm_detail_list.id) as total_units,
+        SUM(data_survei_pm_detail_list.jumlah_total) as total_penerima
+    ');
+    $this->db->from('master_kelompok');
+    $this->db->join('data_survei_pm_detail_list', 
+                    'data_survei_pm_detail_list.master_kelompok_id = master_kelompok.id ' .
+                    'AND data_survei_pm_detail_list.survei_pm_detail_id = ' . (int)$survei_pm_detail_id . ' ' .
+                    'AND data_survei_pm_detail_list.active = 1', 
+                    'left');
+    $this->db->where('master_kelompok.active', 1);
+    $this->db->group_by('master_kelompok.id, master_kelompok.kode_kelompok, master_kelompok.nama_kelompok, master_kelompok.urutan');
+    $this->db->order_by('master_kelompok.urutan', 'ASC');
+    
+    $query = $this->db->get();
+    return $query->result_array();
+}
+
+/**
+ * Check if POK has details
+ */
+public function pok_has_details($survei_pm_detail_id, $master_kelompok_id) {
+    $this->db->where('survei_pm_detail_id', $survei_pm_detail_id);
+    $this->db->where('master_kelompok_id', $master_kelompok_id);
+    $this->db->where('active', 1);
+    
+    return $this->db->count_all_results('data_survei_pm_detail_list') > 0;
+}
+
 }	

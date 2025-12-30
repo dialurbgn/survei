@@ -1475,6 +1475,7 @@ public function actiondata_survei_pm()
         return;
     }
     
+    
     // Ambil dan sanitasi data dengan pengecekan null
     $survei_pm_nama = $this->input->post('survei_pm_nama', true) ?? '';
     $survei_pm_nip = $this->input->post('survei_pm_nip', true) ?? '';
@@ -1740,7 +1741,7 @@ public function actiondata_survei_pm()
         $data_detail['created'] = $timestamp;
         $data_detail['slug'] = $this->ortyd->sanitize('detail-' . $survei_pm_id, $module_detail);
         $success_detail = $this->db->insert($module_detail, $data_detail);
-		
+		$survei_pm_detail_id = $this->db->insert_id();
 		save_history($module_detail,           // nama table: 'data_maintenance'
 				 $survei_pm_detail_id,                   // ID record
 				[],
@@ -1873,6 +1874,480 @@ public function select2_kecamatan() {
     
     echo json_encode($response);
 }
-		
+
+/**
+ * POK Detail Controller Methods - Dynamic Version
+ * Compatible with getviewlistform() pattern
+ * Add these methods to Frontend.php controller
+ */
+
+/**
+ * Get master kelompok by POK number
+ */
+public function get_master_kelompok() {
+    header('X-Robots-Tag: noindex, nofollow', true);
+    header('Content-Type: application/json');
+    
+    $pok_number = $this->input->post('pok_number', true);
+    
+    if (!$pok_number) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'POK number tidak valid',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+    
+    // Get from master_kelompok based on urutan (pok_number)
+    $this->db->where('urutan', $pok_number);
+    $this->db->where('active', 1);
+    $kelompok = $this->db->get('master_kelompok')->row_array();
+    
+    if ($kelompok) {
+        echo json_encode([
+            'status' => 'success',
+            'data' => $kelompok,
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+    } else {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Data kelompok tidak ditemukan',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+    }
+}
+
+/**
+ * Get POK detail list
+ * Fixed: Struktur wilayah sederhana (wil_id, wil_name)
+ */
+public function get_pok_detail_list() {
+    header('X-Robots-Tag: noindex, nofollow', true);
+    header('Content-Type: application/json');
+    
+    $survei_pm_detail_id = $this->input->post('survei_pm_detail_id', true);
+    $master_kelompok_id = $this->input->post('master_kelompok_id', true);
+    
+    if (!$survei_pm_detail_id || $survei_pm_detail_id == '0') {
+        echo json_encode([
+            'status' => 'success',
+            'data' => [],
+            'total' => 0,
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+    
+    // Get detail list - wil_name sudah ada di tabel
+    $this->db->select('*');
+    $this->db->where('survei_pm_detail_id', $survei_pm_detail_id);
+    $this->db->where('master_kelompok_id', $master_kelompok_id);
+    $this->db->where('active', 1);
+    $this->db->order_by('created', 'DESC');
+    
+    $data = $this->db->get('data_survei_pm_detail_list')->result_array();
+    
+    // Calculate total
+    $total = 0;
+    foreach ($data as $row) {
+        $total += (int)$row['jumlah_total'];
+    }
+    
+    echo json_encode([
+        'status' => 'success',
+        'data' => $data,
+        'total' => $total,
+        'csrf_hash' => $this->security->get_csrf_hash()
+    ]);
+}
+/**
+ * Controller methods untuk struktur wilayah sederhana
+ * Tabel: m_set_wil_administratif
+ * Fields: wil_id (int), wil_name (text)
+ */
+
+/**
+ * Update get_survei_detail_id - Return detail_id saja (tidak perlu wilayah)
+ */
+public function get_survei_detail_id() {
+    header('X-Robots-Tag: noindex, nofollow', true);
+    header('Content-Type: application/json');
+    
+    $survei_pm_id = $this->input->post('survei_pm_id', true);
+    
+    if (!$survei_pm_id || $survei_pm_id == '0') {
+        echo json_encode([
+            'status' => 'success',
+            'detail_id' => null,
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+    
+	$survei_pm_pm_id = $this->ortyd->select2_getname($survei_pm_id,'data_survei_pm','id','survei_pm_id');
+    // Get detail id
+    $this->db->select('id');
+    $this->db->where('survei_pm_pm_id', $survei_pm_pm_id);
+    $this->db->where('active', 1);
+    $detail = $this->db->get('data_survei_pm_detail')->row();
+    
+    echo json_encode([
+        'status' => 'success',
+        'detail_id' => $detail ? $detail->id : null,
+        'csrf_hash' => $this->security->get_csrf_hash()
+    ]);
+}
+
+/**
+ * Helper: Get wilayah name by ID
+ */
+private function get_wilayah_name($id) {
+    if (!$id) return null;
+    
+    $this->db->select('wil_name');
+    $this->db->where('wil_id', $id);
+    $this->db->where('wil_is_delete', false);
+    $result = $this->db->get('m_set_wil_administratif')->row();
+    
+    return $result ? $result->wil_name : null;
+}
+
+/**
+ * Update save_pok_detail - Simpan wil_id dan wil_name
+ * Fixed: PostgreSQL type casting
+ */
+public function save_pok_detail() {
+    header('X-Robots-Tag: noindex, nofollow', true);
+    header('Content-Type: application/json');
+    
+    $userid = $this->session->userdata('user_id');
+    $detail_id = $this->input->post('detail_id', true);
+    $survei_pm_detail_id = $this->input->post('survei_pm_detail_id', true);
+    $master_kelompok_id = $this->input->post('master_kelompok_id', true);
+    
+    // Validate
+    if (!$master_kelompok_id) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Master kelompok ID tidak valid',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+    
+    $nama_unit = $this->input->post('nama_unit', true);
+    if (!$nama_unit) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Nama unit kelompok harus diisi',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+    
+    $this->db->trans_begin();
+    
+    try {
+        // VALIDATE: survei_pm_detail HARUS sudah ada
+        if (!$survei_pm_detail_id || $survei_pm_detail_id == '0') {
+            // Cek apakah form_survei_id ada
+            $formId = $this->input->post('form_survei_id', true);
+            
+            if (!$formId || $formId == '0') {
+                // Form utama belum disimpan
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Silakan simpan data survei utama terlebih dahulu sebelum menambahkan detail POK.',
+                    'csrf_hash' => $this->security->get_csrf_hash()
+                ]);
+                return;
+            }
+            
+            // Cek apakah survei_pm_detail sudah ada
+            $this->db->select('id');
+            $this->db->where('survei_pm_pm_id', $formId);
+            $this->db->where('active', 1);
+            $detail = $this->db->get('data_survei_pm_detail')->row();
+            
+            if (!$detail) {
+                // Detail belum ada, form utama belum lengkap
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Data survei belum lengkap. Silakan simpan form survei utama terlebih dahulu.',
+                    'csrf_hash' => $this->security->get_csrf_hash()
+                ]);
+                return;
+            }
+            
+            // Set survei_pm_detail_id dari database
+            $survei_pm_detail_id = $detail->id;
+        }
+        
+        // Get dynamic columns from database
+        $exclude_columns = [
+            'id', 'survei_pm_detail_id', 'master_kelompok_id', 'createdid', 
+            'created', 'modifiedid', 'modified', 'active', 'status_id', 'slug',
+            'wil_name' // wil_name akan di-populate dari wil_id
+        ];
+        
+        $query_columns = $this->ortyd->getviewlistform(
+            'data_survei_pm_detail_list',
+            $exclude_columns,
+            2
+        );
+        
+        // Build data array
+        $data = [
+            'survei_pm_detail_id' => $survei_pm_detail_id,
+            'master_kelompok_id' => $master_kelompok_id,
+            'modifiedid' => $userid,
+            'modified' => date('Y-m-d H:i:s')
+        ];
+        
+        // Dynamic field assignment with PostgreSQL type casting
+        foreach ($query_columns as $column) {
+            $field_name = $column['name'];
+            $field_value = $this->input->post($field_name, true);
+            
+            // Get PostgreSQL type info
+            $udt_name = isset($column['udt_name']) ? strtolower($column['udt_name']) : '';
+            $data_type = isset($column['data_type']) ? strtolower($column['data_type']) : '';
+            $is_nullable = isset($column['is_nullable']) && $column['is_nullable'] == 'YES';
+            
+            // Combine type info for easier checking
+            $type_string = $udt_name . ' ' . $data_type;
+            
+            // CRITICAL: Check if value is empty/null FIRST
+            $is_empty = ($field_value === '' || $field_value === null || $field_value === false);
+            
+            // Type casting based on PostgreSQL types
+            if (preg_match('/(int2|int4|int8|serial|bigserial|smallint|integer|bigint)/', $type_string)) {
+                // Integer types - MUST be int or null, NEVER empty string
+                if ($is_empty) {
+                    $data[$field_name] = $is_nullable ? null : 0;
+                } else {
+                    $data[$field_name] = (int)$field_value;
+                }
+            } elseif (preg_match('/(numeric|decimal|float4|float8|real|double)/', $type_string)) {
+                // Decimal/Float types - MUST be float or null, NEVER empty string
+                if ($is_empty) {
+                    $data[$field_name] = $is_nullable ? null : 0.0;
+                } else {
+                    $data[$field_name] = (float)$field_value;
+                }
+            } elseif (preg_match('/(bool|boolean)/', $type_string)) {
+                // Boolean types
+                if ($is_empty) {
+                    $data[$field_name] = $is_nullable ? null : false;
+                } else {
+                    $data[$field_name] = (bool)$field_value;
+                }
+            } elseif (preg_match('/(date|timestamp|time)/', $type_string)) {
+                // Date/Time types - can be null
+                $data[$field_name] = $is_empty ? null : $field_value;
+            } else {
+                // Text/Varchar/Other types - empty string is OK
+                $data[$field_name] = $field_value === null ? '' : $field_value;
+            }
+        }
+        
+        // DEBUG: Log data before insert (remove in production)
+        // log_message('debug', 'POK Detail Data: ' . print_r($data, true));
+        
+        // Insert or Update
+        $is_update = ($detail_id && $detail_id != '0');
+        
+        if ($is_update) {
+            // Update existing
+            $this->db->where('id', $detail_id);
+            $this->db->update('data_survei_pm_detail_list', $data);
+            
+            save_history('data_survei_pm_detail_list', $detail_id, $data, 'Updated');
+        } else {
+            // Insert new
+            $data['createdid'] = $userid;
+            $data['created'] = date('Y-m-d H:i:s');
+            $data['active'] = 1;
+            $data['status_id'] = 1;
+            $data['slug'] = $this->ortyd->sanitize('detail-list-' . time(), 'data_survei_pm_detail_list');
+            
+            $this->db->insert('data_survei_pm_detail_list', $data);
+            $detail_id = $this->db->insert_id();
+            
+            //save_history('data_survei_pm_detail_list', $detail_id, $data, 'Created');
+        }
+        
+        // Update total di survei_pm_detail
+        $this->update_pok_total($survei_pm_detail_id, $master_kelompok_id);
+        
+        $this->db->trans_commit();
+        
+        $message = $is_update ? 'Data berhasil diupdate' : 'Data berhasil disimpan';
+        
+        echo json_encode([
+            'status' => 'success',
+            'message' => $message,
+            'detail_id' => $detail_id,
+            'survei_pm_detail_id' => $survei_pm_detail_id,
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        
+    } catch (Exception $e) {
+        $this->db->trans_rollback();
+        
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+    }
+}
+
+/**
+ * Get single POK detail for editing
+ */
+public function get_pok_detail() {
+    header('X-Robots-Tag: noindex, nofollow', true);
+    header('Content-Type: application/json');
+    
+    $id = $this->input->post('id', true);
+    
+    if (!$id) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'ID tidak valid',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+    
+    $this->db->where('id', $id);
+    $this->db->where('active', 1);
+    $data = $this->db->get('data_survei_pm_detail_list')->row_array();
+    
+    if ($data) {
+        echo json_encode([
+            'status' => 'success',
+            'data' => $data,
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+    } else {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Data tidak ditemukan',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+    }
+}
+
+/**
+ * Delete POK detail
+ */
+public function delete_pok_detail() {
+    header('X-Robots-Tag: noindex, nofollow', true);
+    header('Content-Type: application/json');
+    
+    $userid = $this->session->userdata('userid');
+    if (!$userid) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Anda harus login terlebih dahulu',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+    
+    $id = $this->input->post('id', true);
+    
+    if (!$id) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'ID tidak valid',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+    
+    $this->db->trans_begin();
+    
+    try {
+        // Get detail info before delete
+        $this->db->where('id', $id);
+        $detail = $this->db->get('data_survei_pm_detail_list')->row();
+        
+        if (!$detail) {
+            throw new Exception('Data tidak ditemukan');
+        }
+        
+        // Soft delete
+        $this->db->where('id', $id);
+        $success = $this->db->update('data_survei_pm_detail_list', [
+            'active' => 0,
+            'modifiedid' => $userid,
+            'modified' => date('Y-m-d H:i:s')
+        ]);
+        
+        if (!$success) {
+            throw new Exception('Gagal menghapus data');
+        }
+        
+        save_history('data_survei_pm_detail_list', $id, [], 'Data Deleted');
+        
+        // Update total in data_survei_pm_detail
+        $this->update_pok_total($detail->survei_pm_detail_id, $detail->master_kelompok_id);
+        
+        $this->db->trans_commit();
+        
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Data berhasil dihapus',
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+        
+    } catch (Exception $e) {
+        $this->db->trans_rollback();
+        
+        echo json_encode([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'csrf_hash' => $this->security->get_csrf_hash()
+        ]);
+    }
+}
+
+/**
+ * Update POK total in data_survei_pm_detail
+ */
+private function update_pok_total($survei_pm_detail_id, $master_kelompok_id) {
+    // Get master kelompok info
+    $this->db->where('id', $master_kelompok_id);
+    $kelompok = $this->db->get('master_kelompok')->row();
+    
+    if (!$kelompok) {
+        return false;
+    }
+    
+    // Calculate total from detail list
+    $this->db->select_sum('jumlah_total');
+    $this->db->where('survei_pm_detail_id', $survei_pm_detail_id);
+    $this->db->where('master_kelompok_id', $master_kelompok_id);
+    $this->db->where('active', 1);
+    $result = $this->db->get('data_survei_pm_detail_list')->row();
+    
+    $total = $result->jumlah_total ?? 0;
+    
+    // Update data_survei_pm_detail
+    $field_name = 'survei_pm_pok_' . $kelompok->urutan;
+    
+    $this->db->where('id', $survei_pm_detail_id);
+    return $this->db->update('data_survei_pm_detail', [
+        $field_name => $total,
+        'modified' => date('Y-m-d H:i:s')
+    ]);
+}
+
+	
 		
 }

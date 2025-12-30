@@ -355,6 +355,44 @@
                                     ?>
                                 </div>
                                 
+                                
+<!-- Section 3: Captcha & Submit -->
+<div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="800">
+    
+    <!-- Captcha -->
+    <div class="row pb-2 mb-1">
+        <div class="form-group col">
+            <label>Verifikasi Keamanan <span class="text-danger">*</span></label>
+            <!-- Cloudflare Turnstile - Will be rendered explicitly by JavaScript -->
+            <div class="cf-turnstile"></div>
+        </div>
+    </div>
+    
+
+    
+</div>
+                                
+                                    <!-- Submit Button -->
+    <div class="row">
+        <div class="form-group col">
+            <?php if ($is_logged_in): ?>
+            <input type="submit" 
+                   id="btnSubmitSurvei" 
+                   value="<?php echo $is_edit_mode ? 'Update Data Identitas' : 'Simpan Data Identitas'; ?>" 
+                   class="btn btn-primary btn-modern text-uppercase font-weight-bold text-3 py-3 btn-px-5 w-100" 
+                   data-loading-text="Memproses..." />
+            <?php else: ?>
+            <a href="<?php echo $googlelink; ?>" 
+               class="btn btn-warning btn-modern text-uppercase font-weight-bold text-3 py-3 btn-px-5 w-100">
+                <img alt="Google" 
+                     src="<?php echo base_url(); ?>themes/ortyd/assets/media/svg/brand-logos/google-icon.svg" 
+                     class="h-20px me-2" />
+                Login dengan Google untuk Melanjutkan
+            </a>
+            <?php endif; ?>
+        </div>
+    </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -404,7 +442,7 @@
                            inputmode="numeric"
                            pattern="[0-9]*"
                            autocomplete="off"
-                           <?php echo $disabled_attr; ?> />
+                           <?php echo $disabled_attr; ?> disabled />
                     <small class="form-text text-muted">Jumlah: <span class="pok-value font-weight-semibold text-primary"><?php echo ${$rows_column['name']}; ?></span> orang</small>
                 </div>
                 
@@ -431,42 +469,8 @@
 </div>
 
 <!-- CSRF Token -->
-<input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" class="csrf_token" />
+<input type="hidden" id="token_csrf" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" class="csrf_token" />
 
-<!-- Section 3: Captcha & Submit -->
-<div class="appear-animation" data-appear-animation="fadeInUp" data-appear-animation-delay="800">
-    
-    <!-- Captcha -->
-    <div class="row pb-2 mb-1">
-        <div class="form-group col">
-            <label>Verifikasi Keamanan <span class="text-danger">*</span></label>
-            <!-- Cloudflare Turnstile - Will be rendered explicitly by JavaScript -->
-            <div class="cf-turnstile"></div>
-        </div>
-    </div>
-    
-    <!-- Submit Button -->
-    <div class="row">
-        <div class="form-group col">
-            <?php if ($is_logged_in): ?>
-            <input type="submit" 
-                   id="btnSubmitSurvei" 
-                   value="<?php echo $is_edit_mode ? 'Update Jumlah Penerima Manfaat' : 'Simpan Data Survei'; ?>" 
-                   class="btn btn-primary btn-modern text-uppercase font-weight-bold text-3 py-3 btn-px-5 w-100" 
-                   data-loading-text="Memproses..." />
-            <?php else: ?>
-            <a href="<?php echo $googlelink; ?>" 
-               class="btn btn-warning btn-modern text-uppercase font-weight-bold text-3 py-3 btn-px-5 w-100">
-                <img alt="Google" 
-                     src="<?php echo base_url(); ?>themes/ortyd/assets/media/svg/brand-logos/google-icon.svg" 
-                     class="h-20px me-2" />
-                Login dengan Google untuk Melanjutkan
-            </a>
-            <?php endif; ?>
-        </div>
-    </div>
-    
-</div>
 
 <?php if (!$is_logged_in): ?>
     </div> <!-- Close overlay div -->
@@ -477,9 +481,14 @@
             </div>
         </div>
     </div>
+    
+    <?php $this->load->view('frontend/v_modal_pok_detail'); ?>
+    
 </section>
 
-
+<script>
+    var baseurl = '<?php echo base_url(); ?>';
+</script>
 <script>
 // ==========================================
 // TURNSTILE CONFIGURATION
@@ -566,7 +575,7 @@ function validateTurnstile() {
     }
     
     const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]');
-    
+    //turnstileResponse = true;
     if (!turnstileResponse || !turnstileResponse.value) {
         Swal.fire({
             title: '<strong>Verifikasi Keamanan Diperlukan</strong>',
@@ -885,24 +894,6 @@ function handleFormSubmission() {
         totalPenerima += parseInt($(this).val() || 0);
     });
     
-    if (totalPenerima === 0) {
-        Swal.fire({
-            title: '<strong>Peringatan</strong>',
-            icon: 'warning',
-            html: 'Total penerima manfaat adalah 0. Apakah Anda yakin ingin melanjutkan?',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Lanjutkan',
-            cancelButtonText: 'Batal',
-            confirmButtonColor: '#ffc107',
-            cancelButtonColor: '#6c757d'
-        }).then(function(result) {
-            if (result.isConfirmed) {
-                proceedWithSubmission();
-            }
-        });
-        return false;
-    }
-    
     // Jika ada error validasi
     if (hasError) {
         var submitButton = $('#btnSubmitSurvei');
@@ -1208,7 +1199,6 @@ function proceedWithSubmission() {
 })();
 </script>
 
-<!-- Load Cloudflare Turnstile -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <style>
