@@ -818,7 +818,7 @@ var disableIdentityFields = <?php echo $disable_identity_fields ? 'true' : 'fals
     });
     
     // Form submission handler
-    $('#formSurvei<?php echo $iddata; ?>').on('submit', function(e) {
+    $('#btnSubmitSurvei').on('click', function(e) {
         e.preventDefault();
         handleFormSubmission();
     });
