@@ -24,7 +24,10 @@
                         <p class="section-subtitle">Program intervensi gizi mencakup berbagai kelompok di seluruh Indonesia</p>
                     </div>
 
-                    <!-- Category 2: Ibu & Keluarga -->
+                    
+                        
+                    <div class="categories-wrapper">
+                        <!-- Category 2: Ibu & Keluarga -->
                         <div class="category-group fade-slide">
                             <div class="category-header">
                                 <div class="category-icon-wrap">
@@ -38,7 +41,6 @@
                             </div>
                         </div>
                         
-                    <div class="categories-wrapper">
                         <!-- Category 1: Bayi & Balita -->
                         <div class="category-group fade-slide">
                             <div class="category-header">
