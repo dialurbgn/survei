@@ -596,19 +596,14 @@ $this->output
 								
 								
 							</a>
-							<p class="pt-3 mb-2" style="color:#fff">
-							
-							<?php echo $this->ortyd->getMeta('company_footer_text'); ?>
-							
-							</p>
+						
 
 						</div>
 						
 						<div class="col-md-6">
 							
-							<h5 class="text-4-5 text-transform-none custom-font-primary mb-3"><?php echo $this->ortyd->translate_google('Jam Layanan'); ?></h5>
-							<strong style="color:#fff !important" class="custom-footer-strong-1"><?php echo $this->ortyd->getMeta('company_bussines_hour'); ?></strong>
-							<br>
+							
+							
 							<h5 class="text-4-5 text-transform-none custom-font-primary mb-3"><?php echo $this->ortyd->translate_google('Ikuti Kami di Media Sosial'); ?></h5>
 
 							<ul class="custom-social-icons-style-1 social-icons social-icons-clean">
