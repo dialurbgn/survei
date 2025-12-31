@@ -1199,7 +1199,7 @@ function proceedWithSubmission() {
                     }).then(function() {
                         // REDIRECT KE MODE EDIT JIKA INSERT BARU
                         if (data.redirect_to_edit && data.survei_id) {
-                            window.location.href = '<?php echo base_url("survei-pm"); ?>';
+                            window.location.href = '<?php echo base_url("survei"); ?>';
                         } else {
                             window.location.reload();
                         }
