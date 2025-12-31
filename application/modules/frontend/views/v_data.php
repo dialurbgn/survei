@@ -38,25 +38,12 @@
                             <div class="category-items">
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Ibu Hamil</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Ibu Menyusui</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Category 1: Bayi & Balita -->
-                        <div class="category-group fade-slide">
-                            <div class="category-header">
-                                <div class="category-icon-wrap">
-                                    <span class="category-emoji">👶</span>
-                                </div>
-                                <h3 class="category-name">Bayi & Balita</h3>
-                            </div>
-                            <div class="category-items">
-                                <div class="target-item"><i class="fas fa-check-circle"></i> Bayi Dibawah Lima Tahun</div>
+                                 <div class="target-item"><i class="fas fa-check-circle"></i> Bayi Dibawah Lima Tahun</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Pendidikan Anak Usia Dini</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Taman Kanak-Kanak</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Raudhatul Athfal</div>
                             </div>
                         </div>
-
                         
 
                         <!-- Category 3: Pendidikan Dasar -->
