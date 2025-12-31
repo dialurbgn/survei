@@ -24,6 +24,20 @@
                         <p class="section-subtitle">Program intervensi gizi mencakup berbagai kelompok di seluruh Indonesia</p>
                     </div>
 
+                    <!-- Category 2: Ibu & Keluarga -->
+                        <div class="category-group fade-slide">
+                            <div class="category-header">
+                                <div class="category-icon-wrap">
+                                    <span class="category-emoji">🤰</span>
+                                </div>
+                                <h3 class="category-name">Ibu & Keluarga</h3>
+                            </div>
+                            <div class="category-items">
+                                <div class="target-item"><i class="fas fa-check-circle"></i> Ibu Hamil</div>
+                                <div class="target-item"><i class="fas fa-check-circle"></i> Ibu Menyusui</div>
+                            </div>
+                        </div>
+                        
                     <div class="categories-wrapper">
                         <!-- Category 1: Bayi & Balita -->
                         <div class="category-group fade-slide">
@@ -41,19 +55,7 @@
                             </div>
                         </div>
 
-                        <!-- Category 2: Ibu & Keluarga -->
-                        <div class="category-group fade-slide">
-                            <div class="category-header">
-                                <div class="category-icon-wrap">
-                                    <span class="category-emoji">🤰</span>
-                                </div>
-                                <h3 class="category-name">Ibu & Keluarga</h3>
-                            </div>
-                            <div class="category-items">
-                                <div class="target-item"><i class="fas fa-check-circle"></i> Ibu Hamil</div>
-                                <div class="target-item"><i class="fas fa-check-circle"></i> Ibu Menyusui</div>
-                            </div>
-                        </div>
+                        
 
                         <!-- Category 3: Pendidikan Dasar -->
                         <div class="category-group fade-slide">
@@ -84,12 +86,12 @@
                             <div class="category-items">
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Sekolah Menengah Pertama</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Madrasah Tsanawiyah</div>
-                                <div class="target-item"><i class="fas fa-check-circle"></i> Sekolah Rakyat Setara SMP</div>
+                                
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Sekolah Menengah Atas</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Sekolah Menengah Kejuruan</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Madrasah Aliyah</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Madrasah Aliyah Kejuruan</div>
-                                <div class="target-item"><i class="fas fa-check-circle"></i> Sekolah Rakyat Setara SMA</div>
+                                
                             </div>
                         </div>
 
@@ -107,6 +109,8 @@
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Seminari</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Pusat Kegiatan Belajar Masyarakat</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Anak Usia Sekolah yang Tidak Sekolah</div>
+                                <div class="target-item"><i class="fas fa-check-circle"></i> Sekolah Rakyat Setara SMP</div>
+                                <div class="target-item"><i class="fas fa-check-circle"></i> Sekolah Rakyat Setara SMA</div>
                             </div>
                         </div>
                     </div>
