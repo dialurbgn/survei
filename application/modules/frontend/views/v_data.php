@@ -38,12 +38,25 @@
                             <div class="category-items">
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Ibu Hamil</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Ibu Menyusui</div>
-                                 <div class="target-item"><i class="fas fa-check-circle"></i> Bayi Dibawah Lima Tahun</div>
+                                <div class="target-item"><i class="fas fa-check-circle"></i> Balita</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Category 1: Bayi & Balita -->
+                        <div class="category-group fade-slide">
+                            <div class="category-header">
+                                <div class="category-icon-wrap">
+                                    <span class="category-emoji">👶</span>
+                                </div>
+                                <h3 class="category-name">Pendidikan Pra Sekolah</h3>
+                            </div>
+                            <div class="category-items">
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Pendidikan Anak Usia Dini</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Taman Kanak-Kanak</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Raudhatul Athfal</div>
                             </div>
                         </div>
+
                         
 
                         <!-- Category 3: Pendidikan Dasar -->
@@ -120,7 +133,7 @@
                             <i class="fas fa-clipboard-list"></i>
                         </div>
                         <h2 class="cta-main-title">Saatnya Berkontribusi untuk Indonesia!</h2>
-                        <p class="cta-main-text">Daftarkan penerima manfaat di wilayah Anda melalui sistem DIALUR.<br>Setiap data yang Anda input adalah investasi untuk masa depan anak Indonesia.</p>
+                        <p class="cta-main-text">Daftarkan penerima manfaat di wilayah Anda melalui sistem survei penerima manfaat MBG.<br>Setiap data yang Anda input adalah investasi untuk masa depan anak Indonesia.</p>
                         
                         <a href="<?php echo base_url('survei'); ?>" class="btn-survey-cta" id="surveyMainBtn">
                             <span class="btn-ripple"></span>
