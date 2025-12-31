@@ -106,7 +106,7 @@
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Pondok Pesantren</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Seminari</div>
                                 <div class="target-item"><i class="fas fa-check-circle"></i> Pusat Kegiatan Belajar Masyarakat</div>
-                                <div class="target-item"><i class="fas fa-check-circle"></i> Anak Usia Sekolah</div>
+                                <div class="target-item"><i class="fas fa-check-circle"></i> Anak Usia Sekolah yang Tidak Sekolah</div>
                             </div>
                         </div>
                     </div>
