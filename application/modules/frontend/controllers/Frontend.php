@@ -1724,6 +1724,8 @@ public function actiondata_survei_pm()
         $existing_detail = $this->db->get($module_detail)->row();
         
         if ($existing_detail) {
+			
+			$success_detail = true;
             //$this->db->where('survei_pm_pm_id', $survei_pm_id);
             //$this->db->where('active', 1);
             //$success_detail = $this->db->update($module_detail, $data_detail);
