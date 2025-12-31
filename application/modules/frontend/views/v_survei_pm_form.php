@@ -987,7 +987,7 @@ function proceedWithSubmission() {
     if(requiredattr == 0){
         var confirmText = isEditMode ? 
             'Apakah Anda yakin akan mengupdate data Identitas Ini ?' :
-            'Apakah Anda yakin akan menyimpan data Identitas Ini dan melanjukan untuk mengisi survei?';
+            'Apakah Anda yakin akan menyimpan data Identitas Ini dan melanjukan untuk mengisi data survei?';
         
         Swal.fire({
             title: '<strong>' + (isEditMode ? 'Update Data' : 'Simpan Data') + '</strong>',
