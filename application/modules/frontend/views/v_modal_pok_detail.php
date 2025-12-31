@@ -826,7 +826,7 @@ input[type=number] {
             html += '<small class="text-muted">' + escapeHtml(item.nama_unit) + '</small>';
             html += '</td>';
             html += '<td>' + (item.jenis_kepemilikan || '-') + '</td>';
-            html += '<td><small>' + (item.wil_name || '-') + '</small></td>';
+            html += '<td><small>' + (item.alamat || '-') + '</small><br><small>' + (item.wil_name || '-') + '</small></td>';
             html += '<td class="text-center">' + (item.jumlah_pria || 0) + '</td>';
             html += '<td class="text-center">' + (item.jumlah_wanita || 0) + '</td>';
             html += '<td class="text-center"><strong>' + (item.jumlah_total || 0) + '</strong></td>';

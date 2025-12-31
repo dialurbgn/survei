@@ -1961,14 +1961,23 @@ public function get_pok_detail_list() {
         return;
     }
     
-    // Get detail list - wil_name sudah ada di tabel
-    $this->db->select('*');
-    $this->db->where('survei_pm_detail_id', $survei_pm_detail_id);
-    $this->db->where('master_kelompok_id', $master_kelompok_id);
-    $this->db->where('active', 1);
-    $this->db->order_by('created', 'DESC');
+    // Get detail list dengan JOIN ke m_set_wil_administratif
+    $this->db->select('
+        data_survei_pm_detail_list.*,
+        wil.wil_keyword as wil_name
+    ');
+    $this->db->from('data_survei_pm_detail_list');
+    $this->db->join(
+        'm_set_wil_administratif as wil', 
+        'wil.wil_id = data_survei_pm_detail_list.wil_id', 
+        'left'
+    );
+    $this->db->where('data_survei_pm_detail_list.survei_pm_detail_id', $survei_pm_detail_id);
+    $this->db->where('data_survei_pm_detail_list.master_kelompok_id', $master_kelompok_id);
+    $this->db->where('data_survei_pm_detail_list.active', 1);
+    $this->db->order_by('data_survei_pm_detail_list.created', 'DESC');
     
-    $data = $this->db->get('data_survei_pm_detail_list')->result_array();
+    $data = $this->db->get()->result_array();
     
     // Calculate total
     $total = 0;
@@ -2185,7 +2194,7 @@ public function save_pok_detail() {
             $this->db->where('id', $detail_id);
             $this->db->update('data_survei_pm_detail_list', $data);
             
-            save_history('data_survei_pm_detail_list', $detail_id, $data, 'Updated');
+            //save_history('data_survei_pm_detail_list', $detail_id, $data, 'Updated');
         } else {
             // Insert new
             $data['createdid'] = $userid;
@@ -2244,9 +2253,21 @@ public function get_pok_detail() {
         return;
     }
     
-    $this->db->where('id', $id);
-    $this->db->where('active', 1);
-    $data = $this->db->get('data_survei_pm_detail_list')->row_array();
+    // Query dengan JOIN ke m_set_wil_administratif
+    $this->db->select('
+        data_survei_pm_detail_list.*,
+        wil.wil_keyword as wil_name
+    ');
+    $this->db->from('data_survei_pm_detail_list');
+    $this->db->join(
+        'm_set_wil_administratif as wil', 
+        'wil.wil_id = data_survei_pm_detail_list.wil_id', 
+        'left'
+    );
+    $this->db->where('data_survei_pm_detail_list.id', $id);
+    $this->db->where('data_survei_pm_detail_list.active', 1);
+    
+    $data = $this->db->get()->row_array();
     
     if ($data) {
         echo json_encode([
