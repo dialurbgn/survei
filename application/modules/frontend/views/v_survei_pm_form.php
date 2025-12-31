@@ -381,7 +381,7 @@
     <div class="row">
         <div class="form-group col">
             <?php if ($is_logged_in): ?>
-            <input type="submit" 
+            <input type="button" 
                    id="btnSubmitSurvei" 
                    value="<?php echo $is_edit_mode ? 'Update Data Identitas' : 'Simpan Data Identitas'; ?>" 
                    class="btn btn-primary btn-modern text-uppercase font-weight-bold text-3 py-3 btn-px-5 w-100" 
