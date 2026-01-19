@@ -55,12 +55,15 @@ class Report extends MX_Controller {
 			
 			if(isset($_GET['tipe'])){
 				if($_GET['tipe'] == 2){
+					$this->tabledb = 'vw_data_survei_prov';
+					$this->titlechilddb = 'Daftar Survei Per Provinsi';
+				}else{
 					$this->tabledb = 'vw_data_survei';
-					$this->titlechilddb = 'Laporan';
+					$this->titlechilddb = 'Daftar Survei';
 				}
 			}else{
 				$this->tabledb = 'vw_data_survei';
-				$this->titlechilddb = 'Laporan';
+				$this->titlechilddb = 'Daftar Survei';
 			}
 			$data['title'] = $this->titlechilddb;
 			$data['module'] = $this->module;
