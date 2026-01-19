@@ -2351,85 +2351,99 @@ class Ortyd {
 	
 	//DATATABLES DATA
 
-	public function _get_datatables_query($table,$column_order,$column_search,$order,$select,$jointable,$joindetail,$joinposition,$wheretable,$wherecolumn,$groupby)
-    {
-		$CI =& get_instance();
-		$CI->db->select($select);
-		if(count($jointable) > 0){
-			for($i = 0;$i < count($jointable);$i++){
-				$CI->db->join($jointable[$i], $joindetail[$i], $joinposition[$i]);
-			}
-		}
-        $CI->db->from($table);
-		
-		if(count($wheretable) > 0){
-			for($i = 0;$i < count($wheretable);$i++){
-				
-				$explode = explode("|",$wheretable[$i]);
-				if(count($explode) > 1){
-					if($explode[1] == 'in'){
-						$CI->db->where_in($explode[0], $wherecolumn[$i]);
-					}elseif($explode[1] == 'like'){
-						$CI->db->like($explode[0], $wherecolumn[$i]);
-					}elseif($explode[1] == 'notin'){
-						$CI->db->where_not_in($explode[0], $wherecolumn[$i]);
-					}elseif($explode[1] == 'or'){
-						$CI->db->or_where($wheretable[$i], $wherecolumn[$i]);
-					}else{
-						$CI->db->where($wheretable[$i], $wherecolumn[$i]);
-					}
-				}else{
-					$CI->db->where($wheretable[$i], $wherecolumn[$i]);
-				}
-						
-				
-			}
-		}
- 
-        $i = 0;
-     
-        foreach ($column_search as $item)
-        {
-			if($_POST['search']['value'])
-            {
-                if($i===0)
-                {
-                    $CI->db->group_start();
-                    $CI->db->like($item, $_POST['search']['value']);
-                }
-                else
-                {
-                    $CI->db->or_like($item, $_POST['search']['value']);
-                }
- 
-                if(count($column_search) - 1 == $i)
-                    $CI->db->group_end();
-            }
-            $i++;
+public function _get_datatables_query($table,$column_order,$column_search,$order,$select,$jointable,$joindetail,$joinposition,$wheretable,$wherecolumn,$groupby)
+{
+    $CI =& get_instance();
+    $CI->db->select($select, FALSE);
+    
+    if(count($jointable) > 0){
+        for($i = 0;$i < count($jointable);$i++){
+            $CI->db->join($jointable[$i], $joindetail[$i], $joinposition[$i]);
         }
-         
-        if(isset($_POST['order']))
-        {
-            $CI->db->order_by($column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
-        } 
-        else if(isset($order))
-        {
-            $order = $order;
-			if(count($order) > 0){
-				foreach($order as $rows => $key){
-					$CI->db->order_by($rows,$key);
-				}
-			}
-            
-        }
-		
-		if(count($groupby) > 0){
-			$CI->db->group_by($groupby); 
-		}
-		
-		 
-		 
     }
+    
+    $CI->db->from($table);
+    
+    if(count($wheretable) > 0){
+        for($i = 0;$i < count($wheretable);$i++){
+            $explode = explode("|",$wheretable[$i]);
+            if(count($explode) > 1){
+                $column_name = trim($explode[0]);
+                $operator = trim($explode[1]);
+                
+                if($operator == 'in'){
+                    $CI->db->where_in($column_name, $wherecolumn[$i]);
+                }elseif($operator == 'like'){
+                    $CI->db->like($column_name, $wherecolumn[$i]);
+                }elseif($operator == 'notin'){
+                    $CI->db->where_not_in($column_name, $wherecolumn[$i]);
+                }elseif($operator == 'or'){
+                    $CI->db->or_where($column_name, $wherecolumn[$i]);
+                }else{
+                    $CI->db->where($column_name, $wherecolumn[$i]);
+                }
+            }else{
+                $CI->db->where($wheretable[$i], $wherecolumn[$i]);
+            }
+        }
+    }
+
+    if(count($groupby) > 0){
+        $CI->db->group_by($groupby); 
+    }
+
+    $i = 0;
+    foreach ($column_search as $item)
+    {
+        if(isset($_POST['search']['value']) && $_POST['search']['value'])
+        {
+            if($i===0)
+            {
+                $CI->db->group_start();
+                $CI->db->like($item, $_POST['search']['value']);
+            }
+            else
+            {
+                $CI->db->or_like($item, $_POST['search']['value']);
+            }
+
+            if(count($column_search) - 1 == $i)
+                $CI->db->group_end();
+        }
+        $i++;
+    }
+     
+    if(isset($_POST['order']))
+    {
+        if(isset($column_order[$_POST['order']['0']['column']]) && 
+           !empty($column_order[$_POST['order']['0']['column']])){
+            
+            $order_column = $column_order[$_POST['order']['0']['column']];
+            $order_dir = strtoupper($_POST['order']['0']['dir']);
+            
+            // PERBAIKAN: Gunakan raw query untuk ORDER BY
+            // Hapus backtick dan escape manual
+            $order_column = str_replace('`', '', $order_column);
+            $order_column = str_replace('"', '', $order_column);
+            
+            // Gunakan order_by dengan FALSE untuk tidak escape
+            $CI->db->order_by($order_column, $order_dir, FALSE);
+        }
+    } 
+    else if(isset($order) && is_array($order))
+    {
+        if(count($order) > 0){
+            foreach($order as $rows => $key){
+                // Hapus backtick dan escape manual
+                $rows = str_replace('`', '', $rows);
+                $rows = str_replace('"', '', $rows);
+                $key = strtoupper($key);
+                
+                $CI->db->order_by($rows, $key, FALSE);
+            }
+        }
+    }
+}
  
     public function get_datatables($table,$column_order,$column_search,$order,$select,$jointable,$joindetail,$joinposition,$wheretable,$wherecolumn,$groupby)
     {
