@@ -229,7 +229,7 @@
 														</div>
 														<!--end::Stat-->
 														<!--begin::Stat-->
-														<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+														<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3" style="display:none">
 															<!--begin::Number-->
 															<a href="<?php echo base_url('data_survei_pm'); ?>"><div class="d-flex align-items-center">
 																<i class="ki-duotone ki-arrow-up fs-3 text-success me-2">
