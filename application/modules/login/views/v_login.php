@@ -105,7 +105,7 @@
 								<!--end::Login options-->
 								
 									<!--begin::Col-->
-								<div class="col-md-12">
+								<div class="col-md-12" style="display:none">
 									<!--begin::Telegram link=-->
 									<a href="<?php echo telegram_link; ?>" target="_blank" class="btn btn-flex btn-color-black btn-outline btn-text-black-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
 									<img alt="Telegram" src="<?php echo base_url(); ?>themes/ortyd/assets/media/svg/brand-logos/telegram-icon.svg" class="h-15px me-3" />Login with Telegram</a>

@@ -131,9 +131,9 @@
 												<!--end::User-->
 												<!--begin::Actions-->
 												<div class="d-flex my-4">
-													<a href="<?php echo base_url('data_survei_pm/createdata'); ?>" class="btn btn-danger me-3">Buat Pengajuan Anda Sekarang <i class="ki-duotone ki-black-right fs-2 text-white"></i></a>
+													<a href="<?php echo base_url('data_survei_pm/createdata'); ?>" class="btn btn-danger me-3" style="display:none">Buat Pengajuan Anda Sekarang <i class="ki-duotone ki-black-right fs-2 text-white"></i></a>
 													<!--begin::Menu-->
-													<div class="me-0">
+													<div class="me-0" style="display:none">
 														<button class="btn btn-icon btn-bg-light btn-active-color-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
 															<i class="ki-solid ki-dots-horizontal fs-2x"></i>
 														</button>
