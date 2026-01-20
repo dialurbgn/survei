@@ -169,39 +169,62 @@ class M_dashboard_popup extends CI_Model {
 		');
 		
 		// Search
-		if($searchValue){
+		if ($searchValue) {
+
+			$searchValue = $this->db->escape_like_str($searchValue);
+
 			$this->db->group_start();
-			$this->db->or_like('data_survei_pm.survei_pm_nama', $searchValue);
-			$this->db->or_like('data_survei_pm.survei_pm_email', $searchValue);
-			$this->db->or_like('data_survei_pm.survei_pm_tlp', $searchValue);
-			$this->db->or_like('m_set_wil_administratif.wil_prov_nama', $searchValue);
-			$this->db->or_like('m_set_wil_administratif.wil_kab_nama', $searchValue);
-			$this->db->or_like('m_set_wil_administratif.wil_kec_nama', $searchValue);
-			$this->db->or_like('master_kelompok.nama_kelompok', $searchValue);
-			$this->db->or_like('data_survei_pm_detail_list.nama_unit', $searchValue);
+
+			$this->db->or_where("data_survei_pm.survei_pm_nama ILIKE '%".$searchValue."%'", NULL, FALSE);
+			$this->db->or_where("data_survei_pm.survei_pm_email ILIKE '%".$searchValue."%'", NULL, FALSE);
+			$this->db->or_where("data_survei_pm.survei_pm_tlp ILIKE '%".$searchValue."%'", NULL, FALSE);
+			$this->db->or_where("m_set_wil_administratif.wil_prov_nama ILIKE '%".$searchValue."%'", NULL, FALSE);
+			$this->db->or_where("m_set_wil_administratif.wil_kab_nama ILIKE '%".$searchValue."%'", NULL, FALSE);
+			$this->db->or_where("m_set_wil_administratif.wil_kec_nama ILIKE '%".$searchValue."%'", NULL, FALSE);
+			$this->db->or_where("master_kelompok.nama_kelompok ILIKE '%".$searchValue."%'", NULL, FALSE);
+			$this->db->or_where("data_survei_pm_detail_list.nama_unit ILIKE '%".$searchValue."%'", NULL, FALSE);
+
 			$this->db->group_end();
 		}
+
+
 		
 		// Total records (filtered)
-		$totalFiltered = $this->db->count_all_results('', FALSE);
+		// Hitung jumlah BARIS HASIL setelah filter + group
+		$countQuery = clone $this->db;
+		$countResult = $countQuery->get()->num_rows();
+		$totalFiltered = $countResult;
 		
-		// Order
-		if(isset($order[0]['column'])){
-			$columnIndex = $order[0]['column'];
-			$columnDir = $order[0]['dir'];
-			
-			$columns = array('id', 'survei_pm_nama', 'survei_pm_email', 'survei_pm_tlp', 'wilayah', 'kelompok', 'nama_unit','tanggal','total_pria','total_wanita','total_semua', 'status');
-			
-			if(isset($columns[$columnIndex])){
-				if($columns[$columnIndex] == 'id'){
-					$this->db->order_by('data_survei_pm.id', $columnDir);
-				} else {
-					$this->db->order_by($columns[$columnIndex], $columnDir);
+		// ORDER MULTI COLUMN (SUPPORT order: [[4,'asc'],[5,'asc']])
+		$columns = array(
+			0  => 'data_survei_pm.id',
+			1  => 'data_survei_pm.survei_pm_nama',
+			2  => 'data_survei_pm.survei_pm_email',
+			3  => 'data_survei_pm.survei_pm_tlp',
+			4  => 'm_set_wil_administratif.wil_prov_nama',   // wilayah ASLI
+			5  => 'master_kelompok.nama_kelompok',          // kelompok ASLI
+			6  => 'data_survei_pm_detail_list.nama_unit',
+			7  => 'data_survei_pm.created',
+			8  => 'SUM(data_survei_pm_detail_list.jumlah_pria)',
+			9  => 'SUM(data_survei_pm_detail_list.jumlah_wanita)',
+			10  => 'SUM(data_survei_pm_detail_list.jumlah_total)',
+			11 => 'data_survei_pm.status'
+		);
+
+		if (!empty($order)) {
+			foreach ($order as $ord) {
+				$colIndex = $ord['column'];
+				$dir      = $ord['dir'];
+
+				if (isset($columns[$colIndex])) {
+					$this->db->order_by($columns[$colIndex], $dir);
 				}
 			}
 		} else {
+			// default order
 			$this->db->order_by('data_survei_pm.created', 'DESC');
 		}
+
 		
 		// Limit
 		if($length != -1){

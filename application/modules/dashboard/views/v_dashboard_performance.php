@@ -1293,6 +1293,23 @@ function drillDownAll(tahun) {
         $('#table-detail-survei').DataTable({
             processing: true,
             serverSide: true,
+			lengthChange: true,
+			dom: 
+            "<'row mb-2'<'col-md-6'l><'col-md-6'f>>" +
+            "<'row mb-2'<'col-md-6'B><'col-md-6'>>" +
+            "<'row'<'col-md-12'tr>>" +
+            "<'row mt-2'<'col-md-6'i><'col-md-6'p>>",
+			buttons: [
+				{
+					extend: 'excelHtml5',
+					text: 'Download Excel',
+					title: 'Detail Survei',
+					className: 'btn btn-success btn-sm',
+					exportOptions: {
+						columns: ':visible:not(:last-child)' // kecuali kolom status
+					}
+				}
+			],
             ajax: {
                 url: '<?php echo base_url('dashboard/getColumnDetail'); ?>',
                 type: 'POST',
@@ -1338,8 +1355,8 @@ function drillDownAll(tahun) {
                 }
             },
             pageLength: 10,
-            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-            order: [[6, 'desc']]
+            lengthMenu: [[10, 25, 50, 100,-1], [10, 25, 50, 100,'All']],
+            order: [[4, 'asc'], [5, 'asc']]
         });
     });
 }
@@ -1402,6 +1419,23 @@ function drillDownProvinsi(prov_code, prov_name, tahun) {
         $('#table-detail-survei').DataTable({
             processing: true,
             serverSide: true,
+			lengthChange: true,
+			dom: 
+            "<'row mb-2'<'col-md-6'l><'col-md-6'f>>" +
+            "<'row mb-2'<'col-md-6'B><'col-md-6'>>" +
+            "<'row'<'col-md-12'tr>>" +
+            "<'row mt-2'<'col-md-6'i><'col-md-6'p>>",
+			buttons: [
+				{
+					extend: 'excelHtml5',
+					text: 'Download Excel',
+					title: 'Detail Survei',
+					className: 'btn btn-success btn-sm',
+					exportOptions: {
+						columns: ':visible:not(:last-child)' // kecuali kolom status
+					}
+				}
+			],
             ajax: {
                 url: '<?php echo base_url('dashboard/getColumnDetail'); ?>',
                 type: 'POST',
@@ -1448,7 +1482,7 @@ function drillDownProvinsi(prov_code, prov_name, tahun) {
                 }
             },
             pageLength: 10,
-            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            lengthMenu: [[10, 25, 50, 100,-1], [10, 25, 50, 100,'All']],
             order: [[6, 'desc']]
         });
     });
@@ -1511,6 +1545,23 @@ function drillDownKabkota(kabkota_code, kabkota_name, tahun) {
         $('#table-detail-survei').DataTable({
             processing: true,
             serverSide: true,
+			lengthChange: true,
+			dom: 
+            "<'row mb-2'<'col-md-6'l><'col-md-6'f>>" +
+            "<'row mb-2'<'col-md-6'B><'col-md-6'>>" +
+            "<'row'<'col-md-12'tr>>" +
+            "<'row mt-2'<'col-md-6'i><'col-md-6'p>>",
+			buttons: [
+				{
+					extend: 'excelHtml5',
+					text: 'Download Excel',
+					title: 'Detail Survei',
+					className: 'btn btn-success btn-sm',
+					exportOptions: {
+						columns: ':visible:not(:last-child)' // kecuali kolom status
+					}
+				}
+			],
             ajax: {
                 url: '<?php echo base_url('dashboard/getColumnDetail'); ?>',
                 type: 'POST',
@@ -1557,7 +1608,7 @@ function drillDownKabkota(kabkota_code, kabkota_name, tahun) {
                 }
             },
             pageLength: 10,
-            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            lengthMenu: [[10, 25, 50, 100,-1], [10, 25, 50, 100,'All']],
             order: [[6, 'desc']]
         });
     });
@@ -1619,6 +1670,23 @@ function drillDownKelompok(kelompok_id, kelompok_name, tahun) {
         $('#table-detail-survei').DataTable({
             processing: true,
             serverSide: true,
+			lengthChange: true,
+			dom: 
+            "<'row mb-2'<'col-md-6'l><'col-md-6'f>>" +
+            "<'row mb-2'<'col-md-6'B><'col-md-6'>>" +
+            "<'row'<'col-md-12'tr>>" +
+            "<'row mt-2'<'col-md-6'i><'col-md-6'p>>",
+			buttons: [
+				{
+					extend: 'excelHtml5',
+					text: 'Download Excel',
+					title: 'Detail Survei',
+					className: 'btn btn-success btn-sm',
+					exportOptions: {
+						columns: ':visible:not(:last-child)' // kecuali kolom status
+					}
+				}
+			],
             ajax: {
                 url: '<?php echo base_url('dashboard/getColumnDetail'); ?>',
                 type: 'POST',
@@ -1665,7 +1733,7 @@ function drillDownKelompok(kelompok_id, kelompok_name, tahun) {
                 }
             },
             pageLength: 10,
-            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            lengthMenu: [[10, 25, 50, 100,-1], [10, 25, 50, 100,'All']],
             order: [[6, 'desc']]
         });
     });
