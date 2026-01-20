@@ -573,7 +573,8 @@ class Dashboard extends MX_Controller {
 				[
 					"seriesname" => "Survei per Bulan",
 					"color" => "#667eea",
-					"data" => $datavalue
+					"data" => $datavalue,
+					"link" => "JavaScript:drillDownAll()"
 				]
 			];
 

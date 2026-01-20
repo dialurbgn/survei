@@ -901,6 +901,11 @@ function get_dashboard_charts(tahun, provinsi, kabkota, kelompok){
                             "category": obj.data
                         }],
                         "dataset": obj.data5
+                    },
+                    events: {
+                        dataPlotClick: function (eventObj, dataObj) {
+							drillDownAll(tahun);
+                        }
                     }
                 }).render();
             }
@@ -1181,6 +1186,114 @@ function get_dashboard_charts(tahun, provinsi, kabkota, kelompok){
 var popupOpened = false;
 // FUNGSI DRILL DOWN
 // FUNGSI DRILL DOWN - POPUP DATATABLES
+
+function drillDownAll(tahun) {
+	
+	if(popupOpened) return;   // ⛔ cegah dobel
+    popupOpened = true;
+	
+    if(!tahun) tahun = <?php echo isset($_GET['tahun']) ? $_GET['tahun'] : date('Y'); ?>;
+    
+    // Container untuk DataTables
+    var container = $('<div/>');
+    container.html('<table class="table table-striped table-bordered" id="table-detail-survei" style="width:100%">' +
+        '<thead>' +
+        '<tr>' +
+        '<th>No</th>' +
+        '<th>Nama</th>' +
+        '<th>Email</th>' +
+        '<th>Telepon</th>' +
+        '<th>Wilayah</th>' +
+        '<th>Kelompok</th>' +
+        '<th>Tanggal</th>' +
+		'<th>Pria</th>' +
+		'<th>Wanita</th>' +
+		'<th>Semua</th>' +
+        '<th>Status</th>' +
+        '</tr>' +
+        '</thead>' +
+        '</table>');
+    
+    var box = bootbox.dialog({
+        size: "xl",
+        title: '<i class="ki-duotone ki-map fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i> Detail Survei - ' + tahun,
+        message: container,
+        buttons: {
+            close: {
+                label: '<i class="ki-duotone ki-cross fs-2"><span class="path1"></span><span class="path2"></span></i> Tutup',
+                className: 'btn-secondary',
+                callback: function() {
+					 popupOpened = false;
+                    if($.fn.DataTable.isDataTable('#table-detail-survei')) {
+                        $('#table-detail-survei').DataTable().destroy();
+                    }
+                }
+            }
+        }
+    });
+	
+	box.on('hidden.bs.modal', function () {
+		popupOpened = false;
+		if($.fn.DataTable.isDataTable('#table-detail-survei')) {
+			$('#table-detail-survei').DataTable().destroy();
+		}
+	});
+    
+    box.on('shown.bs.modal', function() {
+        $('#table-detail-survei').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '<?php echo base_url('dashboard/getColumnDetail'); ?>',
+                type: 'POST',
+                data: function(d) {
+                    d.tahun = tahun;
+                    d.<?php echo $this->security->get_csrf_token_name(); ?> = csrfHash;
+                },
+                dataSrc: function(json) {
+                    if(json.csrf_hash) {
+                        updateCsrfToken(json.csrf_hash);
+                    }
+                    return json.data;
+                }
+            },
+            columns: [
+                { data: 'no', orderable: false },
+                { data: 'survei_pm_nama' },
+                { data: 'survei_pm_email' },
+                { data: 'survei_pm_tlp' },
+                { data: 'wilayah' },
+                { data: 'kelompok' },
+                { data: 'tanggal' },
+				{ data: 'total_pria' },
+				{ data: 'total_wanita' },
+				{ data: 'total_semua' },
+                { data: 'status', orderable: false }
+            ],
+            language: {
+                processing: 'Memuat data...',
+                search: 'Cari:',
+                lengthMenu: 'Tampilkan _MENU_ data',
+                info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+                infoEmpty: 'Tidak ada data',
+                infoFiltered: '(filter dari _MAX_ total data)',
+                zeroRecords: 'Tidak ada data yang cocok',
+                emptyTable: 'Tidak ada data tersedia',
+                paginate: {
+                    first: '<<',
+                    last: '>>',
+                    next: '>',
+                    previous: '<'
+                }
+            },
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            order: [[6, 'desc']]
+        });
+    });
+}
+
+
 function drillDownProvinsi(prov_code, prov_name, tahun) {
 	
 	if(popupOpened) return;   // ⛔ cegah dobel

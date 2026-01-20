@@ -132,6 +132,8 @@ class M_dashboard_popup extends CI_Model {
 		if($provinsi_code && $provinsi_code != '' && $provinsi_code != 'ALL'){
 			$this->db->where("CAST(SUBSTRING(m_set_wil_administratif.wil_prov_kode, 1, 2) AS INTEGER) =", (int)$provinsi_code, FALSE);
 
+		}else{
+			 $this->db->where('m_set_wil_administratif.wil_prov_nama IS NOT NULL', null, FALSE);
 		}
 		
 		if($kabkota_code && $kabkota_code != '' && $kabkota_code != 'ALL'){
