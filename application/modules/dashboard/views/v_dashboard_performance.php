@@ -1249,7 +1249,7 @@ function drillDownAll(tahun) {
         '<thead>' +
         '<tr>' +
         '<th>No</th>' +
-        '<th>Nama</th>' +
+        '<th>Nama Petugas</th>' +
         '<th>Email</th>' +
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
@@ -1358,7 +1358,7 @@ function drillDownProvinsi(prov_code, prov_name, tahun) {
         '<thead>' +
         '<tr>' +
         '<th>No</th>' +
-        '<th>Nama</th>' +
+        '<th>Nama Petugas</th>' +
         '<th>Email</th>' +
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
@@ -1466,7 +1466,7 @@ function drillDownKabkota(kabkota_code, kabkota_name, tahun) {
         '<thead>' +
         '<tr>' +
         '<th>No</th>' +
-        '<th>Nama</th>' +
+        '<th>Nama Petugas</th>' +
         '<th>Email</th>' +
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
@@ -1575,7 +1575,7 @@ function drillDownKelompok(kelompok_id, kelompok_name, tahun) {
         '<thead>' +
         '<tr>' +
         '<th>No</th>' +
-        '<th>Nama</th>' +
+        '<th>Nama Petugas</th>' +
         '<th>Email</th>' +
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
