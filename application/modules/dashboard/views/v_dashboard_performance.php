@@ -826,361 +826,409 @@ function get_dashboard_stats(tahun, provinsi, kabkota, kelompok){
 function get_dashboard_charts(tahun, provinsi, kabkota, kelompok){
     FusionCharts.ready(function() {
         
-        // Chart: Timeline Survei
-        $.post('<?php echo base_url($headurl.'/survei_timeline'); ?>',{
-            tahun : tahun, 
-            provinsi : provinsi,
-            kabkota : kabkota,
-            kelompok : kelompok,
-            <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
-        }, function (data) {
-            obj = JSON.parse(data);
-            updateCsrfToken(obj.csrf_hash)
-            if(obj.message == "success"){ 
-                var caption = 'Timeline Survei per Bulan';
-                var subCaption = "Tahun " + tahun;
-                
-                var myChart = new FusionCharts({
-                    type: "msspline",
-                    renderAt: "chart-timeline",
-                    width: "100%",
-                    height: "100%",
-                    dataFormat: "json",
-                    containerBackgroundOpacity: '0',
-                    dataSource: {
-                        chart: {
-                            "chartLeftMargin": "20",
-                            "chartTopMargin": "20",
-                            "chartRightMargin": "0",
-                            "chartBottomMargin": "5",
-                            xAxisValueBgColor: '#ffffff',
-                            "baseFontColor": "#52575D",
-                            "baseFontSize": "11px",
-                            xAxisValueBgAlpha: 0,
-                            "bgColor": "#ffffff",
-                            "bgAlpha": "0",
-                            "toolTipBgColor": "#FFFFFF",        // background putih
-							"toolTipBorderColor": "#CCCCCC",    // border abu tipis
-							"toolTipColor": "#000000",          // warna teks hitam
-							"toolTipBgAlpha": "100",            // full solid
-							"showToolTipShadow": "1",           // bayangan halus
-                            valueFontColor : "#52575D",
-                            caption: caption,
-                            "captionFont": "Arial",
-                            "captionFontColor": "#52575D",
-                            "captionFontSize": "14",
-                            "subCaption": subCaption,
-                            "subCaptionFontColor": "#52575D",
-                            "subCaptionFontSize": "12",
-                            "alignCaptionWithCanvas": "0",
-                            "captionHorizontalPadding": "10",
-                            "captionOnTop": "1",
-                            "captionAlignment": "left",
-                            xaxisname: "",
-                            yaxisname: "",
-                            theme: "fusion",
-                            "showValues": "1",
-                            showlegend: "1",
-                            legendItemFontSize:"10",
-                            showpercentvalues: "0",
-                            legendposition: "bottom",
-                            usedataplotcolorforlabels: "1",
-                            showLabels: "1",
-                            animateClockwise: "1",
-                            "placeValuesInside": "0",
-                            "numberScaleValue": "1000,1000,1000",
-                            "numberScaleUnit": " rb, jt, M",
-                            "decimalSeparator": ",",
-                            "thousandSeparator": ".",
-                            "rotateValues": "0",
-                            valueFontSize : "11",
-                            showYAxisValues : 1,
-                            showXAxisValues : 1
-                        },
-                        "categories": [{
-                            "category": obj.data
-                        }],
-                        "dataset": obj.data5
+       // Chart: Timeline Survei (SYNC)
+$.ajax({
+    url: '<?php echo base_url($headurl.'/survei_timeline'); ?>',
+    type: 'POST',
+    dataType: 'json',
+    async: false, // <-- PENTING: tunggu selesai dulu
+    data: {
+        tahun : tahun, 
+        provinsi : provinsi,
+        kabkota : kabkota,
+        kelompok : kelompok,
+        <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
+    },
+    success: function (obj) {
+
+        updateCsrfToken(obj.csrf_hash);
+
+        if(obj.message == "success"){ 
+            var caption = 'Timeline Survei per Bulan';
+            var subCaption = "Tahun " + tahun;
+            
+            var myChart = new FusionCharts({
+                type: "msspline",
+                renderAt: "chart-timeline",
+                width: "100%",
+                height: "100%",
+                dataFormat: "json",
+                containerBackgroundOpacity: '0',
+                dataSource: {
+                    chart: {
+                        "chartLeftMargin": "20",
+                        "chartTopMargin": "20",
+                        "chartRightMargin": "0",
+                        "chartBottomMargin": "5",
+                        xAxisValueBgColor: '#ffffff',
+                        "baseFontColor": "#52575D",
+                        "baseFontSize": "11px",
+                        xAxisValueBgAlpha: 0,
+                        "bgColor": "#ffffff",
+                        "bgAlpha": "0",
+                        "toolTipBgColor": "#FFFFFF",
+                        "toolTipBorderColor": "#CCCCCC",
+                        "toolTipColor": "#000000",
+                        "toolTipBgAlpha": "100",
+                        "showToolTipShadow": "1",
+                        valueFontColor : "#52575D",
+                        caption: caption,
+                        "captionFont": "Arial",
+                        "captionFontColor": "#52575D",
+                        "captionFontSize": "14",
+                        "subCaption": subCaption,
+                        "subCaptionFontColor": "#52575D",
+                        "subCaptionFontSize": "12",
+                        "alignCaptionWithCanvas": "0",
+                        "captionHorizontalPadding": "10",
+                        "captionOnTop": "1",
+                        "captionAlignment": "left",
+                        xaxisname: "",
+                        yaxisname: "",
+                        theme: "fusion",
+                        "showValues": "1",
+                        showlegend: "1",
+                        legendItemFontSize:"10",
+                        showpercentvalues: "0",
+                        legendposition: "bottom",
+                        usedataplotcolorforlabels: "1",
+                        showLabels: "1",
+                        animateClockwise: "1",
+                        "placeValuesInside": "0",
+                        "numberScaleValue": "1000,1000,1000",
+                        "numberScaleUnit": " rb, jt, M",
+                        "decimalSeparator": ",",
+                        "thousandSeparator": ".",
+                        "rotateValues": "0",
+                        valueFontSize : "11",
+                        showYAxisValues : 1,
+                        showXAxisValues : 1
                     },
-                    events: {
-                        dataPlotClick: function (eventObj, dataObj) {
-							drillDownAll(tahun);
-                        }
+                    "categories": [{
+                        "category": obj.data
+                    }],
+                    "dataset": obj.data5
+                },
+                events: {
+                    dataPlotClick: function (eventObj, dataObj) {
+                        drillDownAll(tahun);
                     }
-                }).render();
-            }
-        })
+                }
+            }).render();
+        }
+    },
+    error: function(xhr){
+        console.log("Error load survei_timeline:", xhr.responseText);
+    }
+});
+
         
-        // Chart: Survei Per Provinsi
-        $.post('<?php echo base_url($headurl.'/survei_by_provinsi'); ?>',{
-            tahun : tahun, 
-            provinsi : provinsi,
-            kabkota : kabkota,
-            kelompok : kelompok,
-            <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
-        }, function (data) {
-            obj = JSON.parse(data);
-            updateCsrfToken(obj.csrf_hash)
-            if(obj.message == "success"){ 
-                var caption = "Survei per Provinsi";
-                var subCaption = "Jumlah Survei";
-                
-                var myChart = new FusionCharts({
-                    type: "bar2d",
-                    renderAt: "chart-provinsi",
-                    width: "100%",
-                    height: "100%",
-                    dataFormat: "json",
-                    containerBackgroundOpacity: '0',
-                    dataSource: {
-                        chart: {
-                            numDivLines :0,
-                            divLineColor:'#fff',
-                            "chartLeftMargin": "20",
-                            "chartTopMargin": "10",
-                            "chartRightMargin": "0",
-                            "chartBottomMargin": "15",
-                            captionPosition: "left",
-                            plottooltext: "<b>$displayValue</b> ",
-                            xAxisValueBgColor: '#ffffff',
-                            "baseFontColor": "#52575D",
-                            "baseFontSize": "10px",
-                            xAxisValueBgAlpha: 0,
-                            "bgColor": "#ffffff",
-                            "bgAlpha": "0",
-                            "toolTipBgColor": "#FFFFFF",        // background putih
-							"toolTipBorderColor": "#CCCCCC",    // border abu tipis
-							"toolTipColor": "#000000",          // warna teks hitam
-							"toolTipBgAlpha": "100",            // full solid
-							"showToolTipShadow": "1",           // bayangan halus
-                            valueFontColor : "#FFF",
-                            caption: caption,
-                            "captionFont": "Arial",
-                            "captionFontColor": "#52575D",
-                            "captionFontSize": "14",
-                            "subCaption": subCaption,
-                            "subCaptionFontColor": "#52575D",
-                            "subCaptionFontSize": "12",
-                            "alignCaptionWithCanvas": "0",
-                            "captionHorizontalPadding": "10",
-                            "captionOnTop": "1",
-                            "captionAlignment": "left",
-                            "outCnvBaseFontSize": "10",
-                            xaxisname: "",
-                            yaxisname: "",
-                            theme: "fusion",
-                            "showValues": "1",
-                            showlegend: "0",
-                            "showZeroPlane": "1",
-                            "showZeroPlaneValue": "1",
-                            showpercentvalues: "0",
-                            valueFontSize : "10",
-                            legendposition: "right",
-                            legenditemfontsize : "10",
-                            usedataplotcolorforlabels: "1",
-                            showLabels: "1",
-                            animateClockwise: "1",
-                            showYAxisValues : 0,
-                            showXAxisValues : 1,
-                            "rotateValues": "1"
-                        },
-                        data: obj.data
+     // Chart: Survei Per Provinsi (SYNC)
+$.ajax({
+    url: '<?php echo base_url($headurl.'/survei_by_provinsi'); ?>',
+    type: 'POST',
+    dataType: 'json',
+    async: false, // <-- PENTING: biar nunggu selesai dulu
+    data: {
+        tahun : tahun, 
+        provinsi : provinsi,
+        kabkota : kabkota,
+        kelompok : kelompok,
+        <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
+    },
+    success: function (obj) {
+
+        updateCsrfToken(obj.csrf_hash);
+
+        if(obj.message == "success"){ 
+            var caption = "Survei per Provinsi";
+            var subCaption = "Jumlah Survei";
+            
+            var myChart = new FusionCharts({
+                type: "bar2d",
+                renderAt: "chart-provinsi",
+                width: "100%",
+                height: "100%",
+                dataFormat: "json",
+                containerBackgroundOpacity: '0',
+                dataSource: {
+                    chart: {
+                        numDivLines :0,
+                        divLineColor:'#fff',
+                        "chartLeftMargin": "20",
+                        "chartTopMargin": "10",
+                        "chartRightMargin": "0",
+                        "chartBottomMargin": "15",
+                        captionPosition: "left",
+                        plottooltext: "<b>$displayValue</b> ",
+                        xAxisValueBgColor: '#ffffff',
+                        "baseFontColor": "#52575D",
+                        "baseFontSize": "10px",
+                        xAxisValueBgAlpha: 0,
+                        "bgColor": "#ffffff",
+                        "bgAlpha": "0",
+                        "toolTipBgColor": "#FFFFFF",
+                        "toolTipBorderColor": "#CCCCCC",
+                        "toolTipColor": "#000000",
+                        "toolTipBgAlpha": "100",
+                        "showToolTipShadow": "1",
+                        valueFontColor : "#FFF",
+                        caption: caption,
+                        "captionFont": "Arial",
+                        "captionFontColor": "#52575D",
+                        "captionFontSize": "14",
+                        "subCaption": subCaption,
+                        "subCaptionFontColor": "#52575D",
+                        "subCaptionFontSize": "12",
+                        "alignCaptionWithCanvas": "0",
+                        "captionHorizontalPadding": "10",
+                        "captionOnTop": "1",
+                        "captionAlignment": "left",
+                        "outCnvBaseFontSize": "10",
+                        xaxisname: "",
+                        yaxisname: "",
+                        theme: "fusion",
+                        "showValues": "1",
+                        showlegend: "0",
+                        "showZeroPlane": "1",
+                        "showZeroPlaneValue": "1",
+                        showpercentvalues: "0",
+                        valueFontSize : "10",
+                        legendposition: "right",
+                        legenditemfontsize : "10",
+                        usedataplotcolorforlabels: "1",
+                        showLabels: "1",
+                        animateClockwise: "1",
+                        showYAxisValues : 0,
+                        showXAxisValues : 1,
+                        "rotateValues": "1"
                     },
-                    events: {
-                        dataPlotClick: function (eventObj, dataObj) {
-                            var linkStr = dataObj.link;
-                            if(linkStr && linkStr.indexOf('drillDownProvinsi') > -1){
-                                var matches = linkStr.match(/drillDownProvinsi\('([^']+)','([^']+)'\)/);
-                                if(matches){
-                                    drillDownProvinsi(matches[1], matches[2], tahun);
-                                }
+                    data: obj.data
+                },
+                events: {
+                    dataPlotClick: function (eventObj, dataObj) {
+                        var linkStr = dataObj.link;
+                        if(linkStr && linkStr.indexOf('drillDownProvinsi') > -1){
+                            var matches = linkStr.match(/drillDownProvinsi\('([^']+)','([^']+)'\)/);
+                            if(matches){
+                                drillDownProvinsi(matches[1], matches[2], tahun);
                             }
                         }
                     }
-                }).render();
-            }
-        })
-        
-        // Chart: Survei Per Kab/Kota
-        $.post('<?php echo base_url($headurl.'/survei_by_kabkota'); ?>',{
-            tahun : tahun, 
-            provinsi : provinsi,
-            kabkota : kabkota,
-            kelompok : kelompok,
-            <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
-        }, function (data) {
-            obj = JSON.parse(data);
-            updateCsrfToken(obj.csrf_hash)
-            if(obj.message == "success"){ 
-                var caption = "Top 10 Survei per Kab/Kota";
-                var subCaption = "Jumlah Survei";
-                
-                var myChart = new FusionCharts({
-                    type: "bar2d",
-                    renderAt: "chart-kabkota",
-                    width: "100%",
-                    height: "100%",
-                    dataFormat: "json",
-                    containerBackgroundOpacity: '0',
-                    dataSource: {
-                        chart: {
-                            numDivLines :0,
-                            divLineColor:'#fff',
-                            "chartLeftMargin": "20",
-                            "chartTopMargin": "10",
-                            "chartRightMargin": "0",
-                            "chartBottomMargin": "15",
-                            captionPosition: "left",
-                            plottooltext: "<b>$displayValue</b> ",
-                            xAxisValueBgColor: '#ffffff',
-                            "baseFontColor": "#52575D",
-                            "baseFontSize": "10px",
-                            xAxisValueBgAlpha: 0,
-                            "bgColor": "#ffffff",
-                            "bgAlpha": "0",
-                            "toolTipBgColor": "#FFFFFF",        // background putih
-							"toolTipBorderColor": "#CCCCCC",    // border abu tipis
-							"toolTipColor": "#000000",          // warna teks hitam
-							"toolTipBgAlpha": "100",            // full solid
-							"showToolTipShadow": "1",           // bayangan halus
-                            valueFontColor : "#000000",
-							"valueInsideColor": "#FFFFFF",
-                            caption: caption,
-                            "captionFont": "Arial",
-                            "captionFontColor": "#52575D",
-                            "captionFontSize": "14",
-                            "subCaption": subCaption,
-                            "subCaptionFontColor": "#52575D",
-                            "subCaptionFontSize": "12",
-                            "alignCaptionWithCanvas": "0",
-                            "captionHorizontalPadding": "10",
-                            "captionOnTop": "1",
-                            "captionAlignment": "left",
-                            "outCnvBaseFontSize": "10",
-                            xaxisname: "",
-                            yaxisname: "",
-                            theme: "fusion",
-                            "showValues": "1",
-                            showlegend: "0",
-                            "showZeroPlane": "1",
-                            "showZeroPlaneValue": "1",
-                            showpercentvalues: "0",
-                            valueFontSize : "10",
-                            legendposition: "right",
-                            legenditemfontsize : "10",
-                            usedataplotcolorforlabels: "1",
-                            showLabels: "1",
-                            animateClockwise: "1",
-                            showYAxisValues : 0,
-                            showXAxisValues : 1,
-                            "rotateValues": "1"
-                        },
-                        data: obj.data
+                }
+            }).render();
+        }
+    },
+    error: function(xhr){
+        console.log("Error load survei_by_provinsi:", xhr.responseText);
+    }
+});
+
+
+       // Chart: Survei Per Kab/Kota (SYNC)
+$.ajax({
+    url: '<?php echo base_url($headurl.'/survei_by_kabkota'); ?>',
+    type: 'POST',
+    dataType: 'json',
+    async: false, // <-- SYNC MODE
+    data: {
+        tahun : tahun, 
+        provinsi : provinsi,
+        kabkota : kabkota,
+        kelompok : kelompok,
+        <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
+    },
+    success: function (obj) {
+
+        updateCsrfToken(obj.csrf_hash);
+
+        if(obj.message == "success"){ 
+            var caption = "Top 10 Survei per Kab/Kota";
+            var subCaption = "Jumlah Survei";
+            
+            var myChart = new FusionCharts({
+                type: "bar2d",
+                renderAt: "chart-kabkota",
+                width: "100%",
+                height: "100%",
+                dataFormat: "json",
+                containerBackgroundOpacity: '0',
+                dataSource: {
+                    chart: {
+                        numDivLines :0,
+                        divLineColor:'#fff',
+                        "chartLeftMargin": "20",
+                        "chartTopMargin": "10",
+                        "chartRightMargin": "0",
+                        "chartBottomMargin": "15",
+                        captionPosition: "left",
+                        plottooltext: "<b>$displayValue</b> ",
+                        xAxisValueBgColor: '#ffffff',
+                        "baseFontColor": "#52575D",
+                        "baseFontSize": "10px",
+                        xAxisValueBgAlpha: 0,
+                        "bgColor": "#ffffff",
+                        "bgAlpha": "0",
+                        "toolTipBgColor": "#FFFFFF",
+                        "toolTipBorderColor": "#CCCCCC",
+                        "toolTipColor": "#000000",
+                        "toolTipBgAlpha": "100",
+                        "showToolTipShadow": "1",
+                        valueFontColor : "#000000",
+                        "valueInsideColor": "#FFFFFF",
+                        caption: caption,
+                        "captionFont": "Arial",
+                        "captionFontColor": "#52575D",
+                        "captionFontSize": "14",
+                        "subCaption": subCaption,
+                        "subCaptionFontColor": "#52575D",
+                        "subCaptionFontSize": "12",
+                        "alignCaptionWithCanvas": "0",
+                        "captionHorizontalPadding": "10",
+                        "captionOnTop": "1",
+                        "captionAlignment": "left",
+                        "outCnvBaseFontSize": "10",
+                        xaxisname: "",
+                        yaxisname: "",
+                        theme: "fusion",
+                        "showValues": "1",
+                        showlegend: "0",
+                        "showZeroPlane": "1",
+                        "showZeroPlaneValue": "1",
+                        showpercentvalues: "0",
+                        valueFontSize : "10",
+                        legendposition: "right",
+                        legenditemfontsize : "10",
+                        usedataplotcolorforlabels: "1",
+                        showLabels: "1",
+                        animateClockwise: "1",
+                        showYAxisValues : 0,
+                        showXAxisValues : 1,
+                        "rotateValues": "1"
                     },
-                    events: {
-                        dataPlotClick: function (eventObj, dataObj) {
-                            var linkStr = dataObj.link;
-                            if(linkStr && linkStr.indexOf('drillDownKabkota') > -1){
-                                var matches = linkStr.match(/drillDownKabkota\('([^']+)','([^']+)'\)/);
-                                if(matches){
-                                    drillDownKabkota(matches[1], matches[2], tahun);
-                                }
+                    data: obj.data
+                },
+                events: {
+                    dataPlotClick: function (eventObj, dataObj) {
+                        var linkStr = dataObj.link;
+                        if(linkStr && linkStr.indexOf('drillDownKabkota') > -1){
+                            var matches = linkStr.match(/drillDownKabkota\('([^']+)','([^']+)'\)/);
+                            if(matches){
+                                drillDownKabkota(matches[1], matches[2], tahun);
                             }
                         }
                     }
-                }).render();
-            }
-        })
-        
-        // Chart: Survei Per Kelompok (COLUMN CHART)
-        $.post('<?php echo base_url($headurl.'/survei_by_kelompok'); ?>',{
-            tahun : tahun, 
-            provinsi : provinsi,
-            kabkota : kabkota,
-            kelompok : kelompok,
-            <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
-        }, function (data) {
-            obj = JSON.parse(data);
-            updateCsrfToken(obj.csrf_hash)
-            if(obj.message == "success"){ 
-                var caption = "Distribusi Survei per Kelompok";
-                var subCaption = "Jumlah Survei";
-                
-                var myChart = new FusionCharts({
-                    type: "column2d",
-                    renderAt: "chart-kelompok",
-                    width: "100%",
-                    height: "100%",
-                    dataFormat: "json",
-                    containerBackgroundOpacity: '0',
-                    dataSource: {
-                        chart: {
-                            "chartLeftMargin": "20",
-                            "chartTopMargin": "10",
-                            "chartRightMargin": "0",
-                            "chartBottomMargin": "5",
-                            captionPosition: "left",
-                            xAxisValueBgColor: '#ffffff',
-                            "baseFontColor": "#52575D",
-                            xAxisValueBgAlpha: 0,
-                            "bgColor": "#ffffff",
-                            "bgAlpha": "0",
-                            "toolTipBgColor": "#FFFFFF",        // background putih
-							"toolTipBorderColor": "#CCCCCC",    // border abu tipis
-							"toolTipColor": "#000000",          // warna teks hitam
-							"toolTipBgAlpha": "100",            // full solid
-							"showToolTipShadow": "1",           // bayangan halus
-                            valueFontColor : "#52575D",
-                            caption: caption,
-                            "captionFont": "Arial",
-                            "captionFontColor": "#52575D",
-                            "captionFontSize": "14",
-                            "subCaption": subCaption,
-                            "subCaptionFontColor": "#52575D",
-                            "subCaptionFontSize": "12",
-                            labelFontColor:"#52575D",
-                            smartLineColor:"#52575D",
-							 "rotateValues": "1",
-                            "alignCaptionWithCanvas": "0",
-                            "captionHorizontalPadding": "10",
-                            "captionOnTop": "1",
-                            "captionAlignment": "left",
-                            plottooltext: "<b>$displayValue</b> ",
-                            "showValues": "1",
-                            showlegend: "0",
-                            showpercentvalues: "0",
-                            legendposition: "bottom",
-                            usedataplotcolorforlabels: "1",
-                            theme: "fusion",
-                            showLabels: "1",
-                            animateClockwise: "1",
-                            "placeValuesInside": "0",
-                            "numberScaleValue": "1000,1000,1000",
-                            "numberScaleUnit": " rb, jt, M",
-                            "decimalSeparator": ",",
-                            "thousandSeparator": ".",
-                            valueFontSize : "10",
-                            "labelDisplay": "rotate",
-                            "slantLabels": "1"
-                        },
-                        data: obj.data
+                }
+            }).render();
+        }
+    },
+    error: function(xhr){
+        console.log("Error load survei_by_kabkota:", xhr.responseText);
+    }
+});
+
+
+       // Chart: Survei Per Kelompok (COLUMN CHART)
+$.ajax({
+    url: '<?php echo base_url($headurl.'/survei_by_kelompok'); ?>',
+    type: 'POST',
+    dataType: 'json',
+    async: false, // <-- INI YANG BIKIN SYNC
+    data: {
+        tahun : tahun, 
+        provinsi : provinsi,
+        kabkota : kabkota,
+        kelompok : kelompok,
+        <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
+    },
+    success: function (obj) {
+
+        updateCsrfToken(obj.csrf_hash);
+
+        if(obj.message == "success"){ 
+            var caption = "Distribusi Survei per Kelompok";
+            var subCaption = "Jumlah Survei";
+            
+            var myChart = new FusionCharts({
+                type: "column2d",
+                renderAt: "chart-kelompok",
+                width: "100%",
+                height: "100%",
+                dataFormat: "json",
+                containerBackgroundOpacity: '0',
+                dataSource: {
+                    chart: {
+                        "chartLeftMargin": "20",
+                        "chartTopMargin": "10",
+                        "chartRightMargin": "0",
+                        "chartBottomMargin": "5",
+                        captionPosition: "left",
+                        xAxisValueBgColor: '#ffffff',
+                        "baseFontColor": "#52575D",
+                        xAxisValueBgAlpha: 0,
+                        "bgColor": "#ffffff",
+                        "bgAlpha": "0",
+                        "toolTipBgColor": "#FFFFFF",
+                        "toolTipBorderColor": "#CCCCCC",
+                        "toolTipColor": "#000000",
+                        "toolTipBgAlpha": "100",
+                        "showToolTipShadow": "1",
+                        valueFontColor : "#52575D",
+                        caption: caption,
+                        "captionFont": "Arial",
+                        "captionFontColor": "#52575D",
+                        "captionFontSize": "14",
+                        "subCaption": subCaption,
+                        "subCaptionFontColor": "#52575D",
+                        "subCaptionFontSize": "12",
+                        labelFontColor:"#52575D",
+                        smartLineColor:"#52575D",
+                        "rotateValues": "1",
+                        "alignCaptionWithCanvas": "0",
+                        "captionHorizontalPadding": "10",
+                        "captionOnTop": "1",
+                        "captionAlignment": "left",
+                        plottooltext: "<b>$displayValue</b> ",
+                        "showValues": "1",
+                        showlegend: "0",
+                        showpercentvalues: "0",
+                        legendposition: "bottom",
+                        usedataplotcolorforlabels: "1",
+                        theme: "fusion",
+                        showLabels: "1",
+                        animateClockwise: "1",
+                        "placeValuesInside": "0",
+                        "numberScaleValue": "1000,1000,1000",
+                        "numberScaleUnit": " rb, jt, M",
+                        "decimalSeparator": ",",
+                        "thousandSeparator": ".",
+                        valueFontSize : "10",
+                        "labelDisplay": "rotate",
+                        "slantLabels": "1"
                     },
-                    events: {
-                        dataPlotClick: function (eventObj, dataObj) {
-                            // Extract kelompok_id from link attribute
-                            var linkStr = dataObj.link;
-                            if(linkStr && linkStr.indexOf('drillDownKelompok') > -1){
-                                var matches = linkStr.match(/drillDownKelompok\('([^']+)','([^']+)'\)/);
-                                if(matches){
-                                    drillDownKelompok(matches[1], matches[2], tahun);
-                                }
+                    data: obj.data
+                },
+                events: {
+                    dataPlotClick: function (eventObj, dataObj) {
+                        var linkStr = dataObj.link;
+                        if(linkStr && linkStr.indexOf('drillDownKelompok') > -1){
+                            var matches = linkStr.match(/drillDownKelompok\('([^']+)','([^']+)'\)/);
+                            if(matches){
+                                drillDownKelompok(matches[1], matches[2], tahun);
                             }
                         }
                     }
-                }).render();
-            }
-        })
-    })
+                }
+            }).render();
+        }
+    },
+    error: function(xhr){
+        console.log("Error load survei_by_kelompok:", xhr.responseText);
+    }
+});
+
+	
+	})
 }
 
 var popupOpened = false;
