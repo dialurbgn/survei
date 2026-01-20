@@ -160,6 +160,18 @@ class Dashboard extends MX_Controller {
 				$sql .= " AND EXTRACT(YEAR FROM data_survei_pm.created) = ".$this->db->escape($tahun);
 			}
 			
+			if($provinsi && $provinsi != 'ALL'){
+				$sql .= " AND SUBSTRING(m_set_wil_administratif.wil_prov_kode, 1, 2) = ".$this->db->escape($provinsi);
+			}
+			
+			if($kabkota && $kabkota != 'ALL'){
+				$sql .= " AND m_set_wil_administratif.wil_kab_kode = ".$this->db->escape($kabkota);
+			}
+			
+			if($kelompok && $kelompok != 'ALL'){
+				$sql .= " AND data_survei_pm_detail_list.master_kelompok_id = ".$this->db->escape($kelompok);
+			}
+			
 			$query = $this->db->query($sql);
 			$result = $query->result_object();
 			$totalprovinsi = $result ? $result[0]->jumlah : 0;
@@ -178,6 +190,14 @@ class Dashboard extends MX_Controller {
 			
 			if($provinsi && $provinsi != 'ALL'){
 				$sql .= " AND SUBSTRING(m_set_wil_administratif.wil_prov_kode, 1, 2) = ".$this->db->escape($provinsi);
+			}
+			
+			if($kabkota && $kabkota != 'ALL'){
+				$sql .= " AND m_set_wil_administratif.wil_kab_kode = ".$this->db->escape($kabkota);
+			}
+			
+			if($kelompok && $kelompok != 'ALL'){
+				$sql .= " AND data_survei_pm_detail_list.master_kelompok_id = ".$this->db->escape($kelompok);
 			}
 			
 			$query = $this->db->query($sql);
@@ -204,6 +224,10 @@ class Dashboard extends MX_Controller {
 				$sql .= " AND m_set_wil_administratif.wil_kab_kode = ".$this->db->escape($kabkota);
 			}
 			
+			if($kelompok && $kelompok != 'ALL'){
+				$sql .= " AND data_survei_pm_detail_list.master_kelompok_id = ".$this->db->escape($kelompok);
+			}
+			
 			$query = $this->db->query($sql);
 			$result = $query->result_object();
 			$totalkelompok = $result ? $result[0]->jumlah : 0;
@@ -226,6 +250,10 @@ class Dashboard extends MX_Controller {
 			
 			if($kabkota && $kabkota != 'ALL'){
 				$sql .= " AND m_set_wil_administratif.wil_kab_kode = ".$this->db->escape($kabkota);
+			}
+			
+			if($kelompok && $kelompok != 'ALL'){
+				$sql .= " AND data_survei_pm_detail_list.master_kelompok_id = ".$this->db->escape($kelompok);
 			}
 			
 			$query = $this->db->query($sql);
@@ -338,6 +366,10 @@ class Dashboard extends MX_Controller {
 				$sql .= " AND SUBSTRING(m_set_wil_administratif.wil_prov_kode, 1, 2) = ".$this->db->escape($provinsi);
 			}
 			
+			if($kelompok && $kelompok != 'ALL'){
+				$sql .= " AND data_survei_pm_detail_list.master_kelompok_id = ".$this->db->escape($kelompok);
+			}
+			
 			$sql .= " GROUP BY SUBSTRING(m_set_wil_administratif.wil_prov_kode, 1, 2)
 					  ORDER BY total_semua DESC";
 			
@@ -407,6 +439,10 @@ class Dashboard extends MX_Controller {
 			
 			if($kabkota && $kabkota != 'ALL'){
 				$sql .= " AND m_set_wil_administratif.wil_kab_kode = ".$this->db->escape($kabkota);
+			}
+			
+			if($kelompok && $kelompok != 'ALL'){
+				$sql .= " AND data_survei_pm_detail_list.master_kelompok_id = ".$this->db->escape($kelompok);
 			}
 			
 			$sql .= " GROUP BY m_set_wil_administratif.wil_kab_kode
@@ -487,6 +523,10 @@ class Dashboard extends MX_Controller {
 				
 				if($kabkota && $kabkota != 'ALL'){
 					$sql .= " AND m_set_wil_administratif.wil_kab_kode = ".$this->db->escape($kabkota);
+				}
+				
+				if($kelompok && $kelompok != 'ALL'){
+					$sql .= " AND data_survei_pm_detail_list.master_kelompok_id = ".$this->db->escape($kelompok);
 				}
 				
 				$query = $this->db->query($sql);
