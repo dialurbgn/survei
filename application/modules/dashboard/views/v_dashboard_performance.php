@@ -1254,6 +1254,7 @@ function drillDownAll(tahun) {
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
         '<th>Kelompok</th>' +
+		'<th>Nama Unit</th>' +
         '<th>Tanggal</th>' +
 		'<th>Pria</th>' +
 		'<th>Wanita</th>' +
@@ -1313,6 +1314,7 @@ function drillDownAll(tahun) {
                 { data: 'survei_pm_tlp' },
                 { data: 'wilayah' },
                 { data: 'kelompok' },
+				{ data: 'nama_unit' },
                 { data: 'tanggal' },
 				{ data: 'total_pria' },
 				{ data: 'total_wanita' },
@@ -1361,6 +1363,7 @@ function drillDownProvinsi(prov_code, prov_name, tahun) {
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
         '<th>Kelompok</th>' +
+		'<th>Nama Unit</th>' +
         '<th>Tanggal</th>' +
 		'<th>Pria</th>' +
 		'<th>Wanita</th>' +
@@ -1421,6 +1424,7 @@ function drillDownProvinsi(prov_code, prov_name, tahun) {
                 { data: 'survei_pm_tlp' },
                 { data: 'wilayah' },
                 { data: 'kelompok' },
+				{ data: 'nama_unit' },
                 { data: 'tanggal' },
 				{ data: 'total_pria' },
 				{ data: 'total_wanita' },
@@ -1467,6 +1471,7 @@ function drillDownKabkota(kabkota_code, kabkota_name, tahun) {
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
         '<th>Kelompok</th>' +
+		'<th>Nama Unit</th>' +
         '<th>Tanggal</th>' +
 		'<th>Pria</th>' +
 		'<th>Wanita</th>' +
@@ -1528,6 +1533,7 @@ function drillDownKabkota(kabkota_code, kabkota_name, tahun) {
                 { data: 'survei_pm_tlp' },
                 { data: 'wilayah' },
                 { data: 'kelompok' },
+				{ data: 'nama_unit' },
                 { data: 'tanggal' },
 				{ data: 'total_pria' },
 				{ data: 'total_wanita' },
@@ -1574,6 +1580,7 @@ function drillDownKelompok(kelompok_id, kelompok_name, tahun) {
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
         '<th>Kelompok</th>' +
+		'<th>Nama Unit</th>' +
         '<th>Tanggal</th>' +
 		'<th>Pria</th>' +
 		'<th>Wanita</th>' +
@@ -1634,6 +1641,7 @@ function drillDownKelompok(kelompok_id, kelompok_name, tahun) {
                 { data: 'survei_pm_tlp' },
                 { data: 'wilayah' },
                 { data: 'kelompok' },
+				{ data: 'nama_unit' },
                 { data: 'tanggal' },
 				{ data: 'total_pria' },
 				{ data: 'total_wanita' },
@@ -1661,6 +1669,7 @@ function drillDownKelompok(kelompok_id, kelompok_name, tahun) {
             order: [[6, 'desc']]
         });
     });
+
 }
 
 $(document).ready(function() { 

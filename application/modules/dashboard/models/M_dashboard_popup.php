@@ -49,6 +49,11 @@ class M_dashboard_popup extends CI_Model {
 		));
 		
 		array_push($column, array(
+			"data" => "nama_unit",
+			"title" => "Nama Unit"
+		));
+		
+		array_push($column, array(
 			"data" => "tanggal",
 			"title" => "Tanggal Survei"
 		));
@@ -109,6 +114,7 @@ class M_dashboard_popup extends CI_Model {
 			CONCAT(m_set_wil_administratif.wil_prov_nama, \' - \', m_set_wil_administratif.wil_kab_nama, \' - \', 
 			m_set_wil_administratif.wil_kec_nama) as wilayah,
 			master_kelompok.nama_kelompok as kelompok,
+			data_survei_pm_detail_list.nama_unit,
 			TO_CHAR(data_survei_pm.created, \'DD-MM-YYYY HH24:MI\') as tanggal,
 			CASE 
 				WHEN data_survei_pm.status_id = 1 THEN \'Aktif\'
@@ -157,6 +163,7 @@ class M_dashboard_popup extends CI_Model {
 			m_set_wil_administratif.wil_kab_nama,
 			m_set_wil_administratif.wil_kec_nama,
 			master_kelompok.nama_kelompok,
+			data_survei_pm_detail_list.nama_unit,
 			data_survei_pm.created,
 			data_survei_pm.status_id
 		');
@@ -171,6 +178,7 @@ class M_dashboard_popup extends CI_Model {
 			$this->db->or_like('m_set_wil_administratif.wil_kab_nama', $searchValue);
 			$this->db->or_like('m_set_wil_administratif.wil_kec_nama', $searchValue);
 			$this->db->or_like('master_kelompok.nama_kelompok', $searchValue);
+			$this->db->or_like('data_survei_pm_detail_list.nama_unit', $searchValue);
 			$this->db->group_end();
 		}
 		
@@ -182,7 +190,7 @@ class M_dashboard_popup extends CI_Model {
 			$columnIndex = $order[0]['column'];
 			$columnDir = $order[0]['dir'];
 			
-			$columns = array('id', 'survei_pm_nama', 'survei_pm_email', 'survei_pm_tlp', 'wilayah', 'kelompok', 'tanggal', 'status');
+			$columns = array('id', 'survei_pm_nama', 'survei_pm_email', 'survei_pm_tlp', 'wilayah', 'kelompok', 'nama_unit','tanggal','total_pria','total_wanita','total_semua', 'status');
 			
 			if(isset($columns[$columnIndex])){
 				if($columns[$columnIndex] == 'id'){
@@ -244,6 +252,7 @@ class M_dashboard_popup extends CI_Model {
 			$nestedData['survei_pm_tlp'] = $row['survei_pm_tlp'];
 			$nestedData['wilayah'] = $row['wilayah'];
 			$nestedData['kelompok'] = $row['kelompok'];
+			$nestedData['nama_unit'] = $row['nama_unit'];
 			$nestedData['tanggal'] = $row['tanggal'];
 			$nestedData['total_pria'] = $row['total_pria'];
 			$nestedData['total_wanita'] = $row['total_wanita'];
