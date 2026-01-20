@@ -406,6 +406,7 @@
     padding: 20px !important;
     z-index: 9999 !important;
     position: relative !important;
+	transform: none !important;
 }
 
 .filter-menu .form-label {
