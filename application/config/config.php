@@ -524,7 +524,12 @@ $csrf_off = array(
   "dashboard/getheader",
   "dashboard/isonline",
   "rabbit/webhook",
-  "rabbit/process"
+  "rabbit/process",
+  "dashboard/survei_timeline",
+  "dashboard/survei_by_provinsi",
+  "dashboard/survei_by_kabkota",
+  "dashboard/survei_by_kelompok",
+  "dashboard/getColumnDetail"
 );
 
 $config['csrf_exclude_uris'] = $csrf_off;
