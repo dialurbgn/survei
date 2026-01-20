@@ -690,9 +690,9 @@
                         <span class="path4"></span>
                     </i>
                 </div>
-                <div class="stat-label">Total Kelompok/Unit</div>
+                <div class="stat-label">Total Kelompok</div>
                 <div class="stat-value" id="total_kelompok">0</div>
-                <div class="stat-description">Jenis Kelompok/Unit</div>
+                <div class="stat-description">Jenis Kelompok</div>
             </div>
             
             <div class="stat-card stat-card-5">
@@ -1254,7 +1254,7 @@ function drillDownAll(tahun) {
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
         '<th>Kelompok</th>' +
-		'<th>Nama Unit</th>' +
+		'<th>Nama Kelompok</th>' +
         '<th>Tanggal</th>' +
 		'<th>Pria</th>' +
 		'<th>Wanita</th>' +
@@ -1363,7 +1363,7 @@ function drillDownProvinsi(prov_code, prov_name, tahun) {
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
         '<th>Kelompok</th>' +
-		'<th>Nama Unit</th>' +
+		'<th>Nama Kelompok</th>' +
         '<th>Tanggal</th>' +
 		'<th>Pria</th>' +
 		'<th>Wanita</th>' +
@@ -1471,7 +1471,7 @@ function drillDownKabkota(kabkota_code, kabkota_name, tahun) {
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
         '<th>Kelompok</th>' +
-		'<th>Nama Unit</th>' +
+		'<th>Nama Kelompok</th>' +
         '<th>Tanggal</th>' +
 		'<th>Pria</th>' +
 		'<th>Wanita</th>' +
@@ -1580,7 +1580,7 @@ function drillDownKelompok(kelompok_id, kelompok_name, tahun) {
         '<th>Telepon</th>' +
         '<th>Wilayah</th>' +
         '<th>Kelompok</th>' +
-		'<th>Nama Unit</th>' +
+		'<th>Nama Kelompok</th>' +
         '<th>Tanggal</th>' +
 		'<th>Pria</th>' +
 		'<th>Wanita</th>' +
