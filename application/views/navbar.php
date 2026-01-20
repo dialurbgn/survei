@@ -434,23 +434,9 @@
 													
 													
 													?>
-													
-													<?php if($this->session->userdata("ppmse_id") != null && $this->session->userdata("ppmse_id") != '' && $this->session->userdata("ppmse_id") != '-'){
-								
-														$ppmse_name = $this->ortyd->select2_getname($this->session->userdata("ppmse_id"),"master_ppmse","id","name"); 
-														
-													}else{
-														
-														$ppmse_name =  'PPMSE Tidak Terdaftar'; 
-													}
-													
-													
-													?>
-									
 														<div class="fw-bold d-flex align-items-center fs-5"><?php echo $this->session->userdata('fullname'); ?></div>
 														<a href="<?php echo base_url('users_profile/view'); ?>" class="fw-semibold text-muted text-hover-primary fs-7"><span class="badge badge-light-success fw-bold"><?php echo $this->ortyd->select2_getname($this->session->userdata("group_id"),"users_groups","id","name"); ?></span></a>
 														<a href="<?php echo base_url('users_profile/view'); ?>" class="fw-semibold text-muted text-hover-primary fs-7"><?php echo $this->session->userdata('email'); ?><br><?php echo $this->session->userdata('tipe_data'); ?></a>
-														<a href="<?php echo base_url('users_profile/view'); ?>" class="fw-semibold text-muted text-hover-primary fs-7"><?php echo $ppmse_name; ?></a>
 													</div>
 													<!--end::Username-->
 												</div>
