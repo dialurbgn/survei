@@ -692,7 +692,7 @@
                 </div>
                 <div class="stat-label">Total Kelompok</div>
                 <div class="stat-value" id="total_kelompok">0</div>
-                <div class="stat-description">Jenis Kelompok</div>
+                <div class="stat-description">Jenis Kelompok/Nama Kelompok</div>
             </div>
             
             <div class="stat-card stat-card-5">
