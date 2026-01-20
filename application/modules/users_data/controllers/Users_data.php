@@ -11,8 +11,8 @@ class Users_data extends MX_Controller {
 		private $field = 'slug'; // IDENTITY FROM NAME FOR GET ID
 		private $slug_indentity = 'fullname'; //NAME FIELD 
 		private $sorting = 'modified'; // SORT FOR VIEW
-		private $exclude = array('lab_id','validate_admin','google_email','google_id','register_by_google','nik','timezone_id','perusahaan_id','company','workplace','status_kepegawaian','position_name','position_id','data_id','notif_id','banned','last_login','owner_id','validate','online_date','app_version','is_email_all','is_test','app_tipe','signature','color','history_id','status_id','created','modified','createdid','modifiedid','id','active','slug');
-		private $exclude_table = array('lab_id','validate_admin','google_email','google_id','register_by_google','nik','timezone_id','perusahaan_id','signature','password','color','history_id','status_id','created','modified','createdid','modifiedid','id','active','slug');
+		private $exclude = array('lab_id','validate_admin','google_email','google_id','register_by_google','nik','timezone_id','perusahaan_id','company','workplace','status_kepegawaian','position_name','position_id','data_id','notif_id','banned','last_login','owner_id','validate','online_date','app_version','is_email_all','is_test','app_tipe','signature','color','history_id','status_id','created','modified','createdid','modifiedid','id','active','slug','ppmse_id');
+		private $exclude_table = array('lab_id','validate_admin','google_email','google_id','register_by_google','nik','timezone_id','perusahaan_id','signature','password','color','history_id','status_id','created','modified','createdid','modifiedid','id','active','slug','ppmse_id');
 		//END CONFIG VARIABLE
 		
 		private $viewname;
