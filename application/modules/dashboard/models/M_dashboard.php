@@ -386,7 +386,19 @@ public function is_column_nullable($table, $column)
 			}
 		}
 
-		
+		function format_angka_singkat($angka)
+		{
+			if ($angka >= 1000000000) {
+				return number_format($angka / 1000000000, 2, ',', '.') . ' M';
+			} elseif ($angka >= 1000000) {
+				return number_format($angka / 1000000, 2, ',', '.') . ' Jt';
+			} elseif ($angka >= 1000) {
+				return number_format($angka / 1000, 2, ',', '.') . ' Rb';
+			} else {
+				return number_format($angka, 0, ',', '.');
+			}
+		}
+
 		
 		function getcoverdata($id){
 			$fieldnya = array();

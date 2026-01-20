@@ -1,240 +1,267 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-
 class M_dashboard_popup extends CI_Model {
 	
-		private $data_exclude = [
-			
-		];
-		
-		public function __construct()
-		{
-			parent::__construct();
-		}
-		
-		
-		public function getColumn(){
-			$column = array();
-			$filter = $this->input->post('filter',true);
-			$id =  $this->input->post('id',true);
-			$categories = $this->input->post('categories',true);
-			$dataset = $this->input->post('dataset',true);
-			$columndata = 1;
-			
-			if($id || !$id){
-				
-				if($id == 1 || $id == 9){
-					$table = 'vw_data_laporan_patrolisiber';
-					$exclude = $this->data_exclude;
-				}elseif($id == 10){
-					$table = 'vw_data_laporan_pengawasan';
-					$exclude = $this->data_exclude;
-				}elseif($id == 5){
-					$table = 'vw_data_laporan_daftar_hitam';
-					$exclude = $this->data_exclude;
-				}elseif($id == 6){
-					$table = 'vw_data_laporan_daftar_prioritas';
-					$exclude = $this->data_exclude;
-				}else{
-					$table = 'vw_data_laporan_patrolisiber';
-					$exclude = $this->data_exclude;
-				}
-				
-				$columndata == 1;
-				
-				if($columndata == 1){
-					
-						$query_column = $this->ortyd->query_column_include_nosort($table, $exclude);
-						//return $this->db->last_query();
-						if($query_column){
-							array_push($column, array("title" =>'No', "className" => "alignleft"));
-							foreach($query_column as $rows){
-								$label_name = $this->ortyd->translate_column($table,$rows['name']);	
-								array_push($column, array("title" => $label_name, "className" => "alignleft"));
-							}
-						}
-					
-				}
-				
-				
-				
-			}
-			
-			$output = array(
-				"status" => 'success',
-				"column" => $column,
-				"csrf_hash" => $this->security->get_csrf_hash()
-			);
-			
-			return json_encode($output);
-		}
-		
-		public function getColumnDetail(){
-			//$filter = $this->input->post('filter',true);
-			$id =  $this->input->post('id',true);
-			$categories = $this->input->post('categories',true);
-			$dataset = $this->input->post('dataset',true);
-			$tahun = $this->input->post('tahun',true);
-			$project_tipe = $this->input->post('project_tipe',true);
-			$tipenya = $project_tipe.' '.$tahun;
-			
-			$filter = array(
-				"tahun" => $tahun,
-				"project_tipe" => $project_tipe,
-				"tipenya" => $tipenya
-			);
-
-			if($id || !$id){
-				
-				if($id == 1 || $id == 9){
-					$table = 'vw_data_laporan_patrolisiber';
-					$exclude = $this->data_exclude;
-					$sorting = 'created';
-					$data = 1;
-					
-					return $this->getdetail($id, $table, $exclude, $sorting , $data, $categories, $dataset,$filter);
-				}elseif($id == 10){
-					$table = 'vw_data_laporan_pengawasan';
-					$exclude = $this->data_exclude;
-					$sorting = 'created';
-					$data = 1;
-					
-					return $this->getdetail($id, $table, $exclude, $sorting , $data, $categories, $dataset,$filter);
-				}elseif($id == 5){
-					$table = 'vw_data_laporan_daftar_hitam';
-					$exclude = $this->data_exclude;
-					$sorting = 'created';
-					$data = 1;
-					
-					return $this->getdetail($id, $table, $exclude, $sorting , $data, $categories, $dataset,$filter);
-				}elseif($id == 6){
-					$table = 'vw_data_laporan_daftar_prioritas';
-					$exclude = $this->data_exclude;
-					$sorting = 'created';
-					$data = 1;
-					
-					return $this->getdetail($id, $table, $exclude, $sorting , $data, $categories, $dataset,$filter);
-				}else{
-					$table = 'vw_data_laporan_patrolisiber';
-					$exclude = $this->data_exclude;
-					$sorting = 'created';
-					$data = 1;
-					
-					return $this->getdetail($id, $table, $exclude, $sorting , $data, $categories, $dataset,$filter);
-				}
-				
-				
-				
-			}
-			
-		}
-		
-		
-		function getdetail($id, $table, $exclude, $sorting , $data, $categories, $dataset,$filter){
-
-			if($id == 0){
-				
-
-			}else{
-				
-				$query_column = $this->ortyd->query_column_include_nosort($table, $exclude);
-				if($query_column){
-					$ordernya = array(null);
-					$searchnya = array();
-					foreach($query_column as $rowsdata){
-						array_push($ordernya,$rowsdata['name']);
-						array_push($searchnya,$rowsdata['name']);
-					}
-					$column_order = $ordernya;
-					$column_search = $searchnya;
-				}else{
-					$column_order = array(null);
-					$column_search = array(null);
-				}
-				
-				$order = array($table.'.'.$sorting => 'DESC');
-				$select = $table.'.*';
-				
-				$jointable = array();
-				$joindetail = array();
-				$joinposition = array();
-				
-				$wherecolumn = array();
-				$wheredetail = array();
-				
-				if($this->session->userdata('group_id') == 3){
-					array_push($wherecolumn, $table.'.ppmse_id');
-					array_push($wheredetail, $this->session->userdata('ppmse_id'));
-				}
-
-				if($id == 1){
-
-					if($categories != '0' && $categories != ''){
-						$bulan_code = $this->ortyd->select2_getname($categories,'master_bulan','code','id');
-						array_push($wherecolumn, $table.'.bulan');
-						array_push($wheredetail, $bulan_code);
-					
-						//array_push($wherecolumn, $table.'.bulan_won');
-						//array_push($wheredetail, $categories);
-						
-					}else{
-						
-					}
-					
-					if($dataset != '0' && $dataset != ''){
-						//array_push($wherecolumn, 'lower('.$table.'.status)');
-						//array_push($wheredetail, strtolower($dataset));
-					}
-
-				}
-				
-				array_push($wherecolumn, $table.'.tahun');
-				array_push($wheredetail, $filter['tahun']);
-
-				$groupby = array();
-			
-				$list = $this->ortyd->get_datatables($table,$column_order,$column_search,$order,$select,$jointable,$joindetail,$joinposition, $wherecolumn,$wheredetail,$groupby);
-				$data = array();
-				$no = $_POST['start'];
-				//echo $this->db->last_query();
-				foreach ($list as $rows) {
-					$rows = (array) $rows;
-					$no++;
-					$row = array();
-					$row[] = $no;
-					if($query_column){
-						foreach($query_column as $rowsdata){
-							if($rowsdata['name'] == 'lop_nilai' || $rowsdata['name'] == 'nilai' || $rowsdata['name'] == 'total'){
-								$variable = $this->ortyd->rupiahnonkoma($rows[$rowsdata['name']]);
-								$row[] = $variable;
-							}elseif($rowsdata['name']){
-								$variable = $rows[$rowsdata['name']];
-								$row[] = $variable;
-							}else{
-								$variable = $rows[$rowsdata['name']];
-								$row[] = $variable;
-							}
-							
-						}
-					}
-
-					$data[] = $row;
-				}
-				
-		 
-				$output = array(
-					"draw" => $_POST['draw'],
-					"recordsTotal" => $this->ortyd->count_filtered($table,$column_order,$column_search,$order,$select,$jointable,$joindetail,$joinposition, $wherecolumn,$wheredetail,$groupby),
-					"recordsFiltered" => $this->ortyd->count_filtered($table,$column_order,$column_search,$order,$select,$jointable,$joindetail,$joinposition, $wherecolumn,$wheredetail,$groupby),
-					"data" => $data,
-					"csrf_hash" => $this->security->get_csrf_hash()
-				);
-				
-				echo json_encode($output);
-				
-			}
-			
-		}
-		
+	public function __construct()
+	{
+		parent::__construct();
+	}
 	
-}	
+	public function getColumn(){
+		
+		$id = $this->input->post('id',true);
+		$tahun = $this->input->post('tahun',true);
+		$provinsi_code = $this->input->post('provinsi_code',true);
+		$kabkota_code = $this->input->post('kabkota_code',true);
+		$kelompok_id = $this->input->post('kelompok_id',true);
+		
+		$column = array();
+		
+		// Kolom default untuk semua tipe drill down
+		array_push($column, array(
+			"data" => "no",
+			"title" => "No"
+		));
+		
+		array_push($column, array(
+			"data" => "survei_pm_nama",
+			"title" => "Nama Surveyor"
+		));
+		
+		array_push($column, array(
+			"data" => "survei_pm_email",
+			"title" => "Email"
+		));
+		
+		array_push($column, array(
+			"data" => "survei_pm_tlp",
+			"title" => "No. Telepon"
+		));
+		
+		array_push($column, array(
+			"data" => "wilayah",
+			"title" => "Wilayah"
+		));
+		
+		array_push($column, array(
+			"data" => "kelompok",
+			"title" => "Kelompok"
+		));
+		
+		array_push($column, array(
+			"data" => "tanggal",
+			"title" => "Tanggal Survei"
+		));
+		
+		array_push($column, array(
+			"data" => "total_pria",
+			"title" => "Pria"
+		));
+		
+		array_push($column, array(
+			"data" => "total_wanita",
+			"title" => "Wanita"
+		));
+		
+		array_push($column, array(
+			"data" => "total_semua",
+			"title" => "Total"
+		));
+		
+		array_push($column, array(
+			"data" => "status",
+			"title" => "Status"
+		));
+		
+		
+		
+		$data = array(
+			'status' => 'success',
+			'column' => $column,
+			'csrf_hash' => $this->security->get_csrf_hash()
+		);
+		
+		return json_encode($data);
+	}
+	
+	public function getColumnDetail(){
+		
+		$id = $this->input->post('id',true);
+		$tahun = $this->input->post('tahun',true);
+		$provinsi_code = $this->input->post('provinsi_code',true);
+		$kabkota_code = $this->input->post('kabkota_code',true);
+		$kelompok_id = $this->input->post('kelompok_id',true);
+		
+		$start = $this->input->post('start');
+		$length = $this->input->post('length');
+		$draw = $this->input->post('draw');
+		$search = $this->input->post('search');
+		$order = $this->input->post('order');
+		
+		$searchValue = $search['value'];
+		
+		// Base query
+		$this->db->select('
+			data_survei_pm.id,
+			data_survei_pm.survei_pm_nama,
+			data_survei_pm.survei_pm_email,
+			data_survei_pm.survei_pm_tlp,
+			CONCAT(m_set_wil_administratif.wil_prov_nama, \' - \', m_set_wil_administratif.wil_kab_nama, \' - \', 
+			m_set_wil_administratif.wil_kec_nama) as wilayah,
+			master_kelompok.nama_kelompok as kelompok,
+			TO_CHAR(data_survei_pm.created, \'DD-MM-YYYY HH24:MI\') as tanggal,
+			CASE 
+				WHEN data_survei_pm.status_id = 1 THEN \'Aktif\'
+				WHEN data_survei_pm.status_id = 0 THEN \'Draft\'
+				ELSE \'Lainnya\'
+			END as status,
+			SUM(data_survei_pm_detail_list.jumlah_pria)   as total_pria,
+			SUM(data_survei_pm_detail_list.jumlah_wanita) as total_wanita,
+			SUM(data_survei_pm_detail_list.jumlah_total)  as total_semua
+		', FALSE);
+		
+		$this->db->from('data_survei_pm');
+		$this->db->join('data_survei_pm_detail', 'data_survei_pm_detail.survei_pm_pm_id = data_survei_pm.id', 'left');
+		$this->db->join('data_survei_pm_detail_list', 'data_survei_pm_detail_list.survei_pm_detail_id = data_survei_pm_detail.id', 'left');
+		$this->db->join('m_set_wil_administratif', 'm_set_wil_administratif.wil_id = data_survei_pm_detail_list.wil_id', 'left');
+		$this->db->join('master_kelompok', 'master_kelompok.id = data_survei_pm_detail_list.master_kelompok_id', 'left');
+		
+		$this->db->where('data_survei_pm.active', 1);
+		
+		// Filter berdasarkan tipe drill down - DINAMIS
+		if($provinsi_code && $provinsi_code != '' && $provinsi_code != 'ALL'){
+			$this->db->where("CAST(SUBSTRING(m_set_wil_administratif.wil_prov_kode, 1, 2) AS INTEGER) =", (int)$provinsi_code, FALSE);
+
+		}
+		
+		if($kabkota_code && $kabkota_code != '' && $kabkota_code != 'ALL'){
+			$this->db->where('m_set_wil_administratif.wil_kab_kode', $kabkota_code);
+		}
+		
+		if($kelompok_id && $kelompok_id != '' && $kelompok_id != 'ALL'){
+			$this->db->where('data_survei_pm_detail_list.master_kelompok_id', $kelompok_id);
+		}
+		
+		if($tahun && $tahun != 'ALL'){
+			$this->db->where("EXTRACT(YEAR FROM data_survei_pm.created) = ", $tahun, FALSE);
+		}
+		
+		$this->db->group_by('
+			data_survei_pm.id,
+			data_survei_pm.survei_pm_nama,
+			data_survei_pm.survei_pm_email,
+			data_survei_pm.survei_pm_tlp,
+			m_set_wil_administratif.wil_prov_nama,
+			m_set_wil_administratif.wil_kab_nama,
+			m_set_wil_administratif.wil_kec_nama,
+			master_kelompok.nama_kelompok,
+			data_survei_pm.created,
+			data_survei_pm.status_id
+		');
+		
+		// Search
+		if($searchValue){
+			$this->db->group_start();
+			$this->db->or_like('data_survei_pm.survei_pm_nama', $searchValue);
+			$this->db->or_like('data_survei_pm.survei_pm_email', $searchValue);
+			$this->db->or_like('data_survei_pm.survei_pm_tlp', $searchValue);
+			$this->db->or_like('m_set_wil_administratif.wil_prov_nama', $searchValue);
+			$this->db->or_like('m_set_wil_administratif.wil_kab_nama', $searchValue);
+			$this->db->or_like('m_set_wil_administratif.wil_kec_nama', $searchValue);
+			$this->db->or_like('master_kelompok.nama_kelompok', $searchValue);
+			$this->db->group_end();
+		}
+		
+		// Total records (filtered)
+		$totalFiltered = $this->db->count_all_results('', FALSE);
+		
+		// Order
+		if(isset($order[0]['column'])){
+			$columnIndex = $order[0]['column'];
+			$columnDir = $order[0]['dir'];
+			
+			$columns = array('id', 'survei_pm_nama', 'survei_pm_email', 'survei_pm_tlp', 'wilayah', 'kelompok', 'tanggal', 'status');
+			
+			if(isset($columns[$columnIndex])){
+				if($columns[$columnIndex] == 'id'){
+					$this->db->order_by('data_survei_pm.id', $columnDir);
+				} else {
+					$this->db->order_by($columns[$columnIndex], $columnDir);
+				}
+			}
+		} else {
+			$this->db->order_by('data_survei_pm.created', 'DESC');
+		}
+		
+		// Limit
+		if($length != -1){
+			$this->db->limit($length, $start);
+		}
+		
+		$query = $this->db->get();
+		$result = $query->result_array();
+		
+		// Total records (unfiltered)
+		$this->db->select('COUNT(DISTINCT data_survei_pm.id) as total', FALSE);
+		$this->db->from('data_survei_pm');
+		$this->db->join('data_survei_pm_detail', 'data_survei_pm_detail.survei_pm_pm_id = data_survei_pm.id', 'left');
+		$this->db->join('data_survei_pm_detail_list', 'data_survei_pm_detail_list.survei_pm_detail_id = data_survei_pm_detail.id', 'left');
+		$this->db->join('m_set_wil_administratif', 'm_set_wil_administratif.wil_id = data_survei_pm_detail_list.wil_id', 'left');
+		$this->db->where('data_survei_pm.active', 1);
+		
+		// Apply same filters for total count
+		if($provinsi_code && $provinsi_code != '' && $provinsi_code != 'ALL'){
+			$this->db->where("CAST(SUBSTRING(m_set_wil_administratif.wil_prov_kode, 1, 2) AS INTEGER) =", (int)$provinsi_code, FALSE);
+
+		}
+		
+		if($kabkota_code && $kabkota_code != '' && $kabkota_code != 'ALL'){
+			$this->db->where('m_set_wil_administratif.wil_kab_kode', $kabkota_code);
+		}
+		
+		if($kelompok_id && $kelompok_id != '' && $kelompok_id != 'ALL'){
+			$this->db->where('data_survei_pm_detail_list.master_kelompok_id', $kelompok_id);
+		}
+		
+		if($tahun && $tahun != 'ALL'){
+			$this->db->where("EXTRACT(YEAR FROM data_survei_pm.created) = ", $tahun, FALSE);
+		}
+		
+		$totalQuery = $this->db->get();
+		$totalData = $totalQuery->row()->total ?? 0;
+		
+		// Format data untuk DataTables
+		$data = array();
+		$no = $start + 1;
+		
+		foreach($result as $row){
+			$nestedData = array();
+			$nestedData['no'] = $no;
+			$nestedData['survei_pm_nama'] = $row['survei_pm_nama'];
+			$nestedData['survei_pm_email'] = $row['survei_pm_email'];
+			$nestedData['survei_pm_tlp'] = $row['survei_pm_tlp'];
+			$nestedData['wilayah'] = $row['wilayah'];
+			$nestedData['kelompok'] = $row['kelompok'];
+			$nestedData['tanggal'] = $row['tanggal'];
+			$nestedData['total_pria'] = $row['total_pria'];
+			$nestedData['total_wanita'] = $row['total_wanita'];
+			$nestedData['total_semua'] = $row['total_semua'];
+			$nestedData['status'] = '<span class="badge badge-'.($row['status'] == 'Aktif' ? 'success' : 'secondary').'">'.$row['status'].'</span>';
+			
+			$data[] = $nestedData;
+			$no++;
+		}
+		
+		$json_data = array(
+			"draw" => intval($draw),
+			"recordsTotal" => intval($totalData),
+			"recordsFiltered" => intval($totalFiltered),
+			"data" => $data,
+			"csrf_hash" => $this->security->get_csrf_hash()
+		);
+		
+		return json_encode($json_data);
+	}
+
+
+}

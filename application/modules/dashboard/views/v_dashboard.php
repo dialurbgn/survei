@@ -194,9 +194,9 @@
 							<?php 
 						
 						if($this->session->userdata('group_id') == 3){ ?>
-							get_dashboard_performance(project_tipe, tahun);
+							//get_dashboard_performance(project_tipe, tahun);
 						<?php }else{ ?>
-							get_dashboard_performance(project_tipe, tahun);
+							//get_dashboard_performance(project_tipe, tahun);
 						<?php }
 			
 						?>
