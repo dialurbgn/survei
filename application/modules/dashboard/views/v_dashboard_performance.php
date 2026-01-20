@@ -922,7 +922,7 @@ function get_dashboard_charts(tahun, provinsi, kabkota, kelompok){
             obj = JSON.parse(data);
             updateCsrfToken(obj.csrf_hash)
             if(obj.message == "success"){ 
-                var caption = "Top 10 Survei per Provinsi";
+                var caption = "Survei per Provinsi";
                 var subCaption = "Jumlah Survei";
                 
                 var myChart = new FusionCharts({
@@ -953,7 +953,7 @@ function get_dashboard_charts(tahun, provinsi, kabkota, kelompok){
 							"toolTipColor": "#000000",          // warna teks hitam
 							"toolTipBgAlpha": "100",            // full solid
 							"showToolTipShadow": "1",           // bayangan halus
-                            valueFontColor : "#52575D",
+                            valueFontColor : "#FFF",
                             caption: caption,
                             "captionFont": "Arial",
                             "captionFontColor": "#52575D",
