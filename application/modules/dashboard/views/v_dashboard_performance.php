@@ -823,7 +823,7 @@ function get_dashboard_stats(tahun, provinsi, kabkota, kelompok){
     })
 }
 
-function get_dashboard_charts(tahun, provinsi, kabkota, kelompok){
+async function get_dashboard_charts(tahun, provinsi, kabkota, kelompok){
     FusionCharts.ready(function() {
         
        // Chart: Timeline Survei (SYNC)
