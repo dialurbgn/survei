@@ -1792,7 +1792,7 @@ public function menu()
 					 ->distinct()
 					 ->where("$columnname IS NOT NULL")
 					 ->where("$columnname !=", "")
-					 ->where('active', 1)
+					 //->where('active', 1)
 					 ->order_by($columnid, 'ASC');
 
 			$query = $this->db->get($table);
