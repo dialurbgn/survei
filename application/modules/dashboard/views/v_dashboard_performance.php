@@ -1684,8 +1684,8 @@ $(document).ready(function() {
                     table: 'm_set_wil_administratif',
                     id:'SUBSTR(wil_prov_kode, 1, 2)',
                     name:'wil_prov_nama',
-                    reference: 'wil_level',
-                    reference_id: '1',
+                    reference: '1',
+                    reference_id: 'wil_level',
                     page: params.page, 
                     <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
                 };
@@ -1724,8 +1724,8 @@ $(document).ready(function() {
                     table: 'm_set_wil_administratif',
                     id:'wil_kab_kode',
                     name:'wil_kab_nama',
-                    reference: 'wil_level',
-                    reference_id: '2',
+                    reference: '2',
+                    reference_id: 'wil_level',
                     page: params.page, 
                     <?php echo $this->security->get_csrf_token_name(); ?> : csrfHash
                 };
