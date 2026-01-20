@@ -314,8 +314,7 @@ class Dashboard extends MX_Controller {
 			}
 			
 			$sql .= " GROUP BY SUBSTRING(m_set_wil_administratif.wil_prov_kode, 1, 2)
-					  ORDER BY total_semua DESC
-					  LIMIT 10";
+					  ORDER BY total_semua DESC";
 			
 			$query = $this->db->query($sql);
 			$result = $query->result_object();
