@@ -1356,7 +1356,7 @@ function drillDownAll(tahun) {
             },
             pageLength: 10,
             lengthMenu: [[10, 25, 50, 100,-1], [10, 25, 50, 100,'All']],
-            order: [[4, 'asc'], [5, 'asc']]
+            order: [[4, 'asc'], [5, 'asc'], [6, 'asc']]
         });
     });
 }
@@ -1483,7 +1483,7 @@ function drillDownProvinsi(prov_code, prov_name, tahun) {
             },
             pageLength: 10,
             lengthMenu: [[10, 25, 50, 100,-1], [10, 25, 50, 100,'All']],
-            order: [[6, 'desc']]
+             order: [[4, 'asc'], [5, 'asc'], [6, 'asc']]
         });
     });
 }
@@ -1609,7 +1609,7 @@ function drillDownKabkota(kabkota_code, kabkota_name, tahun) {
             },
             pageLength: 10,
             lengthMenu: [[10, 25, 50, 100,-1], [10, 25, 50, 100,'All']],
-            order: [[6, 'desc']]
+             order: [[4, 'asc'], [5, 'asc'], [6, 'asc']]
         });
     });
 }
@@ -1734,7 +1734,7 @@ function drillDownKelompok(kelompok_id, kelompok_name, tahun) {
             },
             pageLength: 10,
             lengthMenu: [[10, 25, 50, 100,-1], [10, 25, 50, 100,'All']],
-            order: [[6, 'desc']]
+             order: [[4, 'asc'], [5, 'asc'], [6, 'asc']]
         });
     });
 
