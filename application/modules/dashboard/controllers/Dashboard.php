@@ -208,6 +208,30 @@ class Dashboard extends MX_Controller {
 			$result = $query->result_object();
 			$totalkelompok = $result ? $result[0]->jumlah : 0;
 			
+			// Total Unit
+			$sql = "SELECT count(DISTINCT data_survei_pm_detail_list.nama_unit) as jumlah
+					FROM data_survei_pm
+					INNER JOIN data_survei_pm_detail ON data_survei_pm_detail.survei_pm_pm_id = data_survei_pm.id
+					INNER JOIN data_survei_pm_detail_list ON data_survei_pm_detail_list.survei_pm_detail_id = data_survei_pm_detail.id
+					INNER JOIN m_set_wil_administratif ON m_set_wil_administratif.wil_id = data_survei_pm_detail_list.wil_id
+					WHERE data_survei_pm.active = 1";
+			
+			if($tahun && $tahun != 'ALL'){
+				$sql .= " AND EXTRACT(YEAR FROM data_survei_pm.created) = ".$this->db->escape($tahun);
+			}
+			
+			if($provinsi && $provinsi != 'ALL'){
+				$sql .= " AND SUBSTRING(m_set_wil_administratif.wil_prov_kode, 1, 2) = ".$this->db->escape($provinsi);
+			}
+			
+			if($kabkota && $kabkota != 'ALL'){
+				$sql .= " AND m_set_wil_administratif.wil_kab_kode = ".$this->db->escape($kabkota);
+			}
+			
+			$query = $this->db->query($sql);
+			$result = $query->result_object();
+			$totalunit = $result ? $result[0]->jumlah : 0;
+			
 			// Total Surveyor (orang yang melakukan survei)
 			$sql = "SELECT count(DISTINCT data_survei_pm.createdid) as jumlah
 					FROM data_survei_pm
@@ -273,6 +297,7 @@ class Dashboard extends MX_Controller {
 				'total_provinsi' => $this->m_model_data->format_angka_singkat($totalprovinsi),
 				'total_kabkota' => $this->m_model_data->format_angka_singkat($totalkabkota),
 				'total_kelompok' => $this->m_model_data->format_angka_singkat($totalkelompok),
+				'total_unit' => $this->m_model_data->format_angka_singkat($totalunit),
 				'total_surveyor' => $this->m_model_data->format_angka_singkat($totalsurveyor),
 				'total_semua' => $this->m_model_data->format_angka_singkat($total_semua)
 			);

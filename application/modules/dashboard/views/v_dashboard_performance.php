@@ -690,9 +690,9 @@
                         <span class="path4"></span>
                     </i>
                 </div>
-                <div class="stat-label">Total Kelompok</div>
+                <div class="stat-label">Total Kelompok/Unit</div>
                 <div class="stat-value" id="total_kelompok">0</div>
-                <div class="stat-description">Jenis Kelompok</div>
+                <div class="stat-description">Jenis Kelompok/Unit</div>
             </div>
             
             <div class="stat-card stat-card-5">
@@ -818,7 +818,7 @@ function get_dashboard_stats(tahun, provinsi, kabkota, kelompok){
             $('#total_survei').text(obj.data.total_semua);
             $('#total_provinsi').text(obj.data.total_provinsi);
             $('#total_kabkota').text(obj.data.total_kabkota);
-            $('#total_kelompok').text(obj.data.total_kelompok);
+            $('#total_kelompok').text(obj.data.total_kelompok+'/'+obj.data.total_unit);
             $('#total_surveyor').text(obj.data.total_surveyor);
         }
     })
