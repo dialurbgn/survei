@@ -1291,6 +1291,7 @@ function drillDownAll(tahun) {
     
     box.on('shown.bs.modal', function() {
         $('#table-detail-survei').DataTable({
+             responsive: true,
             processing: true,
             serverSide: true,
 			lengthChange: true,
@@ -1417,6 +1418,7 @@ function drillDownProvinsi(prov_code, prov_name, tahun) {
     
     box.on('shown.bs.modal', function() {
         $('#table-detail-survei').DataTable({
+             responsive: true,
             processing: true,
             serverSide: true,
 			lengthChange: true,
@@ -1496,24 +1498,29 @@ function drillDownKabkota(kabkota_code, kabkota_name, tahun) {
     if(!tahun) tahun = <?php echo isset($_GET['tahun']) ? $_GET['tahun'] : date('Y'); ?>;
     
     var container = $('<div/>');
-    container.html('<table class="table table-striped table-bordered" id="table-detail-survei" style="width:100%">' +
-        '<thead>' +
-        '<tr>' +
-        '<th>No</th>' +
-        '<th>Nama Petugas</th>' +
-        '<th>Email</th>' +
-        '<th>Telepon</th>' +
-        '<th>Wilayah</th>' +
-        '<th>Kelompok</th>' +
-		'<th>Nama Kelompok</th>' +
-        '<th>Tanggal</th>' +
-		'<th>Pria</th>' +
-		'<th>Wanita</th>' +
-		'<th>Semua</th>' +
-        '<th>Status</th>' +
-        '</tr>' +
-        '</thead>' +
-        '</table>');
+        container.html(
+        '<div class="table-responsive">' +
+            '<table class="table table-striped table-bordered" id="table-detail-survei" style="width:100%">' +
+                '<thead>' +
+                    '<tr>' +
+                        '<th>No</th>' +
+                        '<th>Nama Petugas</th>' +
+                        '<th>Email</th>' +
+                        '<th>Telepon</th>' +
+                        '<th>Wilayah</th>' +
+                        '<th>Kelompok</th>' +
+                        '<th>Nama Kelompok</th>' +
+                        '<th>Tanggal</th>' +
+                        '<th>Pria</th>' +
+                        '<th>Wanita</th>' +
+                        '<th>Semua</th>' +
+                        '<th>Status</th>' +
+                    '</tr>' +
+                '</thead>' +
+            '</table>' +
+        '</div>'
+    );
+
     
     var box = bootbox.dialog({
         size: "xl",
@@ -1543,6 +1550,7 @@ function drillDownKabkota(kabkota_code, kabkota_name, tahun) {
     
     box.on('shown.bs.modal', function() {
         $('#table-detail-survei').DataTable({
+             responsive: true,
             processing: true,
             serverSide: true,
 			lengthChange: true,
@@ -1668,6 +1676,7 @@ function drillDownKelompok(kelompok_id, kelompok_name, tahun) {
     
     box.on('shown.bs.modal', function() {
         $('#table-detail-survei').DataTable({
+             responsive: true,
             processing: true,
             serverSide: true,
 			lengthChange: true,
