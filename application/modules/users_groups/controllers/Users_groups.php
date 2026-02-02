@@ -591,7 +591,7 @@ class Users_groups extends MX_Controller {
 			$this->db->where_in("users_groups_access.view",1);
 			$this->db->join('users_groups_access','users_groups_access.menu_id = master_menu.id','left');
 			$this->db->order_by('sort','asc');
-			$this->db->group_by('master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show, users_groups_access.menu_id');
+			$this->db->group_by('master_menu.sort, master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show, users_groups_access.menu_id');
 			$queryheadmenu = $this->db->get('master_menu');
 			$queryheadmenu = $queryheadmenu->result_object();
 			if($queryheadmenu){
@@ -607,7 +607,7 @@ class Users_groups extends MX_Controller {
 				$this->db->where_not_in("master_menu.id",$menu_gid);
 			}
 			$this->db->order_by('sort','asc');
-			$this->db->group_by('master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
+			$this->db->group_by('master_menu.sort,master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
 			$queryheadmenu = $this->db->get('master_menu');
 			$queryheadmenu = $queryheadmenu->result_object();
 			if($queryheadmenu){
@@ -626,7 +626,7 @@ class Users_groups extends MX_Controller {
 				$this->db->select('master_menu.id, master_menu.name, master_menu.show');
 				$this->db->where_in("master_menu.parent_id",$parent_id);
 				$this->db->order_by('sort','asc');
-				$this->db->group_by('master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
+				$this->db->group_by('master_menu.sort,master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
 				$queryheadmenu = $this->db->get('master_menu');
 				$queryheadmenu = $queryheadmenu->result_object();
 				if($queryheadmenu){
@@ -652,7 +652,7 @@ class Users_groups extends MX_Controller {
 			$this->db->order_by('sort','asc');
 			//$this->db->where("master_menu.show",1);
 			$this->db->join('users_groups_access','users_groups_access.menu_id = master_menu.id','left');
-			$this->db->group_by('master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
+			$this->db->group_by('master_menu.sort,master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
 			$queryheadmenu = $this->db->get('master_menu');
 			$queryheadmenu = $queryheadmenu->result_object();
 			if($queryheadmenu){
@@ -722,7 +722,7 @@ class Users_groups extends MX_Controller {
 						
 						$this->db->select('master_menu.id');
 						if($tipe == 1){
-							$this->db->where("(master_menu.parent_id is null or master_menu.parent_id = '')", null);
+							$this->db->where("(master_menu.parent_id is null)", null);
 						}elseif($tipe == 2){
 							$this->db->where_in("master_menu.parent_id", $parent_id);
 						}else{
@@ -741,7 +741,7 @@ class Users_groups extends MX_Controller {
 						}else{
 							$this->db->select('master_menu.id');
 							if($tipe == 1){
-								$this->db->where("(master_menu.parent_id is null or master_menu.parent_id = '')", null);
+								$this->db->where("(master_menu.parent_id is null)", null);
 							}elseif($tipe == 2){
 								$this->db->where_in("master_menu.parent_id", $parent_id);
 							}else{
@@ -844,7 +844,7 @@ class Users_groups extends MX_Controller {
 						
 						$this->db->select('master_menu.id');
 						if($tipe == 1){
-							$this->db->where("(master_menu.parent_id is null or master_menu.parent_id = '')", null);
+							$this->db->where("(master_menu.parent_id is null)", null);
 						}elseif($tipe == 2){
 							$this->db->where_in("master_menu.parent_id", $parent_id);
 						}else{
@@ -863,7 +863,7 @@ class Users_groups extends MX_Controller {
 						}else{
 							$this->db->select('master_menu.id');
 							if($tipe == 1){
-								$this->db->where("(master_menu.parent_id is null or master_menu.parent_id = '')", null);
+								$this->db->where("(master_menu.parent_id is null)", null);
 							}elseif($tipe == 2){
 								$this->db->where_in("master_menu.parent_id", $parent_id);
 							}else{

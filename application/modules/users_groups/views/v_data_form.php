@@ -265,7 +265,7 @@
 								  
 										$menu_gid = [];
 										$this->db->select('master_menu.id, master_menu.name');
-										$this->db->where("(parent_id is null or parent_id = '')",null);
+										$this->db->where("(parent_id is null)",null);
 										//$this->db->where("master_menu.show",1);
 										if($iddata !=0){
 											$this->db->where("users_groups_access.gid",$iddata);
@@ -277,7 +277,7 @@
 										
 										//$this->db->where('show',1);
 										$this->db->order_by('sort','asc');
-										$this->db->group_by('master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id');
+										$this->db->group_by('master_menu.sort,master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id');
 										$queryheadmenu = $this->db->get('master_menu');
 										$queryheadmenu = $queryheadmenu->result_object();
 										if($queryheadmenu){
@@ -287,23 +287,23 @@
 										}
 			
 										$this->db->select('master_menu.id, master_menu.name, master_menu.show');
-										$this->db->where("(parent_id is null or parent_id = '')",null);
+										$this->db->where("(parent_id is null)",null);
 										//$this->db->where("master_menu.show",1);
 										//$this->db->where('show',1);
 										if(count($menu_gid) > 0){
 											$this->db->where_not_in("master_menu.id",$menu_gid);
 										}
 										$this->db->order_by('sort','asc');
-										$this->db->group_by('master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
+										$this->db->group_by('master_menu.sort,master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
 										$queryheadmenu = $this->db->get('master_menu');
 										$queryheadmenu = $queryheadmenu->result_object();
 										
 										if(!$queryheadmenu){
 											$this->db->select('master_menu.id, master_menu.name, master_menu.show');
-											$this->db->where("(parent_id is null or parent_id = '')",null);
+											$this->db->where("(parent_id is null)",null);
 											//$this->db->where("master_menu.show",1);
 											$this->db->order_by('sort','asc');
-											$this->db->group_by('master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
+											$this->db->group_by('master_menu.sort,master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
 											$queryheadmenu = $this->db->get('master_menu');
 											$queryheadmenu = $queryheadmenu->result_object();
 											
@@ -348,7 +348,7 @@
 									 <?php 
 								  
 										$this->db->select('master_menu.id, master_menu.name, master_menu.show');
-										$this->db->where("(parent_id is null or parent_id = '')",null);
+										$this->db->where("(parent_id is null)",null);
 										//$this->db->where("master_menu.show",1);
 										if($iddata !=0){
 											$this->db->where("users_groups_access.gid",$iddata);
@@ -360,7 +360,7 @@
 										
 										//$this->db->where('show',1);
 										$this->db->order_by('sort','asc');
-										$this->db->group_by('master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show');
+										$this->db->group_by('master_menu.sort,master_menu.id, master_menu.name, master_menu.id, master_menu.parent_id, master_menu.show,master_menu.sort');
 										$queryheadmenu = $this->db->get('master_menu');
 										$queryheadmenu = $queryheadmenu->result_object();
 										if($queryheadmenu){
