@@ -40,7 +40,8 @@ class Dashboard extends MX_Controller {
 			$this->ortyd->session_check();
 			$this->ortyd->access_check($this->module);
 			
-			$gid = $this->session->userdata('group_id');
+			$userid = $this->session->userdata('userid');
+			$gid = $this->ortyd->select2_getname($userid,'users_data','id','gid');
 			if($gid == 3){
 				redirect('survei', 'refresh');			
 			}
